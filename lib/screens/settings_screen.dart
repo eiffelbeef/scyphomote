@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'about_screen.dart';
+import '../providers/settings_provider.dart';
+import '../providers/theme_provider.dart';
+import '../constants.dart';
+
+class SettingsScreen extends ConsumerWidget {
+  static const routeName = '/settings';
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final settings = ref.watch(settingsProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              'Appearance',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.palette_outlined),
+            title: const Text('Theme Mode'),
+            subtitle: Text(_getThemeModeName(themeMode)),
+            trailing: SegmentedButton<ThemeMode>(
+              segments: const [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  icon: Icon(Icons.settings_brightness_rounded),
+                  label: Text('Auto'),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  icon: Icon(Icons.light_mode_rounded),
+                  label: Text('Light'),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  icon: Icon(Icons.dark_mode_rounded),
+                  label: Text('Dark'),
+                ),
+              ],
+              selected: {themeMode},
+              onSelectionChanged: (Set<ThemeMode> newSelection) {
+                ref
+                    .read(themeProvider.notifier)
+                    .setThemeMode(newSelection.first);
+              },
+              showSelectedIcon: false,
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              'Performance',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.speed),
+            title: const Text('Player Refresh Rate'),
+            subtitle: Text('${settings.playerRefreshRate} seconds'),
+            trailing: SizedBox(
+              width: 200,
+              child: Slider(
+                value: settings.playerRefreshRate.toDouble(),
+                min: 3,
+                max: 30,
+                divisions: 27,
+                label: '${settings.playerRefreshRate}s',
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setPlayerRefreshRate(value.round());
+                },
+              ),
+            ),
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.sync),
+            title: const Text('Device List Auto-Refresh'),
+            value: settings.deviceListAutoRefresh,
+            onChanged: (value) {
+              ref
+                  .read(settingsProvider.notifier)
+                  .setDeviceListAutoRefresh(value);
+            },
+          ),
+          if (settings.deviceListAutoRefresh)
+            ListTile(
+              leading: const Icon(Icons.timer_outlined),
+              title: const Text('List Refresh Rate'),
+              subtitle: Text('${settings.deviceListRefreshRate} seconds'),
+              trailing: SizedBox(
+                width: 200,
+                child: Slider(
+                  value: settings.deviceListRefreshRate.toDouble(),
+                  min: 5,
+                  max: 60,
+                  divisions: 11,
+                  label: '${settings.deviceListRefreshRate}s',
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setDeviceListRefreshRate(value.round());
+                  },
+                ),
+              ),
+            ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              'Library',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.grid_view_rounded),
+            title: const Text('Items per Row'),
+            subtitle: Text('${settings.libraryItemsPerRow} items'),
+            trailing: SizedBox(
+              width: 200,
+              child: Slider(
+                value: settings.libraryItemsPerRow.toDouble(),
+                min: 1,
+                max: 6,
+                divisions: 5,
+                label: '${settings.libraryItemsPerRow}',
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setLibraryItemsPerRow(value.round());
+                },
+              ),
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              'About',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text('About ${AppConstants.appName}'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).pushNamed(AboutScreen.routeName);
+            },
+          ),
+          const Divider(),
+        ],
+      ),
+    );
+  }
+
+  String _getThemeModeName(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.system:
+        return 'Follow System';
+      case ThemeMode.light:
+        return 'Light Mode';
+      case ThemeMode.dark:
+        return 'Dark Mode';
+    }
+  }
+}

@@ -1,0 +1,13 @@
+import 'package:flutter/material.dart';
+
+class AppConstants {
+  static const String appName = 'Scyphomote';
+  static const String appVersion = '0.1.0';
+  static const String githubUrl = 'https://github.com/EiffelBeef/Scyphomote';
+  static const int sessionActivityThreshold = 3600;
+
+  static final GlobalKey<ScaffoldMessengerState> messengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  static bool isInForeground = true;
+}

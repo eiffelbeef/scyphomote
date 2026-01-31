@@ -1,0 +1,89 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/auth_provider.dart';
+import '../widgets/user_avatar.dart';
+import 'login_screen.dart';
+
+class UserManagementScreen extends ConsumerWidget {
+  const UserManagementScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Manage Users')),
+      body: authState.users.isEmpty
+          ? const Center(child: Text('No saved users'))
+          : ListView.builder(
+              itemCount: authState.users.length,
+              itemBuilder: (context, index) {
+                final user = authState.users[index];
+                final isActive = user.userId == authState.currentUser?.userId;
+
+                return ListTile(
+                  leading: UserAvatar(user: user),
+                  title: Text(user.username),
+                  subtitle: Text(user.serverUrl),
+                  trailing: isActive
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Theme.of(context).colorScheme.primary,
+                        )
+                      : null,
+                  onTap: () async {
+                    await ref
+                        .read(authProvider.notifier)
+                        .switchUser(user.userId);
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  },
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete User'),
+                        content: Text('Delete ${user.username}?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await ref
+                                  .read(authProvider.notifier)
+                                  .deleteUser(user.userId);
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                                if (authState.users.length == 1) {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Add User'),
+      ),
+    );
+  }
+}
