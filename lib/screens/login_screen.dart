@@ -110,12 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       obscureText: true,
                       autofillHints: const [AutofillHints.password],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter password';
-                        }
-                        return null;
-                      },
+                      validator: (value) => null,
                     ),
                     const SizedBox(height: 24),
                     if (authState.error != null)
