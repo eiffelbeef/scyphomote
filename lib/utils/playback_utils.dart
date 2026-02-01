@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
+import '../models/session.dart';
 
 Future<void> playItemOnRemote(
   BuildContext context,
@@ -46,4 +47,32 @@ Future<void> playItemOnRemote(
       context,
     ).showSnackBar(SnackBar(content: Text('Failed to play: $e')));
   }
+}
+
+bool isEpisodeNearEnd(Session session) {
+  final nowPlaying = session.nowPlaying;
+
+  if (nowPlaying?.type != 'Episode') return false;
+
+  final runtimeTicks = nowPlaying?.runTimeTicks ?? 0;
+  final runtimeSeconds = runtimeTicks ~/ 10000000;
+
+  // Must be at least 10 minutes long
+  if (runtimeSeconds < 600) return false;
+
+  final positionTicks = session.playState?.positionTicks ?? 0;
+  final positionSeconds = positionTicks ~/ 10000000;
+  final secondsFromEnd = runtimeSeconds - positionSeconds;
+
+  // Determine threshold based on total runtime
+  int threshold = 30; // Default for 10-40 mins
+  if (runtimeSeconds >= 3000) {
+    // 50 mins
+    threshold = 40;
+  } else if (runtimeSeconds >= 2400) {
+    // 40 mins
+    threshold = 35;
+  }
+
+  return secondsFromEnd <= threshold && secondsFromEnd > 0;
 }

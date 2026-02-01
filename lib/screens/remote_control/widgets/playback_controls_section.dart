@@ -15,6 +15,7 @@ import 'remote_navigation_sheet.dart';
 import '../../../widgets/text_input_dialog.dart';
 
 import 'trickplay_overlay.dart';
+import '../../../utils/playback_utils.dart';
 
 class PlaybackControlsSection extends ConsumerWidget {
   final Session session;
@@ -142,19 +143,41 @@ class PlaybackControlsSection extends ConsumerWidget {
                         : null,
                   ),
                   const SizedBox(width: 12),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.skip_next_rounded),
-                    iconSize: 28,
-                    onPressed:
-                        (session.nowPlayingQueueSize > 1 &&
-                            session.supportsMediaControl)
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref
-                                .read(playbackProvider.notifier)
-                                .sendPlayingCommand(JellyfinCommands.nextTrack);
-                          }
-                        : null,
+                  Builder(
+                    builder: (context) {
+                      final isEnding = isEpisodeNearEnd(session);
+                      final isNextEnabled =
+                          session.nowPlayingQueueSize > 1 &&
+                          session.supportsMediaControl;
+                      final showHighlight = isEnding && isNextEnabled;
+
+                      return IconButton(
+                        icon: const Icon(Icons.skip_next_rounded),
+                        iconSize: 28,
+                        onPressed: isNextEnabled
+                            ? () {
+                                HapticFeedback.mediumImpact();
+                                ref
+                                    .read(playbackProvider.notifier)
+                                    .sendPlayingCommand(
+                                      JellyfinCommands.nextTrack,
+                                    );
+                              }
+                            : null,
+                        style: IconButton.styleFrom(
+                          backgroundColor: showHighlight
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
+                          foregroundColor: showHighlight
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSecondaryContainer,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -205,15 +228,37 @@ class PlaybackControlsSection extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.stop_rounded),
-                    iconSize: 24,
-                    onPressed: session.supportsMediaControl
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref.read(playbackProvider.notifier).stop();
-                          }
-                        : null,
+                  const SizedBox(width: 12),
+                  Builder(
+                    builder: (context) {
+                      final isEnding = isEpisodeNearEnd(session);
+                      final isStopEnabled = session.supportsMediaControl;
+                      final hasNext = session.nowPlayingQueueSize > 1;
+                      final showHighlight = isEnding && !hasNext;
+
+                      return IconButton(
+                        icon: const Icon(Icons.stop_rounded),
+                        iconSize: 24,
+                        onPressed: isStopEnabled
+                            ? () {
+                                HapticFeedback.mediumImpact();
+                                ref.read(playbackProvider.notifier).stop();
+                              }
+                            : null,
+                        style: IconButton.styleFrom(
+                          backgroundColor: showHighlight
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
+                          foregroundColor: showHighlight
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSecondaryContainer,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 12),
                   Expanded(
