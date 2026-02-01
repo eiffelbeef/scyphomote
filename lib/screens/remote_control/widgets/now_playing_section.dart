@@ -130,7 +130,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         // Media Info
         if (nowPlaying != null) ...[
           InkWell(
-            onTap: () => _showCastAndCrew(context, nowPlaying.people ?? []),
+            onTap: nowPlaying.isVideo
+                ? () => _showCastAndCrew(context, nowPlaying.people ?? [])
+                : null,
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
