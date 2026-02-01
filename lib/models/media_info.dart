@@ -15,6 +15,7 @@ class MediaInfo {
   final int? runTimeTicks;
   final bool hasLyrics;
   final bool hasSubtitles;
+  final int? productionYear;
   final TrickplayManifest? trickplay;
 
   MediaInfo({
@@ -32,6 +33,7 @@ class MediaInfo {
     this.runTimeTicks,
     this.hasLyrics = false,
     this.hasSubtitles = false,
+    this.productionYear,
     this.trickplay,
   });
 
@@ -51,8 +53,15 @@ class MediaInfo {
   }
 
   String? get displaySubtitle {
-    if (type == 'Episode') return name;
-    if (type == 'Audio' && album != null) return album;
+    if (type == 'Episode') {
+      return name;
+    }
+    if (type == 'Audio' && album != null) {
+      return album;
+    }
+    if (type == 'Movie' && productionYear != null) {
+      return productionYear.toString();
+    }
     return null;
   }
 
@@ -73,8 +82,9 @@ class MediaInfo {
     runTimeTicks: json['RunTimeTicks'],
     hasLyrics: json['HasLyrics'] ?? false,
     hasSubtitles: json['HasSubtitles'] ?? false,
+    productionYear: json['ProductionYear'],
     trickplay: json['Trickplay'] != null
-      ? TrickplayManifest.fromJson(json['Trickplay'])
-      : null,
+        ? TrickplayManifest.fromJson(json['Trickplay'])
+        : null,
   );
 }
