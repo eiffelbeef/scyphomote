@@ -16,6 +16,7 @@ Scyphomote is a dedicated remote control for Jellyfin, built with Flutter.
 * **Remote Navigation**: Full directional remote for controlling any Jellyfin client interface that supports it.
 * **Now Playing**: Metadata, high-quality artwork, and synchronized **lyrics** for music.
 * **Trickplay support**: Visual frame previews while seeking (supports Jellyfin's trickplay/bif files).
+* **Cast & Crew**: View cast and crew members.
 * **Playback transparency**: View playback method (Direct Play vs. Transcoding) with detailed transcode reasons and quality metrics.
 * Detailed session information (capabilities, supported commands, media types).
 * Material 3 interface with light/dark theme support.

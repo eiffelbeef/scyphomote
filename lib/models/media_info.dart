@@ -1,5 +1,29 @@
 import 'trickplay.dart';
 
+class Person {
+  final String id;
+  final String name;
+  final String? role;
+  final String? type;
+  final String? primaryImageTag;
+
+  Person({
+    required this.id,
+    required this.name,
+    this.role,
+    this.type,
+    this.primaryImageTag,
+  });
+
+  factory Person.fromJson(Map<String, dynamic> json) => Person(
+    id: json['Id'] as String,
+    name: json['Name'] as String,
+    role: json['Role'] as String?,
+    type: json['Type'] as String?,
+    primaryImageTag: json['PrimaryImageTag'] as String?,
+  );
+}
+
 class MediaInfo {
   final String id;
   final String name;
@@ -17,6 +41,7 @@ class MediaInfo {
   final bool hasSubtitles;
   final int? productionYear;
   final TrickplayManifest? trickplay;
+  final List<Person>? people;
 
   MediaInfo({
     required this.id,
@@ -35,6 +60,7 @@ class MediaInfo {
     this.hasSubtitles = false,
     this.productionYear,
     this.trickplay,
+    this.people,
   });
 
   int? get durationSeconds =>
@@ -86,5 +112,8 @@ class MediaInfo {
     trickplay: json['Trickplay'] != null
         ? TrickplayManifest.fromJson(json['Trickplay'])
         : null,
+    people: (json['People'] as List?)
+        ?.map((p) => Person.fromJson(p as Map<String, dynamic>))
+        .toList(),
   );
 }

@@ -481,8 +481,18 @@ class JellyfinApiService {
     }
   }
 
-  String getArtworkUrl(String itemId, String imageType, {int maxWidth = 500}) {
-    return '${_dio.options.baseUrl}Items/$itemId/Images/$imageType?maxWidth=$maxWidth';
+  String getArtworkUrl(
+    String itemId,
+    String imageType, {
+    int maxWidth = 500,
+    String? tag,
+  }) {
+    final baseUrl = _dio.options.baseUrl;
+    var url = '${baseUrl}Items/$itemId/Images/$imageType?maxWidth=$maxWidth';
+    if (tag != null) {
+      url += '&tag=$tag';
+    }
+    return url;
   }
 
   Future<String?> downloadUserImage(

@@ -40,31 +40,25 @@ class PlaybackNotifier extends Notifier<void> {
   }
 
   Future<void> play() => _withSession(
-    (user, session) => _apiService.unpause(
-      session.sessionId,
-    ),
+    (user, session) => _apiService.unpause(session.sessionId),
     refreshAfter: true,
     errorMessage: 'Failed to play',
   );
 
   Future<void> pause() => _withSession(
-    (user, session) =>
-        _apiService.pause(session.sessionId),
+    (user, session) => _apiService.pause(session.sessionId),
     refreshAfter: true,
     errorMessage: 'Failed to pause',
   );
 
   Future<void> playPause() => _withSession(
-    (user, session) => _apiService.playPause(
-      session.sessionId,
-    ),
+    (user, session) => _apiService.playPause(session.sessionId),
     refreshAfter: true,
     errorMessage: 'Failed to toggle play/pause',
   );
 
   Future<void> stop() => _withSession(
-    (user, session) =>
-        _apiService.stop(session.sessionId),
+    (user, session) => _apiService.stop(session.sessionId),
     refreshAfter: true,
     errorMessage: 'Failed to stop',
   );
@@ -80,26 +74,18 @@ class PlaybackNotifier extends Notifier<void> {
   );
 
   Future<void> setVolume(int volume) => _withSession(
-    (user, session) => _apiService.setVolume(
-      session.sessionId,
-      volume,
-    ),
+    (user, session) => _apiService.setVolume(session.sessionId, volume),
     errorMessage: 'Failed to set volume',
   );
 
   Future<void> sendCommand(String command) => _withSession(
-    (user, session) => _apiService.sendCommand(
-      session.sessionId,
-      command,
-    ),
+    (user, session) => _apiService.sendCommand(session.sessionId, command),
     errorMessage: 'Failed to send command',
   );
 
   Future<void> sendPlayingCommand(String command) => _withSession(
-    (user, session) => _apiService.sendPlayingCommand(
-      session.sessionId,
-      command,
-    ),
+    (user, session) =>
+        _apiService.sendPlayingCommand(session.sessionId, command),
     refreshAfter: true,
     errorMessage: 'Failed to send playing command',
   );
@@ -111,13 +97,9 @@ class PlaybackNotifier extends Notifier<void> {
   Future<void> toggleMute() => _withSession(
     (user, session) async {
       if (session.playState?.isMuted ?? false) {
-        await _apiService.unmute(
-          session.sessionId,
-        );
+        await _apiService.unmute(session.sessionId);
       } else {
-        await _apiService.mute(
-          session.sessionId,
-        );
+        await _apiService.mute(session.sessionId);
       }
     },
     refreshAfter: true,
@@ -125,10 +107,8 @@ class PlaybackNotifier extends Notifier<void> {
   );
 
   Future<void> setSubtitleStreamIndex(int index) => _withSession(
-    (user, session) => _apiService.setSubtitleStreamIndex(
-      session.sessionId,
-      index,
-    ),
+    (user, session) =>
+        _apiService.setSubtitleStreamIndex(session.sessionId, index),
     refreshAfter: true,
     errorMessage: 'Failed to set subtitle stream index',
   );
@@ -148,18 +128,13 @@ class PlaybackNotifier extends Notifier<void> {
   );
 
   Future<void> sendString(String text) => _withSession(
-    (user, session) => _apiService.sendString(
-      session.sessionId,
-      text,
-    ),
+    (user, session) => _apiService.sendString(session.sessionId, text),
     errorMessage: 'Failed to send string',
   );
 
   Future<void> setAudioStreamIndex(int index) => _withSession(
-    (user, session) => _apiService.setAudioStreamIndex(
-      session.sessionId,
-      index,
-    ),
+    (user, session) =>
+        _apiService.setAudioStreamIndex(session.sessionId, index),
     refreshAfter: true,
     errorMessage: 'Failed to set audio stream index',
   );
@@ -181,9 +156,7 @@ final mediaSegmentsProvider = FutureProvider.family<List<MediaSegment>, String>(
     if (user == null) return [];
 
     try {
-      final segmentsJson = await apiService.getMediaSegments(
-        itemId,
-      );
+      final segmentsJson = await apiService.getMediaSegments(itemId);
 
       return segmentsJson.map((json) => MediaSegment.fromJson(json)).toList();
     } catch (e) {

@@ -11,10 +11,7 @@ final itemDetailsProvider =
       if (user == null) return null;
 
       try {
-        return await apiService.getItemDetails(
-          user.userId,
-          itemId,
-        );
+        return await apiService.getItemDetails(user.userId, itemId);
       } catch (e) {
         logError('Failed to fetch item details: $e');
         return null;
@@ -30,10 +27,7 @@ final playbackInfoProvider =
       if (user == null) return null;
 
       try {
-        return await apiService.getPlaybackInfo(
-          user.userId,
-          itemId,
-        );
+        return await apiService.getPlaybackInfo(user.userId, itemId);
       } catch (e) {
         logError('Failed to fetch playback info: $e');
         return null;
@@ -54,9 +48,7 @@ final lyricsProvider =
       if (user == null) return null;
 
       try {
-        return await apiService.getLyrics(
-          params.itemId,
-        );
+        return await apiService.getLyrics(params.itemId);
       } catch (e) {
         logError('Failed to fetch lyrics: $e');
         return null;

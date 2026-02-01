@@ -6,11 +6,13 @@ import '../../../widgets/marquee_text.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
+import '../../../models/media_info.dart';
 import '../../../models/media_segment.dart';
 import '../../../constants/jellyfin_commands.dart';
 import '../../../widgets/text_input_dialog.dart';
 import '../../../constants.dart';
 import '../../../utils/logger.dart';
+import '../../../providers/auth_provider.dart';
 
 class NowPlayingSection extends ConsumerStatefulWidget {
   final Session session;
@@ -127,13 +129,37 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
         // Media Info
         if (nowPlaying != null) ...[
-          MarqueeText(
-            text: nowPlaying.displayTitle,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-            maxWidth: widget.maxWidth,
+          InkWell(
+            onTap: () => _showCastAndCrew(context, nowPlaying.people ?? []),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: MarqueeText(
+                      text: nowPlaying.displayTitle,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxWidth: widget.maxWidth,
+                    ),
+                  ),
+                  if (nowPlaying.isVideo)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 4),
           if (nowPlaying.displaySubtitle != null)
@@ -415,6 +441,204 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           Expanded(child: Text(value)),
         ],
       ),
+    );
+  }
+
+  void _showCastAndCrew(
+    BuildContext context,
+    List<Person> initialPeople,
+  ) async {
+    final nowPlaying = widget.session.nowPlaying;
+    if (nowPlaying == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final apiService = ref.read(apiServiceProvider);
+            final detailsAsync = initialPeople.isEmpty
+                ? ref.watch(itemDetailsProvider(nowPlaying.id))
+                : AsyncValue.data(null);
+
+            return DraggableScrollableSheet(
+              initialChildSize: 0.6,
+              minChildSize: 0.3,
+              maxChildSize: 0.9,
+              expand: false,
+              builder: (context, scrollController) {
+                return Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Cast & Crew',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    Expanded(
+                      child: detailsAsync.when(
+                        data: (details) {
+                          final people = initialPeople.isNotEmpty
+                              ? initialPeople
+                              : (details != null
+                                    ? (details['People'] as List?)
+                                              ?.map(
+                                                (p) => Person.fromJson(
+                                                  p as Map<String, dynamic>,
+                                                ),
+                                              )
+                                              .toList() ??
+                                          []
+                                    : []);
+
+                          if (people.isEmpty) {
+                            return const Center(
+                              child: Text('No cast information available'),
+                            );
+                          }
+
+                          return ListView.builder(
+                            controller: scrollController,
+                            itemCount: people.length,
+                            itemBuilder: (context, index) {
+                              final person = people[index];
+                              final imageUrl = person.primaryImageTag != null
+                                  ? apiService.getArtworkUrl(
+                                      person.id,
+                                      'Primary',
+                                      maxWidth: 200,
+                                      tag: person.primaryImageTag,
+                                    )
+                                  : null;
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: Row(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: imageUrl != null
+                                          ? CachedNetworkImage(
+                                              imageUrl: imageUrl,
+                                              width: 80,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  Container(
+                                                    width: 80,
+                                                    height: 120,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainerHighest,
+                                                    child: const Icon(
+                                                      Icons.person,
+                                                      size: 32,
+                                                    ),
+                                                  ),
+                                              errorWidget:
+                                                  (
+                                                    context,
+                                                    url,
+                                                    error,
+                                                  ) => Container(
+                                                    width: 80,
+                                                    height: 120,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainerHighest,
+                                                    child: const Icon(
+                                                      Icons.person,
+                                                      size: 32,
+                                                    ),
+                                                  ),
+                                            )
+                                          : Container(
+                                              width: 80,
+                                              height: 120,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainerHighest,
+                                              child: const Icon(
+                                                Icons.person,
+                                                size: 32,
+                                              ),
+                                            ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            person.name,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                          if (person.role != null) ...[
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              person.role!,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (err, stack) =>
+                            Center(child: Text('Error loading cast: $err')),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 
