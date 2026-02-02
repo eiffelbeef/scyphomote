@@ -44,7 +44,7 @@ class AboutScreen extends StatelessWidget {
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const Text('A Remote for Jellyfin'),
-            const Text('Version ${AppConstants.appVersion}'),
+            Text('Version ${AppConstants.appVersion}'),
             const SizedBox(height: 32),
             const Divider(),
             const SizedBox(height: 24),

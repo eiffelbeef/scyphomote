@@ -42,7 +42,7 @@ class JellyfinApiService {
   String _deviceName = '';
   String? _accessToken;
   final String _clientName = AppConstants.appName;
-  final String _version = AppConstants.appVersion;
+  String get _version => AppConstants.appVersion;
 
   final LruCache<String, Uint8List> _trickplayCache = LruCache(maxEntries: 50);
 

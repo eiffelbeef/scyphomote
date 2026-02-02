@@ -8,9 +8,14 @@ import 'screens/about_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/session_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'constants.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final packageInfo = await PackageInfo.fromPlatform();
+  AppConstants.appVersion = packageInfo.version;
+
   runApp(const ProviderScope(child: ScyphomoteApp()));
 }
 
