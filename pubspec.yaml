@@ -41,7 +41,7 @@ dependencies:
   url_launcher: ^6.2.5
   marquee: ^2.3.0
   device_info_plus: ^12.3.0
-  package_info_plus: ^8.0.0
+  package_info_plus: ^9.0.0
 
 dev_dependencies:
   flutter_test:
