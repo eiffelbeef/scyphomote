@@ -32,31 +32,36 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.palette_outlined),
             title: const Text('Theme Mode'),
             subtitle: Text(_getThemeModeName(themeMode)),
-            trailing: SegmentedButton<ThemeMode>(
-              segments: const [
-                ButtonSegment(
-                  value: ThemeMode.system,
-                  icon: Icon(Icons.settings_brightness_rounded),
-                  label: Text('Auto'),
-                ),
-                ButtonSegment(
-                  value: ThemeMode.light,
-                  icon: Icon(Icons.light_mode_rounded),
-                  label: Text('Light'),
-                ),
-                ButtonSegment(
-                  value: ThemeMode.dark,
-                  icon: Icon(Icons.dark_mode_rounded),
-                  label: Text('Dark'),
-                ),
-              ],
-              selected: {themeMode},
-              onSelectionChanged: (Set<ThemeMode> newSelection) {
-                ref
-                    .read(themeProvider.notifier)
-                    .setThemeMode(newSelection.first);
+            trailing: LayoutBuilder(
+              builder: (context, constraints) {
+                final showLabels = MediaQuery.of(context).size.width > 450;
+                return SegmentedButton<ThemeMode>(
+                  segments: [
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      icon: const Icon(Icons.settings_brightness_rounded),
+                      label: showLabels ? const Text('Auto') : null,
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.light,
+                      icon: const Icon(Icons.light_mode_rounded),
+                      label: showLabels ? const Text('Light') : null,
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.dark,
+                      icon: const Icon(Icons.dark_mode_rounded),
+                      label: showLabels ? const Text('Dark') : null,
+                    ),
+                  ],
+                  selected: {themeMode},
+                  onSelectionChanged: (Set<ThemeMode> newSelection) {
+                    ref
+                        .read(themeProvider.notifier)
+                        .setThemeMode(newSelection.first);
+                  },
+                  showSelectedIcon: false,
+                );
               },
-              showSelectedIcon: false,
             ),
           ),
           const Divider(),
