@@ -91,9 +91,9 @@ class AboutScreen extends StatelessWidget {
             Text(
               'Privacy Policy',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             const Padding(
@@ -104,6 +104,7 @@ class AboutScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 14),
               ),
             ),
+            if (kDebugMode) ...[
               const SizedBox(height: 32),
               const Divider(),
               const SizedBox(height: 24),
@@ -130,12 +131,12 @@ class AboutScreen extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.favorite, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      const Text('Donate using Liberapay'),
+                      Icon(Icons.favorite, color: Colors.amber),
+                      SizedBox(width: 8),
+                      Text('Donate using Liberapay'),
                     ],
                   ),
                 ),
