@@ -151,7 +151,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                           session.supportsMediaControl;
                       final showHighlight = isEnding && isNextEnabled;
 
-                      return IconButton(
+                      return IconButton.filledTonal(
                         icon: const Icon(Icons.skip_next_rounded),
                         iconSize: 28,
                         onPressed: isNextEnabled
@@ -164,18 +164,16 @@ class PlaybackControlsSection extends ConsumerWidget {
                                     );
                               }
                             : null,
-                        style: IconButton.styleFrom(
-                          backgroundColor: showHighlight
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(
+                        style: showHighlight
+                            ? IconButton.styleFrom(
+                                backgroundColor: Theme.of(
                                   context,
-                                ).colorScheme.secondaryContainer,
-                          foregroundColor: showHighlight
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(
+                                ).colorScheme.primary,
+                                foregroundColor: Theme.of(
                                   context,
-                                ).colorScheme.onSecondaryContainer,
-                        ),
+                                ).colorScheme.onPrimary,
+                              )
+                            : null,
                       );
                     },
                   ),
@@ -228,7 +226,6 @@ class PlaybackControlsSection extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const SizedBox(width: 12),
                   Builder(
                     builder: (context) {
                       final isEnding = isEpisodeNearEnd(session);
@@ -236,7 +233,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                       final hasNext = session.nowPlayingQueueSize > 1;
                       final showHighlight = isEnding && !hasNext;
 
-                      return IconButton(
+                      return IconButton.filledTonal(
                         icon: const Icon(Icons.stop_rounded),
                         iconSize: 24,
                         onPressed: isStopEnabled
@@ -245,18 +242,16 @@ class PlaybackControlsSection extends ConsumerWidget {
                                 ref.read(playbackProvider.notifier).stop();
                               }
                             : null,
-                        style: IconButton.styleFrom(
-                          backgroundColor: showHighlight
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(
+                        style: showHighlight
+                            ? IconButton.styleFrom(
+                                backgroundColor: Theme.of(
                                   context,
-                                ).colorScheme.secondaryContainer,
-                          foregroundColor: showHighlight
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(
+                                ).colorScheme.primary,
+                                foregroundColor: Theme.of(
                                   context,
-                                ).colorScheme.onSecondaryContainer,
-                        ),
+                                ).colorScheme.onPrimary,
+                              )
+                            : null,
                       );
                     },
                   ),
@@ -316,7 +311,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                                 : null,
                           ),
                         if (nowPlaying.type != 'Audio') ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 12),
                           Consumer(
                             builder: (context, ref, child) {
                               final itemDetailsAsync = ref.watch(
