@@ -85,7 +85,25 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (kDebugMode) ...[
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            Text(
+              'Privacy Policy',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Scyphomote does not collect, store, or process any of your personal data. All communication occurs directly between your device and your Jellyfin server.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
               const SizedBox(height: 32),
               const Divider(),
               const SizedBox(height: 24),
