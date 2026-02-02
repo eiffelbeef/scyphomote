@@ -111,7 +111,12 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> login(String serverUrl, String username, String password) async {
+  Future<void> login(
+    String serverUrl,
+    String username,
+    String password, {
+    bool persist = true,
+  }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final authenticatedUser = await _apiService.authenticate(
@@ -138,8 +143,10 @@ class AuthNotifier extends Notifier<AuthState> {
         profileImageBase64: profileImageBase64,
       );
 
-      await _storageService.saveUser(user);
-      await _storageService.setActiveUser(user.userId);
+      if (persist) {
+        await _storageService.saveUser(user);
+        await _storageService.setActiveUser(user.userId);
+      }
 
       final users = await _storageService.getUsers();
       state = AuthState(currentUser: user, users: users, isLoading: false);

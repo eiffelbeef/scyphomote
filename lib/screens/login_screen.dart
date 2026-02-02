@@ -42,6 +42,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _loginDemo() async {
+    await ref
+        .read(authProvider.notifier)
+        .login('https://demo.jellyfin.org/stable/', 'demo', '', persist: false);
+
+    if (mounted && ref.read(authProvider).currentUser != null) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
@@ -133,6 +143,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Text('Login'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: authState.isLoading ? null : _loginDemo,
+                      child: const Text("Try on Jellfyn's demo server"),
                     ),
                     if (hasUsers) ...[
                       const SizedBox(height: 16),
