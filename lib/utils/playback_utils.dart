@@ -25,9 +25,9 @@ Future<void> playItemOnRemote(
     final userData = item['UserData'] as Map<String, dynamic>?;
     final startPositionTicks = userData?['PlaybackPositionTicks'] as int?;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Starting playback...')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Attempting to start playback...')),
+    );
 
     await apiService.playTo(
       session.sessionId,
