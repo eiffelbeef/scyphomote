@@ -43,6 +43,16 @@ flutter pub get
 flutter run
 ```
 
+## Docker
+
+You can also run the application using Docker:
+
+```bash
+docker-compose up -d
+```
+
+This will pull the latest image from GHCR and serve it at `http://localhost:6262`.
+
 ## License
 
 This project is licensed under the [GNU AGPLv3](LICENSE).

@@ -1,0 +1,7 @@
+services:
+  scyphomote:
+    image: ghcr.io/eiffelbeef/scyphomote:latest
+    container_name: scyphomote
+    ports:
+      - 6262:80
+    restart: unless-stopped
