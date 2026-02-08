@@ -124,7 +124,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         parentId: widget.parentId,
         sortBy: sortBy,
         sortOrder: sortOrder,
-        searchTerm: _searchController.text,
+        searchTerm: _searchController.text.trim(),
         includeItemTypes:
             (widget.collectionType == 'music' && widget.isRoot && !_isSearching)
             ? _musicViewMode
