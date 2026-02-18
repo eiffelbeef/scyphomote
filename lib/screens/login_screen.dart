@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
@@ -144,11 +145,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             )
                           : const Text('Login'),
                     ),
-                    const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: authState.isLoading ? null : _loginDemo,
-                      child: const Text("Try on Jellfyn's demo server"),
-                    ),
+                    if (kDebugMode) ...[
+                      const SizedBox(height: 12),
+                      TextButton(
+                        onPressed: authState.isLoading ? null : _loginDemo,
+                        child: const Text("Try on Jellfyn's demo server"),
+                      ),
+                    ],
                     if (hasUsers) ...[
                       const SizedBox(height: 16),
                       OutlinedButton(
