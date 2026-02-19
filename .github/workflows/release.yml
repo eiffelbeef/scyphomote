@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - name: Build signed APK
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          flutter build apk --release -- \
+            -Pandroid.injected.signing.store.file=$PWD/keystore.jks \
+            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+          mv build/app/outputs/flutter-apk/app-release.apk scyphomote-android.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: scyphomote-android.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - run: flutter build ipa --release --no-codesign
+      - run: mv build/ios/ipa/*.ipa scyphomote-ios.ipa
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: scyphomote-ios.ipa
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: sudo apt-get update -q && sudo apt-get install -y clang cmake ninja-build libgtk-3-dev
+      - run: flutter pub get
+      - run: flutter build linux --release
+      - run: tar -czf scyphomote-linux.tar.gz -C build/linux/x64/release/bundle .
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: scyphomote-linux.tar.gz
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - run: |
+          mkdir dist
+          cp -r "build/macos/Build/Products/Release/scyphomote.app" dist/
+          hdiutil create -format UDZO -srcfolder dist -volname scyphomote scyphomote-macos.dmg
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: scyphomote-macos.dmg
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath scyphomote-windows.zip
+        shell: pwsh
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: scyphomote-windows.zip
