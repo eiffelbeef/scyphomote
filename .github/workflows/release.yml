@@ -10,6 +10,7 @@ permissions:
 jobs:
   android:
     runs-on: ubuntu-latest
+    environment: Android signing
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -17,16 +18,15 @@ jobs:
       - run: flutter pub get
       - name: Build signed APK
         env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-          flutter build apk --release -- \
-            -Pandroid.injected.signing.store.file=$PWD/keystore.jks \
-            -Pandroid.injected.signing.store.password=$STORE_PASSWORD \
-            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+          echo "$KEYSTORE_BASE64" | base64 -d > android/keystore.jks
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=../keystore.jks\n' \
+            "$STORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > android/key.properties
+          flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk scyphomote-android.apk
       - uses: softprops/action-gh-release@v2
         with:
@@ -40,7 +40,11 @@ jobs:
         with: { channel: stable }
       - run: flutter pub get
       - run: flutter build ipa --release --no-codesign
-      - run: mv build/ios/ipa/*.ipa scyphomote-ios.ipa
+      - name: Package unsigned IPA
+        run: |
+          mkdir Payload
+          cp -r build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app Payload/
+          zip -r scyphomote-ios.ipa Payload/
       - uses: softprops/action-gh-release@v2
         with:
           files: scyphomote-ios.ipa
@@ -51,7 +55,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with: { channel: stable }
-      - run: sudo apt-get update -q && sudo apt-get install -y clang cmake ninja-build libgtk-3-dev
+      - run: sudo apt-get update -q && sudo apt-get install -y clang cmake ninja-build libgtk-3-dev libsecret-1-dev
       - run: flutter pub get
       - run: flutter build linux --release
       - run: tar -czf scyphomote-linux.tar.gz -C build/linux/x64/release/bundle .
