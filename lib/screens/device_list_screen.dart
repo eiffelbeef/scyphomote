@@ -176,9 +176,9 @@ class DeviceListScreen extends ConsumerWidget {
                     : Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Icon(
                   isPlaying
-                      ? Icons.play_arrow
+                      ? Icons.play_arrow_rounded
                       : isPaused
-                      ? Icons.pause
+                      ? Icons.pause_rounded
                       : Icons.devices,
                   color: isPlaying || isPaused ? Colors.white : null,
                 ),
