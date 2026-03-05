@@ -426,8 +426,9 @@ class DeviceListScreen extends ConsumerWidget {
         }
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Message sent to $successCount session(s)')),
+          UiUtils.showSnackBar(
+            context,
+            'Message sent to $successCount session(s)',
           );
         }
       },

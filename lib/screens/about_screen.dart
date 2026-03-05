@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../constants.dart';
+import '../utils/ui_utils.dart';
 
 class AboutScreen extends StatelessWidget {
   static const routeName = '/about';
@@ -17,12 +18,7 @@ class AboutScreen extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context, String label, String text) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label address copied to clipboard'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    UiUtils.showSnackBar(context, '$label address copied to clipboard');
   }
 
   @override

@@ -16,6 +16,7 @@ import '../../../widgets/text_input_dialog.dart';
 
 import 'trickplay_overlay.dart';
 import '../../../utils/playback_utils.dart';
+import '../../../utils/ui_utils.dart';
 
 class PlaybackControlsSection extends ConsumerWidget {
   final Session session;
@@ -211,8 +212,11 @@ class PlaybackControlsSection extends ConsumerWidget {
                               context: context,
                               title: 'Send Message',
                               maxLines: 3,
-                              onSend: (text) {
-                                ref
+                              onSend: (text) async {
+                                if (context.mounted) {
+                                  UiUtils.showSnackBar(context, 'Message sent');
+                                }
+                                await ref
                                     .read(playbackProvider.notifier)
                                     .sendDisplayMessage(
                                       AppConstants.appName,

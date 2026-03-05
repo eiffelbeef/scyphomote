@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../models/session.dart';
+import 'ui_utils.dart';
 
 Future<void> playItemOnRemote(
   BuildContext context,
@@ -14,9 +15,7 @@ Future<void> playItemOnRemote(
   final itemId = item['Id'] as String;
 
   if (user == null || session == null) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('No active session selected')));
+    UiUtils.showSnackBar(context, 'No active session selected');
     return;
   }
 
@@ -25,9 +24,7 @@ Future<void> playItemOnRemote(
     final userData = item['UserData'] as Map<String, dynamic>?;
     final startPositionTicks = userData?['PlaybackPositionTicks'] as int?;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Attempting to start playback...')),
-    );
+    UiUtils.showSnackBar(context, 'Attempting to start playback...');
 
     await apiService.playTo(
       session.sessionId,
@@ -43,9 +40,7 @@ Future<void> playItemOnRemote(
   } catch (e) {
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Failed to play: $e')));
+    UiUtils.showSnackBar(context, 'Failed to play: $e');
   }
 }
 
