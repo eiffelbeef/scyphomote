@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../utils/ui_utils.dart';
 import 'smooth_animated_slider.dart';
-
-String formatDuration(int seconds) {
-  final hours = seconds ~/ 3600;
-  final minutes = (seconds % 3600) ~/ 60;
-  final secs = seconds % 60;
-
-  if (hours > 0) {
-    return '$hours:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-  }
-  return '$minutes:${secs.toString().padLeft(2, '0')}';
-}
 
 class PlaybackProgressControl extends StatefulWidget {
   final int currentPositionSeconds;
@@ -96,7 +86,11 @@ class _PlaybackProgressControlState extends State<PlaybackProgressControl> {
                         : null,
                     overlayBuilder: widget.overlayBuilder != null
                         ? (context, value, thumbCenter) =>
-                            widget.overlayBuilder!(context, value, thumbCenter)
+                              widget.overlayBuilder!(
+                                context,
+                                value,
+                                thumbCenter,
+                              )
                         : null,
                   );
                 },

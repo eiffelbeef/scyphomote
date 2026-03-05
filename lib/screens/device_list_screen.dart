@@ -4,6 +4,7 @@ import 'package:scyphomote/constants.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../models/session.dart';
+import '../utils/ui_utils.dart';
 import '../widgets/user_avatar.dart';
 import 'remote_control/remote_control_screen.dart';
 import 'user_management_screen.dart';
@@ -146,8 +147,7 @@ class DeviceListScreen extends ConsumerWidget {
 
     // Calculate progress for active sessions
     double progress = 0.0;
-    if (isActive &&
-        session.nowPlaying != null &&
+    if (session.nowPlaying != null &&
         session.nowPlaying!.durationSeconds > 0 &&
         session.playState != null) {
       progress =
@@ -228,6 +228,49 @@ class DeviceListScreen extends ConsumerWidget {
                                   : 'Direct Play',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
+                            if (session.playState?.positionSeconds != null &&
+                                session.nowPlaying!.durationSeconds != null &&
+                                MediaQuery.of(context).size.width >= 360) ...[
+                              const Spacer(),
+                              Builder(
+                                builder: (context) {
+                                  final baseColor = Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant;
+                                  return Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: formatDuration(
+                                            session.playState!.positionSeconds!,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              ' / ${formatDuration(session.nowPlaying!.durationSeconds!)}',
+                                          style: TextStyle(
+                                            color: baseColor.withValues(
+                                              alpha: 0.35,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: baseColor.withValues(
+                                            alpha: 0.65,
+                                          ),
+                                          fontWeight: FontWeight.w300,
+                                          fontFeatures: const [
+                                            FontFeature.tabularFigures(),
+                                          ],
+                                          height: 1.0,
+                                        ),
+                                  );
+                                },
+                              ),
+                            ],
                           ],
                         ),
                       ),
