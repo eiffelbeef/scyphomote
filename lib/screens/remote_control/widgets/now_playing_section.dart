@@ -8,12 +8,9 @@ import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
 import '../../../models/media_info.dart';
 import '../../../models/media_segment.dart';
-import '../../../constants/jellyfin_commands.dart';
-import '../../../widgets/text_input_dialog.dart';
-import '../../../constants.dart';
-import '../../../utils/ui_utils.dart';
-import '../../../utils/logger.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../utils/logger.dart';
+import 'remote_button.dart';
 
 class NowPlayingSection extends ConsumerStatefulWidget {
   final Session session;
@@ -313,26 +310,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           ),
           const SizedBox(height: 16),
           // Idle State Message Button
-          IconButton.filledTonal(
-            icon: const Icon(Icons.message_rounded),
-            iconSize: 24,
-            onPressed: session.ifCapable(
-              JellyfinCommands.displayMessage,
-              () => TextInputDialog.show(
-                context: context,
-                title: 'Send Message',
-                maxLines: 3,
-                onSend: (text) async {
-                  if (context.mounted) {
-                    UiUtils.showSnackBar(context, 'Message sent');
-                  }
-                  await ref
-                      .read(playbackProvider.notifier)
-                      .sendDisplayMessage(AppConstants.appName, text);
-                },
-              ),
-            ),
-          ),
+          MessageButton(session: session),
         ],
       ],
     );

@@ -6,7 +6,6 @@ import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
-import '../../../constants.dart';
 import '../../../constants/jellyfin_commands.dart';
 import '../../library_screen.dart';
 import '../../../providers/session_provider.dart';
@@ -16,7 +15,7 @@ import '../../../widgets/text_input_dialog.dart';
 
 import 'trickplay_overlay.dart';
 import '../../../utils/playback_utils.dart';
-import '../../../utils/ui_utils.dart';
+import 'remote_button.dart';
 
 class PlaybackControlsSection extends ConsumerWidget {
   final Session session;
@@ -89,31 +88,25 @@ class PlaybackControlsSection extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.skip_previous_rounded),
+                  RemoteIconButton(
+                    icon: Icons.skip_previous_rounded,
                     iconSize: 28,
                     onPressed:
                         (session.nowPlayingQueueSize > 1 &&
                             session.supportsMediaControl)
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref
-                                .read(playbackProvider.notifier)
-                                .sendPlayingCommand(
-                                  JellyfinCommands.previousTrack,
-                                );
-                          }
+                        ? () => ref
+                              .read(playbackProvider.notifier)
+                              .sendPlayingCommand(
+                                JellyfinCommands.previousTrack,
+                              )
                         : null,
                   ),
                   const SizedBox(width: 12),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.fast_rewind_rounded),
+                  RemoteIconButton(
+                    icon: Icons.fast_rewind_rounded,
                     iconSize: 28,
                     onPressed: session.supportsMediaControl
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref.read(playbackProvider.notifier).rewind();
-                          }
+                        ? () => ref.read(playbackProvider.notifier).rewind()
                         : null,
                   ),
                   const SizedBox(width: 12),
@@ -133,14 +126,12 @@ class PlaybackControlsSection extends ConsumerWidget {
                         : null,
                   ),
                   const SizedBox(width: 12),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.fast_forward_rounded),
+                  RemoteIconButton(
+                    icon: Icons.fast_forward_rounded,
                     iconSize: 28,
                     onPressed: session.supportsMediaControl
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref.read(playbackProvider.notifier).fastForward();
-                          }
+                        ? () =>
+                              ref.read(playbackProvider.notifier).fastForward()
                         : null,
                   ),
                   const SizedBox(width: 12),
@@ -152,18 +143,15 @@ class PlaybackControlsSection extends ConsumerWidget {
                           session.supportsMediaControl;
                       final showHighlight = isEnding && isNextEnabled;
 
-                      return IconButton.filledTonal(
-                        icon: const Icon(Icons.skip_next_rounded),
+                      return RemoteIconButton(
+                        icon: Icons.skip_next_rounded,
                         iconSize: 28,
                         onPressed: isNextEnabled
-                            ? () {
-                                HapticFeedback.mediumImpact();
-                                ref
-                                    .read(playbackProvider.notifier)
-                                    .sendPlayingCommand(
-                                      JellyfinCommands.nextTrack,
-                                    );
-                              }
+                            ? () => ref
+                                  .read(playbackProvider.notifier)
+                                  .sendPlayingCommand(
+                                    JellyfinCommands.nextTrack,
+                                  )
                             : null,
                         style: showHighlight
                             ? IconButton.styleFrom(
@@ -187,48 +175,21 @@ class PlaybackControlsSection extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.fullscreen_rounded),
-                          iconSize: 24,
+                        RemoteIconButton(
+                          icon: Icons.fullscreen_rounded,
                           onPressed: session.ifCapable(
                             JellyfinCommands.toggleFullscreen,
-                            () {
-                              HapticFeedback.mediumImpact();
-                              ref
-                                  .read(playbackProvider.notifier)
-                                  .sendCommand(
-                                    JellyfinCommands.toggleFullscreen,
-                                  );
-                            },
+                            () => ref
+                                .read(playbackProvider.notifier)
+                                .sendCommand(JellyfinCommands.toggleFullscreen),
                           ),
                         ),
                         const SizedBox(width: 12),
-                        IconButton.filledTonal(
-                          icon: const Icon(Icons.message_rounded),
-                          iconSize: 24,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.displayMessage,
-                            () => TextInputDialog.show(
-                              context: context,
-                              title: 'Send Message',
-                              maxLines: 3,
-                              onSend: (text) async {
-                                if (context.mounted) {
-                                  UiUtils.showSnackBar(context, 'Message sent');
-                                }
-                                await ref
-                                    .read(playbackProvider.notifier)
-                                    .sendDisplayMessage(
-                                      AppConstants.appName,
-                                      text,
-                                    );
-                              },
-                            ),
-                          ),
-                        ),
+                        MessageButton(session: session),
                       ],
                     ),
                   ),
+
                   const SizedBox(width: 12),
                   Builder(
                     builder: (context) {
