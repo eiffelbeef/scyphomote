@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/login_screen.dart';
@@ -33,33 +34,91 @@ class ScyphomoteApp extends ConsumerStatefulWidget {
 
 class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
     with WidgetsBindingObserver {
+  StreamSubscription<Uri?>? _widgetSubscription;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     AppConstants.isInForeground = true;
     _checkForWidgetLaunch();
+    _widgetSubscription = HomeWidget.widgetClicked.listen((Uri? uri) {
+      if (uri != null) {
+        _handleWidgetLaunch(uri);
+      }
+    });
   }
 
   Future<void> _checkForWidgetLaunch() async {
     try {
       final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-      if (uri?.host == 'remote') {
-        // App was launched from the widget title
-        // In a real app we'd navigate to the remote screen,
-        // but since it requires a session we'll just navigate to the DeviceListScreen
-        // so the user can easily select their session.
-        AppConstants.messengerKey.currentState?.showSnackBar(
-          const SnackBar(content: Text('Launched from Remote Widget')),
-        );
+      if (uri != null) {
+        _handleWidgetLaunch(uri);
       }
     } catch (e) {
       logError('Failed to check widget launch intent: $e');
     }
   }
 
+  Future<void> _handleWidgetLaunch(Uri uri) async {
+    if (uri.host == 'remote') {
+      final sessionId = uri.queryParameters['session_id'];
+      if (sessionId != null) {
+        // Wait for auth to be initialized
+        if (ref.read(authProvider).isLoading) {
+          final completer = Completer<void>();
+          final sub = ref.listenManual(authProvider, (prev, next) {
+            if (!next.isLoading) {
+              if (!completer.isCompleted) completer.complete();
+            }
+          });
+          await completer.future;
+          sub.close();
+        }
+
+        if (ref.read(authProvider).currentUser == null) {
+          AppConstants.messengerKey.currentState?.showSnackBar(
+            const SnackBar(content: Text('Please log in first')),
+          );
+          return;
+        }
+
+        AppConstants.messengerKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('Connecting to session...')),
+        );
+
+        final sessionNotifier = ref.read(sessionProvider.notifier);
+        await sessionNotifier.fetchSessions();
+        final sessionState = ref.read(sessionProvider);
+
+        final session = sessionState.sessions
+            .where((s) => s.sessionId == sessionId)
+            .firstOrNull;
+
+        if (session != null) {
+          sessionNotifier.selectSession(session);
+
+          final navigator = AppConstants.navigatorKey.currentState;
+          if (navigator != null) {
+            navigator.popUntil((route) => route.isFirst);
+            navigator.pushNamed(RemoteControlScreen.routeName);
+          }
+        } else {
+          AppConstants.messengerKey.currentState?.showSnackBar(
+            const SnackBar(content: Text('Session not found or offline')),
+          );
+        }
+      } else {
+        AppConstants.messengerKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('Launched from Remote Widget')),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
+    _widgetSubscription?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -93,6 +152,7 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
     );
 
     return MaterialApp(
+      navigatorKey: AppConstants.navigatorKey,
       scaffoldMessengerKey: AppConstants.messengerKey,
       title: AppConstants.appName,
       theme: ThemeData(

@@ -22,10 +22,12 @@ class RemoteWidgetProvider : HomeWidgetProvider() {
                 // Determine layout actions using HomeWidgetBackgroundIntent
                 // These trigger the Dart background function
                 // This intent simply opens the app
+                val sessionId = widgetData.getString("widget_session_id", null)
+                val uriStr = if (sessionId != null) "scyphomote://remote?session_id=$sessionId" else "scyphomote://remote"
                 val openAppIntent = HomeWidgetLaunchIntent.getActivity(
                     context,
                     MainActivity::class.java,
-                    Uri.parse("scyphomote://remote")
+                    Uri.parse(uriStr)
                 )
                 setOnClickPendingIntent(R.id.widget_title, openAppIntent)
 
