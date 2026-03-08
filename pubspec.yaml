@@ -42,6 +42,7 @@ dependencies:
   marquee: ^2.3.0
   device_info_plus: ^12.3.0
   package_info_plus: ^9.0.0
+  home_widget: ^0.9.0
 
 dev_dependencies:
   flutter_test:

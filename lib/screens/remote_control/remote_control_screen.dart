@@ -6,6 +6,8 @@ import '../../models/session.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/session_provider.dart';
 import '../../providers/playback_provider.dart';
+import '../../widgets/home_widget_manager.dart';
+import '../../utils/ui_utils.dart';
 import 'widgets/now_playing_section.dart';
 import 'widgets/playback_controls_section.dart';
 
@@ -97,6 +99,11 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
         title: Text(session.deviceName),
         centerTitle: true,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.add_to_home_screen),
+            tooltip: 'Add Remote Widget',
+            onPressed: () => _pinWidget(context, session),
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () => _showSessionInfoDialog(context, session),
@@ -200,6 +207,23 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
         },
       ),
     );
+  }
+
+  Future<void> _pinWidget(BuildContext context, Session session) async {
+    try {
+      await HomeWidgetManager.pinWidget(
+        session.deviceId,
+        session.deviceName,
+        session.sessionId,
+      );
+      if (context.mounted) {
+        UiUtils.showSnackBar(context, 'Widget pinned to Home Screen');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        UiUtils.showSnackBar(context, 'Failed to pin widget: $e');
+      }
+    }
   }
 
   void _showSessionInfoDialog(BuildContext context, Session session) {

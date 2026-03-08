@@ -9,12 +9,17 @@ import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/session_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:home_widget/home_widget.dart';
+import 'widgets/home_widget_manager.dart';
+import 'utils/logger.dart';
 import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final packageInfo = await PackageInfo.fromPlatform();
   AppConstants.appVersion = packageInfo.version;
+
+  await HomeWidgetManager.init();
 
   runApp(const ProviderScope(child: ScyphomoteApp()));
 }
@@ -33,6 +38,24 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     AppConstants.isInForeground = true;
+    _checkForWidgetLaunch();
+  }
+
+  Future<void> _checkForWidgetLaunch() async {
+    try {
+      final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
+      if (uri?.host == 'remote') {
+        // App was launched from the widget title
+        // In a real app we'd navigate to the remote screen,
+        // but since it requires a session we'll just navigate to the DeviceListScreen
+        // so the user can easily select their session.
+        AppConstants.messengerKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('Launched from Remote Widget')),
+        );
+      }
+    } catch (e) {
+      logError('Failed to check widget launch intent: $e');
+    }
   }
 
   @override
