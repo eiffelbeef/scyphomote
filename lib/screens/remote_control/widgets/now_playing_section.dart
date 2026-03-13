@@ -10,6 +10,7 @@ import '../../../models/media_info.dart';
 import '../../../models/media_segment.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../utils/logger.dart';
+import '../../../utils/ui_utils.dart';
 import 'remote_button.dart';
 
 class NowPlayingSection extends ConsumerStatefulWidget {
@@ -129,7 +130,10 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         if (nowPlaying != null) ...[
           InkWell(
             onTap: nowPlaying.isVideo
-                ? () => _showCastAndCrew(context, nowPlaying.people ?? [])
+                ? () => _showCastAndCrew(
+                    context,
+                    nowPlaying.seriesId ?? nowPlaying.id,
+                  )
                 : null,
             borderRadius: BorderRadius.circular(8),
             child: Padding(
@@ -163,13 +167,39 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           ),
           const SizedBox(height: 4),
           if (nowPlaying.displaySubtitle != null)
-            MarqueeText(
-              text: nowPlaying.displaySubtitle!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            InkWell(
+              onTap: nowPlaying.isVideo
+                  ? () => _showCastAndCrew(context, nowPlaying.id)
+                  : null,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: MarqueeText(
+                        text: nowPlaying.displaySubtitle!,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxWidth: widget.maxWidth,
+                      ),
+                    ),
+                    if (nowPlaying.isVideo)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxWidth: widget.maxWidth,
             ),
 
           const SizedBox(height: 8),
@@ -322,11 +352,13 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     try {
       final info = await ref.read(playbackInfoProvider(itemId).future);
 
-      if (!mounted || !context.mounted) return;
-      if (info == null) return;
+      if (!mounted) return;
 
-      final mediaSources = info['MediaSources'] as List?;
-      if (mediaSources == null || mediaSources.isEmpty) return;
+      final mediaSources = info?['MediaSources'] as List?;
+      if (mediaSources == null || mediaSources.isEmpty) {
+        UiUtils.showErrorToast('Info', 'No media sources found');
+        return;
+      }
 
       final source = mediaSources.first;
       final videoStream = (source['MediaStreams'] as List?)?.firstWhere(
@@ -428,10 +460,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     );
   }
 
-  void _showCastAndCrew(
-    BuildContext context,
-    List<Person> initialPeople,
-  ) async {
+  void _showCastAndCrew(BuildContext context, String itemId) async {
     final nowPlaying = widget.session.nowPlaying;
     if (nowPlaying == null) return;
 
@@ -440,16 +469,12 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       builder: (context) {
         return Consumer(
           builder: (context, ref, child) {
             final apiService = ref.read(apiServiceProvider);
-            final detailsAsync = initialPeople.isEmpty
-                ? ref.watch(itemDetailsProvider(nowPlaying.id))
-                : AsyncValue.data(null);
+            final detailsAsync = ref.watch(itemDetailsProvider(itemId));
 
             return DraggableScrollableSheet(
               initialChildSize: 0.6,
@@ -482,18 +507,16 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                     Expanded(
                       child: detailsAsync.when(
                         data: (details) {
-                          final people = initialPeople.isNotEmpty
-                              ? initialPeople
-                              : (details != null
-                                    ? (details['People'] as List?)
-                                              ?.map(
-                                                (p) => Person.fromJson(
-                                                  p as Map<String, dynamic>,
-                                                ),
-                                              )
-                                              .toList() ??
-                                          []
-                                    : []);
+                          final people = (details != null
+                              ? (details['People'] as List?)
+                                        ?.map(
+                                          (p) => Person.fromJson(
+                                            p as Map<String, dynamic>,
+                                          ),
+                                        )
+                                        .toList() ??
+                                    []
+                              : []);
 
                           if (people.isEmpty) {
                             return const Center(
