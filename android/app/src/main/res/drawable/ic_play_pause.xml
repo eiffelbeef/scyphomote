@@ -7,9 +7,9 @@
     <!-- Play triangle -->
     <path
         android:pathData="M3,5v14l8,-7z"
-        android:fillColor="#E0E0E0" />
+        android:fillColor="@color/widget_icon_color" />
     <!-- Pause bars -->
     <path
         android:pathData="M14,5h3v14h-3zM19,5h3v14h-3z"
-        android:fillColor="#E0E0E0" />
+        android:fillColor="@color/widget_icon_color" />
 </vector>

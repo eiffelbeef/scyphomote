@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget background: deep dark purple -->
+    <color name="widget_bg">#E61B1030</color>
+    <!-- Button background -->
+    <color name="widget_btn_bg">#33FFFFFF</color>
+    <color name="widget_btn_stroke">#22FFFFFF</color>
+    <!-- OK button accent -->
+    <color name="widget_ok_bg">#997C4DFF</color>
+    <!-- Text & icon colors -->
+    <color name="widget_icon_color">#E0E0E0</color>
+    <color name="widget_title_color">#DEFFFFFF</color>
+    <color name="widget_ok_text">#FFFFFF</color>
+</resources>

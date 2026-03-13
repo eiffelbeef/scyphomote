@@ -6,5 +6,5 @@
     android:viewportHeight="24">
     <path
         android:pathData="M16.59,8.59L12,13.17L7.41,8.59L6,10l6,6l6,-6z"
-        android:fillColor="#E0E0E0" />
+        android:fillColor="@color/widget_icon_color" />
 </vector>
