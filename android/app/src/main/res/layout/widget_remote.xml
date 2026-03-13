@@ -4,88 +4,90 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/widget_bg"
-    android:padding="16dp"
+    android:padding="12dp"
     android:gravity="center">
 
+    <!-- Title (tappable to open app) -->
     <TextView
         android:id="@+id/widget_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Scyphomote"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textColor="#DEFFFFFF"
+        android:textSize="14sp"
         android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.05"
         android:gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="8dp" />
 
-    <!-- D-Pad Grid -->
+    <!-- D-Pad -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
 
-        <TextView
+        <!-- Up -->
+        <ImageView
             android:id="@+id/btn_up"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="▲"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:background="@drawable/widget_btn_bg" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_up"
+            android:scaleType="center"
+            android:background="@drawable/widget_btn_bg"
+            android:contentDescription="Up" />
 
+        <!-- Left / OK / Right -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical">
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_left"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:text="◀"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:background="@drawable/widget_btn_bg" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_arrow_left"
+                android:scaleType="center"
+                android:background="@drawable/widget_btn_bg"
+                android:contentDescription="Left" />
 
             <TextView
                 android:id="@+id/btn_ok"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:text="OK"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:gravity="center"
-                android:background="@drawable/widget_btn_bg"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
+                android:background="@drawable/widget_ok_btn_bg"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:contentDescription="Select" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_right"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:text="▶"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:background="@drawable/widget_btn_bg" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_arrow_right"
+                android:scaleType="center"
+                android:background="@drawable/widget_btn_bg"
+                android:contentDescription="Right" />
         </LinearLayout>
 
-        <TextView
+        <!-- Down -->
+        <ImageView
             android:id="@+id/btn_down"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:text="▼"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:background="@drawable/widget_btn_bg" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_down"
+            android:scaleType="center"
+            android:background="@drawable/widget_btn_bg"
+            android:contentDescription="Down" />
     </LinearLayout>
 
     <!-- Playback Controls -->
@@ -93,34 +95,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="center">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:tint="#FFFFFF"
-            android:background="@drawable/widget_btn_bg" />
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_back"
+            android:scaleType="center"
+            android:background="@drawable/widget_playback_btn_bg"
+            android:contentDescription="Back" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_play_pause"
-            android:layout_width="72dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_media_play"
-            android:tint="#FFFFFF"
-            android:background="@drawable/widget_btn_bg"
-            android:layout_marginLeft="12dp" />
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_play_pause"
+            android:scaleType="center"
+            android:background="@drawable/widget_playback_btn_bg"
+            android:layout_marginLeft="8dp"
+            android:contentDescription="Play/Pause" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_stop"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:tint="#FFFFFF"
-            android:background="@drawable/widget_btn_bg"
-            android:layout_marginLeft="12dp" />
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_stop"
+            android:scaleType="center"
+            android:background="@drawable/widget_playback_btn_bg"
+            android:layout_marginLeft="8dp"
+            android:contentDescription="Stop" />
     </LinearLayout>
 
 </LinearLayout>
