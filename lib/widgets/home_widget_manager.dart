@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:home_widget/home_widget.dart';
 import '../services/jellyfin_api_service.dart';
 import '../utils/logger.dart';
@@ -78,7 +79,12 @@ Future<void> backgroundCallback(Uri? uri) async {
 }
 
 class HomeWidgetManager {
+  static bool get isWidgetSupported =>
+      //Platform.isAndroid || Platform.isIOS;
+      Platform.isAndroid;
+
   static Future<void> init() async {
+    if (!isWidgetSupported) return;
     // Register the background callback
     await HomeWidget.registerInteractivityCallback(backgroundCallback);
   }
@@ -87,6 +93,7 @@ class HomeWidgetManager {
     String serverUrl,
     String accessToken,
   ) async {
+    if (!isWidgetSupported) return;
     await HomeWidget.saveWidgetData<String>('widget_server_url', serverUrl);
     await HomeWidget.saveWidgetData<String>('widget_access_token', accessToken);
     await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
@@ -97,6 +104,7 @@ class HomeWidgetManager {
     String deviceName,
     String sessionId,
   ) async {
+    if (!isWidgetSupported) return;
     await HomeWidget.saveWidgetData<String>('widget_device_id', deviceId);
     await HomeWidget.saveWidgetData<String>('widget_device_name', deviceName);
     await HomeWidget.saveWidgetData<String>('widget_session_id', sessionId);
@@ -104,5 +112,11 @@ class HomeWidgetManager {
     await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
 
     await HomeWidget.requestPinWidget(name: 'RemoteWidgetProvider');
+  }
+
+  static Future<void> syncPremiumStatus(bool isPremium) async {
+    if (!isWidgetSupported) return;
+    await HomeWidget.saveWidgetData<bool>('is_premium', isPremium);
+    await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
   }
 }

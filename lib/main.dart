@@ -42,15 +42,18 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     AppConstants.isInForeground = true;
-    _checkForWidgetLaunch();
-    _widgetSubscription = HomeWidget.widgetClicked.listen((Uri? uri) {
-      if (uri != null) {
-        _handleWidgetLaunch(uri);
-      }
-    });
+    if (HomeWidgetManager.isWidgetSupported) {
+      _checkForWidgetLaunch();
+      _widgetSubscription = HomeWidget.widgetClicked.listen((Uri? uri) {
+        if (uri != null) {
+          _handleWidgetLaunch(uri);
+        }
+      });
+    }
   }
 
   Future<void> _checkForWidgetLaunch() async {
+    if (!HomeWidgetManager.isWidgetSupported) return;
     try {
       final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
       if (uri != null) {

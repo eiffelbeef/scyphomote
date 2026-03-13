@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../widgets/home_widget_manager.dart';
 import '../utils/logger.dart';
 
 class BillingService {
@@ -8,13 +10,24 @@ class BillingService {
   final String _premiumProductId = 'scyphomote_premium';
 
   StreamSubscription<List<PurchaseDetails>>? _subscription;
+  late SharedPreferences _prefs;
 
   bool _isPremium = false;
   bool get isPremium => _isPremium;
 
+  bool _isAvailable = true;
+  bool get isAvailable => _isAvailable;
+
+  static bool get isBillingSupported =>
+      //Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
+      Platform.isAndroid;
+
   Future<void> initialize() async {
-    final available = await _iap.isAvailable();
-    if (!available) {
+    _prefs = await SharedPreferences.getInstance();
+    _isPremium = _prefs.getBool('is_premium') ?? false;
+
+    _isAvailable = isBillingSupported && await _iap.isAvailable();
+    if (!_isAvailable) {
       logError('In-App Purchases are not available.');
       return;
     }
@@ -29,13 +42,18 @@ class BillingService {
       },
     );
 
-    _isPremium = await HomeWidget.getWidgetData<bool>('is_premium') ?? false;
-
     await _iap.restorePurchases();
   }
 
   void dispose() {
     _subscription?.cancel();
+  }
+
+  Future<void> _updatePremiumStatus(bool value) async {
+    _isPremium = value;
+    await _prefs.setBool('is_premium', value);
+
+    await HomeWidgetManager.syncPremiumStatus(value);
   }
 
   void _listenToPurchaseUpdated(
@@ -45,8 +63,7 @@ class BillingService {
       if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
         if (purchaseDetails.productID == _premiumProductId) {
-          _isPremium = true;
-          await HomeWidget.saveWidgetData<bool>('is_premium', true);
+          await _updatePremiumStatus(true);
         }
 
         if (purchaseDetails.pendingCompletePurchase) {
@@ -74,7 +91,6 @@ class BillingService {
   }
 
   Future<void> setPremiumLocal(bool value) async {
-    _isPremium = value;
-    await HomeWidget.saveWidgetData<bool>('is_premium', value);
+    await _updatePremiumStatus(value);
   }
 }

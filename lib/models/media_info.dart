@@ -29,6 +29,8 @@ class MediaInfo {
   final String name;
   final String type;
   final String? seriesName;
+  final String? seriesId;
+  final String? seasonId;
   final int? season;
   final int? episode;
   final String? album;
@@ -48,6 +50,8 @@ class MediaInfo {
     required this.name,
     required this.type,
     this.seriesName,
+    this.seriesId,
+    this.seasonId,
     this.season,
     this.episode,
     this.album,
@@ -98,6 +102,8 @@ class MediaInfo {
     name: json['Name'],
     type: json['Type'],
     seriesName: json['SeriesName'],
+    seriesId: json['SeriesId'],
+    seasonId: json['SeasonId'],
     season: json['ParentIndexNumber'],
     episode: json['IndexNumber'],
     album: json['Album'],

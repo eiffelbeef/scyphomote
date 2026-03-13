@@ -10,6 +10,8 @@ class PremiumScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium = ref.watch(isPremiumProvider);
+    final billingService = ref.read(billingServiceProvider);
+    final isAvailable = billingService.isAvailable;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Unlock Premium')),
@@ -28,7 +30,7 @@ class PremiumScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isPremium ? 'You are Premium!' : 'Unlock Premium Widget',
+                isPremium ? 'You are Premium!' : 'Unlock Scyphomote Premium',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -92,19 +94,20 @@ class PremiumScreen extends ConsumerWidget {
               ],
               const SizedBox(height: 32),
               if (!isPremium)
-                FilledButton.icon(
-                  onPressed: () {
-                    ref.read(isPremiumProvider.notifier).buyPremium();
-                  },
-                  icon: const Icon(Icons.shopping_cart),
-                  label: const Text('Buy Now'),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
+                if (isAvailable)
+                  FilledButton.icon(
+                    onPressed: () {
+                      ref.read(isPremiumProvider.notifier).buyPremium();
+                    },
+                    icon: const Icon(Icons.shopping_cart),
+                    label: const Text('Buy Now'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                     ),
                   ),
-                ),
             ],
           ),
         ),

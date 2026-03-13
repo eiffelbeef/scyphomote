@@ -99,11 +99,12 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
         title: Text(session.deviceName),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add_to_home_screen),
-            tooltip: 'Add Remote Widget',
-            onPressed: () => _pinWidget(context, session),
-          ),
+          if (HomeWidgetManager.isWidgetSupported)
+            IconButton(
+              icon: const Icon(Icons.add_to_home_screen),
+              tooltip: 'Add Remote Widget',
+              onPressed: () => _pinWidget(context, session),
+            ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () => _showSessionInfoDialog(context, session),
