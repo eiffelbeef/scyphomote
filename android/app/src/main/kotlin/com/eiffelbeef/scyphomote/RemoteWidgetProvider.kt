@@ -18,6 +18,21 @@ class RemoteWidgetProvider : HomeWidgetProvider() {
         widgetData: SharedPreferences
     ) {
         appWidgetIds.forEach { widgetId ->
+            val isPremium = widgetData.getBoolean("is_premium", false)
+            if (!isPremium) {
+                // Render the LOCKED widget
+                val views = RemoteViews(context.packageName, R.layout.widget_locked).apply {
+                    val openPaywallIntent = HomeWidgetLaunchIntent.getActivity(
+                        context,
+                        MainActivity::class.java,
+                        Uri.parse("scyphomote://upgrade")
+                    )
+                    setOnClickPendingIntent(R.id.widget_locked_container, openPaywallIntent)
+                }
+                appWidgetManager.updateAppWidget(widgetId, views)
+                return@forEach
+            }
+
             var sessionId = widgetData.getString("widget_session_id_$widgetId", null)
             var deviceName = widgetData.getString("widget_device_name_$widgetId", null)
 

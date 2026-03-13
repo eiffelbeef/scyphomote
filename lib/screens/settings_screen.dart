@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'about_screen.dart';
 import '../providers/settings_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/billing_provider.dart';
 import '../constants.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -157,6 +159,27 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if (kDebugMode) ...[
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                'Debug',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SwitchListTile(
+              secondary: const Icon(Icons.bug_report),
+              title: const Text('Force Premium Status'),
+              value: ref.watch(isPremiumProvider),
+              onChanged: (value) {
+                ref.read(isPremiumProvider.notifier).setPremium(value);
+              },
+            ),
+          ],
           const Divider(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

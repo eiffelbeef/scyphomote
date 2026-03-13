@@ -6,6 +6,7 @@ import 'screens/device_list_screen.dart';
 import 'screens/remote_control/remote_control_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
+import 'screens/premium_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/session_provider.dart';
@@ -113,6 +114,15 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
           const SnackBar(content: Text('Launched from Remote Widget')),
         );
       }
+    } else if (uri.host == 'upgrade') {
+      await Future.delayed(
+        const Duration(milliseconds: 150),
+      ); // needed for navigator to not drop the transition when app is brought up from background
+      final navigator = AppConstants.navigatorKey.currentState;
+      if (navigator != null) {
+        navigator.popUntil((route) => route.isFirst);
+        navigator.pushNamed(PremiumScreen.routeName);
+      }
     }
   }
 
@@ -187,6 +197,7 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
         RemoteControlScreen.routeName: (context) => const RemoteControlScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
+        PremiumScreen.routeName: (context) => const PremiumScreen(),
       },
     );
   }

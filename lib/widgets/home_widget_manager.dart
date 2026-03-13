@@ -6,6 +6,12 @@ import '../utils/logger.dart';
 Future<void> backgroundCallback(Uri? uri) async {
   if (uri == null) return;
 
+  final isPremium = await HomeWidget.getWidgetData<bool>('is_premium') ?? false;
+  if (!isPremium) {
+    logError('Attempted to use widget without premium unlock.');
+    return;
+  }
+
   if (uri.host == 'widget_command') {
     final command = uri.pathSegments.first;
     logDebug('Widget command received: $command');
