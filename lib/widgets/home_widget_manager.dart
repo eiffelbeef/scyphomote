@@ -20,9 +20,9 @@ Future<void> backgroundCallback(Uri? uri) async {
       final accessToken = await HomeWidget.getWidgetData<String>(
         'widget_access_token',
       );
-      final sessionId = await HomeWidget.getWidgetData<String>(
-        'widget_session_id',
-      );
+      String? sessionId = uri.queryParameters['session_id'];
+
+      sessionId ??= await HomeWidget.getWidgetData<String>('widget_session_id');
 
       if (deviceId == null ||
           serverUrl == null ||

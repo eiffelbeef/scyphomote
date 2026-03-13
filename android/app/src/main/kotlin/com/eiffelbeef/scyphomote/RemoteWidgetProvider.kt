@@ -18,11 +18,22 @@ class RemoteWidgetProvider : HomeWidgetProvider() {
         widgetData: SharedPreferences
     ) {
         appWidgetIds.forEach { widgetId ->
+            var sessionId = widgetData.getString("widget_session_id_$widgetId", null)
+            var deviceName = widgetData.getString("widget_device_name_$widgetId", null)
+
+            if (sessionId == null) {
+                sessionId = widgetData.getString("widget_session_id", null)
+                deviceName = widgetData.getString("widget_device_name", "Scyphomote")
+
+                if (sessionId != null) {
+                    widgetData.edit()
+                        .putString("widget_session_id_$widgetId", sessionId)
+                        .putString("widget_device_name_$widgetId", deviceName)
+                        .apply()
+                }
+            }
+
             val views = RemoteViews(context.packageName, R.layout.widget_remote).apply {
-                // Determine layout actions using HomeWidgetBackgroundIntent
-                // These trigger the Dart background function
-                // This intent simply opens the app
-                val sessionId = widgetData.getString("widget_session_id", null)
                 val uriStr = if (sessionId != null) "scyphomote://remote?session_id=$sessionId" else "scyphomote://remote"
                 val openAppIntent = HomeWidgetLaunchIntent.getActivity(
                     context,
@@ -31,73 +42,29 @@ class RemoteWidgetProvider : HomeWidgetProvider() {
                 )
                 setOnClickPendingIntent(R.id.widget_title, openAppIntent)
 
-                setOnClickPendingIntent(
-                    R.id.btn_up,
-                    HomeWidgetBackgroundIntent.getBroadcast(
+                fun getCommandIntent(command: String): android.app.PendingIntent {
+                    val cmdUriStr = if (sessionId != null) {
+                        "scyphomote://widget_command/$command?session_id=$sessionId"
+                    } else {
+                        "scyphomote://widget_command/$command"
+                    }
+                    return HomeWidgetBackgroundIntent.getBroadcast(
                         context,
-                        Uri.parse("scyphomote://widget_command/up")
+                        Uri.parse(cmdUriStr)
                     )
-                )
+                }
 
-                setOnClickPendingIntent(
-                    R.id.btn_down,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/down")
-                    )
-                )
+                setOnClickPendingIntent(R.id.btn_up, getCommandIntent("up"))
+                setOnClickPendingIntent(R.id.btn_down, getCommandIntent("down"))
+                setOnClickPendingIntent(R.id.btn_left, getCommandIntent("left"))
+                setOnClickPendingIntent(R.id.btn_right, getCommandIntent("right"))
+                setOnClickPendingIntent(R.id.btn_ok, getCommandIntent("ok"))
+                setOnClickPendingIntent(R.id.btn_play_pause, getCommandIntent("play_pause"))
+                setOnClickPendingIntent(R.id.btn_stop, getCommandIntent("stop"))
+                setOnClickPendingIntent(R.id.btn_back, getCommandIntent("back"))
 
-                setOnClickPendingIntent(
-                    R.id.btn_left,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/left")
-                    )
-                )
-
-                setOnClickPendingIntent(
-                    R.id.btn_right,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/right")
-                    )
-                )
-
-                setOnClickPendingIntent(
-                    R.id.btn_ok,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/ok")
-                    )
-                )
-
-                setOnClickPendingIntent(
-                    R.id.btn_play_pause,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/play_pause")
-                    )
-                )
-
-                setOnClickPendingIntent(
-                    R.id.btn_stop,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/stop")
-                    )
-                )
-                
-                setOnClickPendingIntent(
-                    R.id.btn_back,
-                    HomeWidgetBackgroundIntent.getBroadcast(
-                        context,
-                        Uri.parse("scyphomote://widget_command/back")
-                    )
-                )
-
-                // Optional: show the device name if we have it
-                val deviceName = widgetData.getString("widget_device_name", "Scyphomote")
-                setTextViewText(R.id.widget_title, deviceName)
+                // Show the device name if we have it
+                setTextViewText(R.id.widget_title, deviceName ?: "Scyphomote")
             }
             appWidgetManager.updateAppWidget(widgetId, views)
         }
