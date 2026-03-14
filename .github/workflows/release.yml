@@ -28,7 +28,7 @@ jobs:
             "$STORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > android/key.properties
           flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk scyphomote-android.apk
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: scyphomote-android.apk
 
@@ -45,7 +45,7 @@ jobs:
           mkdir Payload
           cp -r build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app Payload/
           zip -r scyphomote-ios.ipa Payload/
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: scyphomote-ios.ipa
 
@@ -59,7 +59,7 @@ jobs:
       - run: flutter pub get
       - run: flutter build linux --release
       - run: tar -czf scyphomote-linux.tar.gz -C build/linux/x64/release/bundle .
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: scyphomote-linux.tar.gz
 
@@ -75,7 +75,7 @@ jobs:
           mkdir dist
           cp -r "build/macos/Build/Products/Release/scyphomote.app" dist/
           hdiutil create -format UDZO -srcfolder dist -volname scyphomote scyphomote-macos.dmg
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: scyphomote-macos.dmg
 
@@ -89,6 +89,6 @@ jobs:
       - run: flutter build windows --release
       - run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath scyphomote-windows.zip
         shell: pwsh
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
           files: scyphomote-windows.zip
