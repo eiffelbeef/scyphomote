@@ -18,8 +18,11 @@ Future<void> backgroundCallback(Uri? uri) async {
     logDebug('Widget command received: $command');
 
     try {
-      final deviceId = await HomeWidget.getWidgetData<String>(
-        'widget_device_id',
+      final localDeviceId = await HomeWidget.getWidgetData<String>(
+        'widget_local_device_id',
+      );
+      final localDeviceName = await HomeWidget.getWidgetData<String>(
+        'widget_local_device_name',
       );
       final serverUrl = await HomeWidget.getWidgetData<String>(
         'widget_server_url',
@@ -27,22 +30,24 @@ Future<void> backgroundCallback(Uri? uri) async {
       final accessToken = await HomeWidget.getWidgetData<String>(
         'widget_access_token',
       );
-      String? sessionId = uri.queryParameters['session_id'];
+      final sessionId = uri.queryParameters['session_id'];
 
-      sessionId ??= await HomeWidget.getWidgetData<String>('widget_session_id');
-
-      if (deviceId == null ||
+      if (localDeviceId == null ||
           serverUrl == null ||
           accessToken == null ||
           sessionId == null) {
         logError(
-          'Missing widget configuration data (deviceId, serverUrl, token, sessionId).',
+          'Missing widget configuration data (localDeviceId: ${localDeviceId != null}, serverUrl: ${serverUrl != null}, token: ${accessToken != null}, sessionId: ${sessionId != null}).',
         );
         return;
       }
 
       final apiService = JellyfinApiService();
+      apiService.setDeviceId(localDeviceId);
+      apiService.setDeviceName(localDeviceName ?? 'Scyphomote');
       apiService.setCredentials(serverUrl, accessToken);
+
+      logDebug('Sending widget command: $command to session: $sessionId');
 
       switch (command) {
         case 'up':
@@ -89,28 +94,44 @@ class HomeWidgetManager {
     await HomeWidget.registerInteractivityCallback(backgroundCallback);
   }
 
-  static Future<void> saveSettingsToWidget(
-    String serverUrl,
-    String accessToken,
-  ) async {
+  static Future<void> pinWidget({
+    required String serverUrl,
+    required String accessToken,
+    required String localDeviceId,
+    required String localDeviceName,
+    required String clientDeviceId,
+    required String clientDeviceName,
+    required String sessionId,
+  }) async {
     if (!isWidgetSupported) return;
+
+    // Save configuration for background tasks
     await HomeWidget.saveWidgetData<String>('widget_server_url', serverUrl);
     await HomeWidget.saveWidgetData<String>('widget_access_token', accessToken);
+    await HomeWidget.saveWidgetData<String>(
+      'widget_local_device_id',
+      localDeviceId,
+    );
+    await HomeWidget.saveWidgetData<String>(
+      'widget_local_device_name',
+      localDeviceName,
+    );
+
+    // Save session-specific data as pending (to be adopted by the next added widget)
+    await HomeWidget.saveWidgetData<String>(
+      'widget_client_device_id',
+      clientDeviceId,
+    );
+    await HomeWidget.saveWidgetData<String>(
+      'widget_pending_device_name',
+      clientDeviceName,
+    );
+    await HomeWidget.saveWidgetData<String>(
+      'widget_pending_session_id',
+      sessionId,
+    );
+
     await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
-  }
-
-  static Future<void> pinWidget(
-    String deviceId,
-    String deviceName,
-    String sessionId,
-  ) async {
-    if (!isWidgetSupported) return;
-    await HomeWidget.saveWidgetData<String>('widget_device_id', deviceId);
-    await HomeWidget.saveWidgetData<String>('widget_device_name', deviceName);
-    await HomeWidget.saveWidgetData<String>('widget_session_id', sessionId);
-
-    await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
-
     await HomeWidget.requestPinWidget(name: 'RemoteWidgetProvider');
   }
 

@@ -65,6 +65,7 @@ class JellyfinApiService {
   }
 
   String get deviceId => _deviceId;
+  String get deviceName => _deviceName;
 
   String _buildAuthHeader(String? accessToken) {
     final token = accessToken ?? _accessToken ?? '';

@@ -212,10 +212,23 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
 
   Future<void> _pinWidget(BuildContext context, Session session) async {
     try {
+      final authState = ref.read(authProvider);
+      final user = authState.currentUser;
+
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
+
+      final apiService = ref.read(apiServiceProvider);
+
       await HomeWidgetManager.pinWidget(
-        session.deviceId,
-        session.deviceName,
-        session.sessionId,
+        serverUrl: user.serverUrl,
+        accessToken: user.accessToken,
+        localDeviceId: apiService.deviceId,
+        localDeviceName: apiService.deviceName,
+        clientDeviceId: session.deviceId,
+        clientDeviceName: session.deviceName,
+        sessionId: session.sessionId,
       );
       if (context.mounted) {
         UiUtils.showSnackBar(context, 'Widget pinned to Home Screen');

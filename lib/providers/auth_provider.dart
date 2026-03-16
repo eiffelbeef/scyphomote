@@ -8,7 +8,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import '../utils/logger.dart';
-import '../widgets/home_widget_manager.dart';
 
 final storageServiceProvider = Provider((ref) => StorageService());
 final apiServiceProvider = Provider((ref) => JellyfinApiService());
@@ -98,10 +97,6 @@ class AuthNotifier extends Notifier<AuthState> {
           activeUser.serverUrl,
           activeUser.accessToken,
         );
-        HomeWidgetManager.saveSettingsToWidget(
-          activeUser.serverUrl,
-          activeUser.accessToken,
-        );
       }
       state = AuthState(
         currentUser: activeUser,
@@ -131,10 +126,6 @@ class AuthNotifier extends Notifier<AuthState> {
       );
 
       _apiService.setCredentials(
-        authenticatedUser.serverUrl,
-        authenticatedUser.accessToken,
-      );
-      HomeWidgetManager.saveSettingsToWidget(
         authenticatedUser.serverUrl,
         authenticatedUser.accessToken,
       );
@@ -168,10 +159,6 @@ class AuthNotifier extends Notifier<AuthState> {
     final user = state.users.firstWhere((u) => u.userId == userId);
     await _storageService.setActiveUser(userId);
     _apiService.setCredentials(user.serverUrl, user.accessToken);
-    await HomeWidgetManager.saveSettingsToWidget(
-      user.serverUrl,
-      user.accessToken,
-    );
     state = state.copyWith(currentUser: user);
   }
 
@@ -199,10 +186,6 @@ class AuthNotifier extends Notifier<AuthState> {
     if (newActiveUser != null) {
       await _storageService.setActiveUser(newActiveUser.userId);
       _apiService.setCredentials(
-        newActiveUser.serverUrl,
-        newActiveUser.accessToken,
-      );
-      await HomeWidgetManager.saveSettingsToWidget(
         newActiveUser.serverUrl,
         newActiveUser.accessToken,
       );
