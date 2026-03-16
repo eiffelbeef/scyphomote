@@ -168,7 +168,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           const SizedBox(height: 4),
           if (nowPlaying.displaySubtitle != null)
             InkWell(
-              onTap: nowPlaying.isVideo
+              onTap: nowPlaying.type == 'Episode'
                   ? () => _showCastAndCrew(context, nowPlaying.id)
                   : null,
               borderRadius: BorderRadius.circular(8),
@@ -188,7 +188,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         maxWidth: widget.maxWidth,
                       ),
                     ),
-                    if (nowPlaying.isVideo)
+                    if (nowPlaying.type == 'Episode')
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: Icon(
