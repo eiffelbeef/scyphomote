@@ -69,21 +69,23 @@ class AuthNotifier extends Notifier<AuthState> {
         if (kIsWeb) {
           final webInfo = await deviceInfo.webBrowserInfo;
           deviceName = 'Web (${webInfo.browserName.name})';
-        } else if (Platform.isAndroid) {
-          final androidInfo = await deviceInfo.androidInfo;
-          //deviceName = '${androidInfo.manufacturer} ${androidInfo.model}';
-          deviceName = androidInfo.name;
-        } else if (Platform.isIOS) {
-          final iosInfo = await deviceInfo.iosInfo;
-          deviceName = iosInfo.name;
-        } else if (Platform.isLinux) {
-          deviceName = Platform.localHostname;
-        } else if (Platform.isMacOS) {
-          final macInfo = await deviceInfo.macOsInfo;
-          deviceName = macInfo.computerName;
-        } else if (Platform.isWindows) {
-          final windowsInfo = await deviceInfo.windowsInfo;
-          deviceName = windowsInfo.computerName;
+        } else {
+          if (Platform.isAndroid) {
+            final androidInfo = await deviceInfo.androidInfo;
+            //deviceName = '${androidInfo.manufacturer} ${androidInfo.model}';
+            deviceName = androidInfo.name;
+          } else if (Platform.isIOS) {
+            final iosInfo = await deviceInfo.iosInfo;
+            deviceName = iosInfo.name;
+          } else if (Platform.isLinux) {
+            deviceName = Platform.localHostname;
+          } else if (Platform.isMacOS) {
+            final macInfo = await deviceInfo.macOsInfo;
+            deviceName = macInfo.computerName;
+          } else if (Platform.isWindows) {
+            final windowsInfo = await deviceInfo.windowsInfo;
+            deviceName = windowsInfo.computerName;
+          }
         }
       } catch (e) {
         logError('Failed to get device name: $e');

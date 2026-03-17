@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/home_widget_manager.dart';
@@ -18,9 +19,8 @@ class BillingService {
   bool _isAvailable = true;
   bool get isAvailable => _isAvailable;
 
-  static bool get isBillingSupported =>
-      //Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
-      Platform.isAndroid;
+  static bool get isBillingSupported => !kIsWeb && Platform.isAndroid;
+  // !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();

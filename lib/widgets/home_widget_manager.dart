@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import '../services/jellyfin_api_service.dart';
 import '../utils/logger.dart';
@@ -84,9 +85,8 @@ Future<void> backgroundCallback(Uri? uri) async {
 }
 
 class HomeWidgetManager {
-  static bool get isWidgetSupported =>
-      //Platform.isAndroid || Platform.isIOS;
-      Platform.isAndroid;
+  static bool get isWidgetSupported => !kIsWeb && Platform.isAndroid;
+  // !kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS);
 
   static Future<void> init() async {
     if (!isWidgetSupported) return;
