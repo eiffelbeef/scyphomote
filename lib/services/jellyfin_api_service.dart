@@ -92,6 +92,9 @@ class JellyfinApiService {
         serverUrl: serverUrl,
         accessToken: response.data['AccessToken'] as String,
         serverId: response.data['ServerId'] as String,
+        isAdmin:
+            response.data['User']?['Policy']?['IsAdministrator'] as bool? ??
+            false,
       );
     } catch (e) {
       throw Exception('Authentication failed: $e');

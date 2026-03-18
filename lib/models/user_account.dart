@@ -5,6 +5,7 @@ class UserAccount {
   final String accessToken;
   final String serverId;
   final String? profileImageBase64;
+  final bool isAdmin;
 
   UserAccount({
     required this.userId,
@@ -13,6 +14,7 @@ class UserAccount {
     required this.accessToken,
     required this.serverId,
     this.profileImageBase64,
+    this.isAdmin = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -22,6 +24,7 @@ class UserAccount {
     'accessToken': accessToken,
     'serverId': serverId,
     'profileImageBase64': profileImageBase64,
+    'isAdmin': isAdmin,
   };
 
   factory UserAccount.fromJson(Map<String, dynamic> json) => UserAccount(
@@ -31,5 +34,6 @@ class UserAccount {
     accessToken: json['accessToken'] as String,
     serverId: json['serverId'] as String,
     profileImageBase64: json['profileImageBase64'] as String?,
+    isAdmin: json['isAdmin'] as bool? ?? false,
   );
 }

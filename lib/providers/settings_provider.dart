@@ -7,12 +7,14 @@ class SettingsState {
   final bool deviceListAutoRefresh;
   final int deviceListRefreshRate;
   final int libraryItemsPerRow;
+  final bool hideOtherUsersSessions;
 
   SettingsState({
     this.playerRefreshRate = 10,
     this.deviceListAutoRefresh = true,
     this.deviceListRefreshRate = 10,
     this.libraryItemsPerRow = 2,
+    this.hideOtherUsersSessions = false,
   });
 
   SettingsState copyWith({
@@ -20,6 +22,7 @@ class SettingsState {
     bool? deviceListAutoRefresh,
     int? deviceListRefreshRate,
     int? libraryItemsPerRow,
+    bool? hideOtherUsersSessions,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -28,6 +31,8 @@ class SettingsState {
       deviceListRefreshRate:
           deviceListRefreshRate ?? this.deviceListRefreshRate,
       libraryItemsPerRow: libraryItemsPerRow ?? this.libraryItemsPerRow,
+      hideOtherUsersSessions:
+          hideOtherUsersSessions ?? this.hideOtherUsersSessions,
     );
   }
 }
@@ -48,12 +53,14 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final autoRefresh = await _storageService.getDeviceListAutoRefresh();
     final listRate = await _storageService.getDeviceListRefreshRate();
     final itemsPerRow = await _storageService.getLibraryItemsPerRow();
+    final hideSessions = await _storageService.getHideOtherUsersSessions();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
       deviceListAutoRefresh: autoRefresh ?? true,
       deviceListRefreshRate: listRate ?? 10,
       libraryItemsPerRow: itemsPerRow ?? 2,
+      hideOtherUsersSessions: hideSessions ?? false,
     );
   }
 
@@ -75,6 +82,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setLibraryItemsPerRow(int count) async {
     state = state.copyWith(libraryItemsPerRow: count);
     await _storageService.saveLibraryItemsPerRow(count);
+  }
+
+  Future<void> setHideOtherUsersSessions(bool hide) async {
+    state = state.copyWith(hideOtherUsersSessions: hide);
+    await _storageService.saveHideOtherUsersSessions(hide);
   }
 }
 

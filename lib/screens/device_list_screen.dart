@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/constants.dart';
 import '../providers/auth_provider.dart';
+import '../providers/settings_provider.dart';
 import '../providers/session_provider.dart';
 import '../models/session.dart';
 import '../utils/ui_utils.dart';
@@ -298,14 +299,25 @@ class DeviceListScreen extends ConsumerWidget {
     return a.deviceName.toLowerCase().compareTo(b.deviceName.toLowerCase());
   }
 
-  List<Session> _getActiveSessions(SessionState state) {
-    return state.sessions.where((s) => s.isPlaying || s.isPaused).toList()
-      ..sort(_compareDeviceNames);
-  }
+  List<Session> _getSessions(
+    SessionState state,
+    WidgetRef ref,
+    AuthState authState, {
+    required bool active,
+    bool sortByLastActivity = false,
+  }) {
+    final settings = ref.watch(settingsProvider);
+    final sessions = state.sessions.where((s) {
+      if (settings.hideOtherUsersSessions &&
+          s.userId != authState.currentUser?.userId) {
+        return false;
+      }
+      final isSessionActive = s.isPlaying || s.isPaused;
+      return active ? isSessionActive : !isSessionActive;
+    }).toList();
 
-  List<Session> _getIdleSessions(SessionState state) {
-    return state.sessions.where((s) => !s.isPlaying && !s.isPaused).toList()
-      ..sort((a, b) {
+    if (sortByLastActivity) {
+      return sessions..sort((a, b) {
         if (a.lastActivityDate == null && b.lastActivityDate == null) {
           return 0;
         }
@@ -313,6 +325,9 @@ class DeviceListScreen extends ConsumerWidget {
         if (b.lastActivityDate == null) return -1;
         return b.lastActivityDate!.compareTo(a.lastActivityDate!);
       });
+    } else {
+      return sessions..sort(_compareDeviceNames);
+    }
   }
 
   // Sliver builders for better code organization
@@ -321,7 +336,8 @@ class DeviceListScreen extends ConsumerWidget {
     WidgetRef ref,
     SessionState state,
   ) {
-    final activeSessions = _getActiveSessions(state);
+    final authState = ref.watch(authProvider);
+    final activeSessions = _getSessions(state, ref, authState, active: true);
     if (activeSessions.isEmpty) return [];
 
     return [
@@ -340,7 +356,14 @@ class DeviceListScreen extends ConsumerWidget {
     WidgetRef ref,
     SessionState state,
   ) {
-    final idleSessions = _getIdleSessions(state);
+    final authState = ref.watch(authProvider);
+    final idleSessions = _getSessions(
+      state,
+      ref,
+      authState,
+      active: false,
+      sortByLastActivity: true,
+    );
     if (idleSessions.isEmpty) return [];
 
     return [

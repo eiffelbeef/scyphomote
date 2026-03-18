@@ -143,6 +143,7 @@ class AuthNotifier extends Notifier<AuthState> {
         accessToken: authenticatedUser.accessToken,
         serverId: authenticatedUser.serverId,
         profileImageBase64: profileImageBase64,
+        isAdmin: authenticatedUser.isAdmin,
       );
 
       if (persist) {

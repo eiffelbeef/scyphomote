@@ -6,6 +6,7 @@ import 'premium_screen.dart';
 import '../providers/settings_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/billing_provider.dart';
+import '../providers/auth_provider.dart';
 import '../constants.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -181,6 +182,29 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          if (ref.watch(authProvider).currentUser?.isAdmin ?? false) ...[
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                'Admin',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SwitchListTile(
+              secondary: const Icon(Icons.visibility_off_outlined),
+              title: const Text("Hide other users' sessions"),
+              value: settings.hideOtherUsersSessions,
+              onChanged: (value) {
+                ref
+                    .read(settingsProvider.notifier)
+                    .setHideOtherUsersSessions(value);
+              },
+            ),
+          ],
           if (kDebugMode) ...[
             const Divider(),
             Padding(

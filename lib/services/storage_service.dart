@@ -12,6 +12,7 @@ class StorageService {
   static const String _browseSortByKey = 'browse_sort_by';
   static const String _browseSortOrderKey = 'browse_sort_order';
   static const String _libraryItemsPerRowKey = 'library_items_per_row';
+  static const String _hideOtherUsersSessionsKey = 'hide_other_users_sessions';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -150,5 +151,17 @@ class StorageService {
 
   Future<void> saveLibraryItemsPerRow(int count) async {
     await _storage.write(key: _libraryItemsPerRowKey, value: count.toString());
+  }
+
+  Future<bool?> getHideOtherUsersSessions() async {
+    final val = await _storage.read(key: _hideOtherUsersSessionsKey);
+    return val != null ? val == 'true' : null;
+  }
+
+  Future<void> saveHideOtherUsersSessions(bool hide) async {
+    await _storage.write(
+      key: _hideOtherUsersSessionsKey,
+      value: hide.toString(),
+    );
   }
 }
