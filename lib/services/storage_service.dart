@@ -164,4 +164,19 @@ class StorageService {
       value: hide.toString(),
     );
   }
+
+  // Locale
+  static const String _localeKey = 'locale';
+
+  Future<String?> getLocale() async {
+    return await _storage.read(key: _localeKey);
+  }
+
+  Future<void> saveLocale(String? localeCode) async {
+    if (localeCode == null) {
+      await _storage.delete(key: _localeKey);
+    } else {
+      await _storage.write(key: _localeKey, value: localeCode);
+    }
+  }
 }

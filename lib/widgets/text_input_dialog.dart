@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 
 class TextInputDialog extends StatefulWidget {
   final String title;
@@ -26,7 +27,7 @@ class TextInputDialog extends StatefulWidget {
     required BuildContext context,
     required String title,
     String? subtitle,
-    String labelText = 'Message',
+    String? labelText,
     String? hintText,
     String? initialText,
     int maxLines = 1,
@@ -38,7 +39,7 @@ class TextInputDialog extends StatefulWidget {
       builder: (context) => TextInputDialog(
         title: title,
         subtitle: subtitle,
-        labelText: labelText,
+        labelText: labelText ?? AppLocalizations.of(context)!.message,
         hintText: hintText,
         initialText: initialText,
         maxLines: maxLines,
@@ -107,7 +108,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
         FilledButton(
           onPressed: () {
@@ -117,7 +118,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
               Navigator.pop(context);
             }
           },
-          child: const Text('Send'),
+          child: Text(AppLocalizations.of(context)!.send),
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import '../widgets/user_avatar.dart';
 import 'login_screen.dart';
 
@@ -10,11 +11,12 @@ class UserManagementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Users')),
+      appBar: AppBar(title: Text(l10n.manageUsers)),
       body: authState.users.isEmpty
-          ? const Center(child: Text('No saved users'))
+          ? Center(child: Text(l10n.noSavedUsers))
           : ListView.builder(
               itemCount: authState.users.length,
               itemBuilder: (context, index) {
@@ -43,12 +45,14 @@ class UserManagementScreen extends ConsumerWidget {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Delete User'),
-                        content: Text('Delete ${user.username}?'),
+                        title: Text(l10n.deleteUser),
+                        content: Text(
+                          l10n.deleteUserConfirmation(user.username),
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Cancel'),
+                            child: Text(l10n.cancel),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -66,7 +70,7 @@ class UserManagementScreen extends ConsumerWidget {
                                 }
                               }
                             },
-                            child: const Text('Delete'),
+                            child: Text(l10n.delete),
                           ),
                         ],
                       ),
@@ -82,7 +86,7 @@ class UserManagementScreen extends ConsumerWidget {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('Add User'),
+        label: Text(l10n.addUser),
       ),
     );
   }

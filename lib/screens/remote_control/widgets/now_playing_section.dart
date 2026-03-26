@@ -12,6 +12,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../utils/logger.dart';
 import '../../../utils/ui_utils.dart';
 import 'remote_button.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class NowPlayingSection extends ConsumerStatefulWidget {
   final Session session;
@@ -40,11 +41,11 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final imageUrl = widget.imageUrl;
     final artworkSize = widget.artworkSize;
     final nowPlaying = session.nowPlaying;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Artwork Section
         Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
@@ -66,7 +67,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
             else
               _buildPlaceholder(context, size: artworkSize),
 
-            // Skip Button
             if (nowPlaying != null && nowPlaying.isVideo)
               Consumer(
                 builder: (context, ref, child) {
@@ -104,7 +104,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                 .seek(activeSegment.endSeconds.toInt());
                           },
                           icon: const Icon(Icons.skip_next),
-                          label: Text('Skip ${activeSegment.type}'),
+                          label: Text(l10n.skipType(activeSegment.type)),
                           style: FilledButton.styleFrom(
                             backgroundColor: Theme.of(
                               context,
@@ -126,14 +126,10 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
         const SizedBox(height: 16),
 
-        // Media Info
         if (nowPlaying != null) ...[
           InkWell(
             onTap: nowPlaying.isVideo
-                ? () => _showCastAndCrew(
-                    context,
-                    nowPlaying.seriesId ?? nowPlaying.id,
-                  )
+                ? () => _showCastAndCrew(nowPlaying.seriesId ?? nowPlaying.id)
                 : null,
             borderRadius: BorderRadius.circular(8),
             child: Padding(
@@ -169,7 +165,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           if (nowPlaying.displaySubtitle != null)
             InkWell(
               onTap: nowPlaying.type == 'Episode'
-                  ? () => _showCastAndCrew(context, nowPlaying.id)
+                  ? () => _showCastAndCrew(nowPlaying.id)
                   : null,
               borderRadius: BorderRadius.circular(8),
               child: Padding(
@@ -204,7 +200,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
           const SizedBox(height: 8),
 
-          // Playback Method Indicator
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -214,18 +209,22 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Playback Details'),
+                        title: Text(l10n.playbackDetails),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Method: ${session.playMethod}'),
+                            Text(
+                              l10n.playMethod(session.playMethod ?? l10n.none),
+                            ),
                             if (session.transcodeReasons != null &&
                                 session.transcodeReasons!.isNotEmpty) ...[
                               const SizedBox(height: 16),
-                              const Text(
-                                'Transcode Reasons:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              Text(
+                                l10n.transcodeReasons,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               ...session.transcodeReasons!.map(
@@ -237,7 +236,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Close'),
+                            child: Text(l10n.close),
                           ),
                         ],
                       ),
@@ -265,8 +264,8 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         const SizedBox(width: 8),
                         Text(
                           session.playMethod == 'Transcode'
-                              ? 'Transcoding'
-                              : 'Direct Play',
+                              ? l10n.transcoding
+                              : l10n.directPlay,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(width: 4),
@@ -284,7 +283,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                 InkWell(
                   onTap: _isLoadingMediaInfo
                       ? null
-                      : () => _showMediaInfoDialog(context, nowPlaying.id),
+                      : () => _showMediaInfoDialog(nowPlaying.id),
                   borderRadius: BorderRadius.circular(4),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -326,27 +325,26 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
             ],
           ),
         ] else ...[
-          // Idle State: No Media Playing
           Text(
-            'No media playing',
+            l10n.noMediaPlaying,
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Use the remote or browse library to play',
+            l10n.useRemoteOrBrowse,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          // Idle State Message Button
           MessageButton(session: session),
         ],
       ],
     );
   }
 
-  void _showMediaInfoDialog(BuildContext context, String itemId) async {
+  void _showMediaInfoDialog(String itemId) async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() => _isLoadingMediaInfo = true);
 
     try {
@@ -356,7 +354,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
       final mediaSources = info?['MediaSources'] as List?;
       if (mediaSources == null || mediaSources.isEmpty) {
-        UiUtils.showErrorToast('Info', 'No media sources found');
+        UiUtils.showErrorToast('Info', l10n.noMediaSourcesFound);
         return;
       }
 
@@ -375,52 +373,52 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Media Details'),
+          title: Text(l10n.mediaDetails),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _infoRow('Container', source['Container']),
+                _infoRow(l10n.container, source['Container']),
                 _infoRow(
-                  'Size',
+                  l10n.size,
                   source['Size'] != null
                       ? '${(source['Size'] / 1024 / 1024).toStringAsFixed(1)} MB'
                       : null,
                 ),
                 const Divider(),
                 if (videoStream != null) ...[
-                  const Text(
-                    'Video',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.video,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  _infoRow('Codec', videoStream['Codec']),
+                  _infoRow(l10n.codec, videoStream['Codec']),
                   _infoRow(
-                    'Resolution',
+                    l10n.resolution,
                     '${videoStream['Width']}x${videoStream['Height']}',
                   ),
                   _infoRow(
-                    'Bitrate',
+                    l10n.bitrate,
                     videoStream['BitRate'] != null
                         ? '${(videoStream['BitRate'] / 1000).toStringAsFixed(1)} kbps'
                         : null,
                   ),
                   _infoRow(
-                    'Framerate',
+                    l10n.framerate,
                     videoStream['RealFrameRate']?.toString(),
                   ),
                   const Divider(),
                 ],
                 if (audioStream != null) ...[
-                  const Text(
-                    'Audio',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.audio,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  _infoRow('Codec', audioStream['Codec']),
-                  _infoRow('Language', audioStream['Language']),
-                  _infoRow('Channels', audioStream['Channels']?.toString()),
+                  _infoRow(l10n.codec, audioStream['Codec']),
+                  _infoRow(l10n.language, audioStream['Language']),
+                  _infoRow(l10n.channels, audioStream['Channels']?.toString()),
                   _infoRow(
-                    'Bitrate',
+                    l10n.bitrate,
                     audioStream['BitRate'] != null
                         ? '${(audioStream['BitRate'] / 1000).toStringAsFixed(1)} kbps'
                         : null,
@@ -432,7 +430,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: Text(l10n.close),
             ),
           ],
         ),
@@ -448,19 +446,23 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
   Widget _infoRow(String label, String? value) {
     if (value == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(
+            l10n.labelFormat(label),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
           Expanded(child: Text(value)),
         ],
       ),
     );
   }
 
-  void _showCastAndCrew(BuildContext context, String itemId) async {
+  void _showCastAndCrew(String itemId) async {
     final nowPlaying = widget.session.nowPlaying;
     if (nowPlaying == null) return;
 
@@ -482,6 +484,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
               maxChildSize: 0.9,
               expand: false,
               builder: (context, scrollController) {
+                final l10n = AppLocalizations.of(context)!;
                 return Column(
                   children: [
                     const SizedBox(height: 12),
@@ -498,7 +501,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        'Cast & Crew',
+                        l10n.castAndCrew,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -519,9 +522,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                               : []);
 
                           if (people.isEmpty) {
-                            return const Center(
-                              child: Text('No cast information available'),
-                            );
+                            return Center(child: Text(l10n.noCastInfo));
                           }
 
                           return ListView.builder(
@@ -635,8 +636,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         },
                         loading: () =>
                             const Center(child: CircularProgressIndicator()),
-                        error: (err, stack) =>
-                            Center(child: Text('Error loading cast: $err')),
+                        error: (err, stack) => Center(
+                          child: Text(l10n.errorLoadingCast(err.toString())),
+                        ),
                       ),
                     ),
                   ],

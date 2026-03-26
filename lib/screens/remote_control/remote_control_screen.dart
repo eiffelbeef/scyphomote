@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import '../../models/session.dart';
 
 import '../../providers/auth_provider.dart';
@@ -43,11 +44,12 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     final sessionState = ref.watch(sessionProvider);
     final session = sessionState.selectedSession;
     final user = authState.currentUser;
+    final l10n = AppLocalizations.of(context)!;
 
     if (session == null || user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Remote Control')),
-        body: const Center(child: Text('No session selected')),
+        appBar: AppBar(title: Text(l10n.remoteControl)),
+        body: Center(child: Text(l10n.noSessionSelected)),
       );
     }
 
@@ -102,7 +104,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
           if (HomeWidgetManager.isWidgetSupported)
             IconButton(
               icon: const Icon(Icons.add_to_home_screen),
-              tooltip: 'Add Remote Widget',
+              tooltip: l10n.addRemoteWidget,
               onPressed: () => _pinWidget(context, session),
             ),
           IconButton(
@@ -231,11 +233,17 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
         sessionId: session.sessionId,
       );
       if (context.mounted) {
-        UiUtils.showSnackBar(context, 'Widget pinned to Home Screen');
+        UiUtils.showSnackBar(
+          context,
+          AppLocalizations.of(context)!.widgetPinned,
+        );
       }
     } catch (e) {
       if (context.mounted) {
-        UiUtils.showSnackBar(context, 'Failed to pin widget: $e');
+        UiUtils.showSnackBar(
+          context,
+          AppLocalizations.of(context)!.widgetPinFailed(e.toString()),
+        );
       }
     }
   }
@@ -244,37 +252,38 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
-          title: const Text('Session Info'),
+          title: Text(l10n.sessionInfo),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _infoItem('User', session.userName),
-                _infoItem('Client', session.clientName),
-                _infoItem('Device Name', session.deviceName),
+                _infoItem(l10n.user, session.userName),
+                _infoItem(l10n.client, session.clientName),
+                _infoItem(l10n.deviceName, session.deviceName),
                 _infoItem(
-                  'App Version',
-                  session.applicationVersion ?? 'unknown',
+                  l10n.appVersion,
+                  session.applicationVersion ?? l10n.none,
                 ),
-                _infoItem('Session ID', session.sessionId),
+                _infoItem(l10n.sessionId, session.sessionId),
                 _infoItem(
-                  'Can Seek',
-                  session.playState?.canSeek.toString() ?? 'unknown',
+                  l10n.canSeek,
+                  session.playState?.canSeek.toString() ?? l10n.none,
                 ),
                 _infoItem(
-                  'Supports Media Control',
+                  l10n.supportsMediaControl,
                   session.supportsMediaControl.toString(),
                 ),
                 _infoItem(
-                  'Supports Remote Control',
+                  l10n.supportsRemoteControl,
                   session.supportsRemoteControl.toString(),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Playable Media Types:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  l10n.playableMediaTypes,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Wrap(
@@ -295,9 +304,9 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                   }).toList(),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Supported Commands:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                Text(
+                  l10n.supportedCommands,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Wrap(
@@ -323,7 +332,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: Text(l10n.close),
             ),
           ],
         );
@@ -332,12 +341,16 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
   }
 
   Widget _infoItem(String label, String value) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            l10n.labelFormat(label),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           Expanded(
             child: Text(value, style: const TextStyle(fontFamily: 'monospace')),
           ),

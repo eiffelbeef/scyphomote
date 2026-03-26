@@ -9,11 +9,15 @@ import 'screens/about_screen.dart';
 import 'screens/premium_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/locale_provider.dart';
 import 'providers/session_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'widgets/home_widget_manager.dart';
 import 'utils/logger.dart';
+import 'utils/ui_utils.dart';
 import 'constants.dart';
 
 void main() async {
@@ -65,6 +69,15 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
   }
 
   Future<void> _handleWidgetLaunch(Uri uri) async {
+    // Pre-resolve all localized strings before any async work
+    final ctx = AppConstants.navigatorKey.currentContext;
+    if (ctx == null) return;
+    final l10n = AppLocalizations.of(ctx)!;
+    final msgPleaseLogin = l10n.pleaseLogInFirst;
+    final msgConnecting = l10n.connectingToSession;
+    final msgNotFound = l10n.sessionNotFoundOrOffline;
+    final msgLaunched = l10n.launchedFromRemoteWidget;
+
     if (uri.host == 'remote') {
       final sessionId = uri.queryParameters['session_id'];
       if (sessionId != null) {
@@ -81,14 +94,16 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
         }
 
         if (ref.read(authProvider).currentUser == null) {
-          AppConstants.messengerKey.currentState?.showSnackBar(
-            const SnackBar(content: Text('Please log in first')),
+          UiUtils.showSnackBar(
+            AppConstants.navigatorKey.currentContext,
+            msgPleaseLogin,
           );
           return;
         }
 
-        AppConstants.messengerKey.currentState?.showSnackBar(
-          const SnackBar(content: Text('Connecting to session...')),
+        UiUtils.showSnackBar(
+          AppConstants.navigatorKey.currentContext,
+          msgConnecting,
         );
 
         final sessionNotifier = ref.read(sessionProvider.notifier);
@@ -108,13 +123,15 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
             navigator.pushNamed(RemoteControlScreen.routeName);
           }
         } else {
-          AppConstants.messengerKey.currentState?.showSnackBar(
-            const SnackBar(content: Text('Session not found or offline')),
+          UiUtils.showSnackBar(
+            AppConstants.navigatorKey.currentContext,
+            msgNotFound,
           );
         }
       } else {
-        AppConstants.messengerKey.currentState?.showSnackBar(
-          const SnackBar(content: Text('Launched from Remote Widget')),
+        UiUtils.showSnackBar(
+          AppConstants.navigatorKey.currentContext,
+          msgLaunched,
         );
       }
     } else if (uri.host == 'upgrade') {
@@ -153,6 +170,7 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final themeMode = ref.watch(themeProvider);
+    final locale = ref.watch(localeProvider);
     final isLoading = authState.isLoading;
 
     final lightColorScheme = ColorScheme.fromSeed(
@@ -168,6 +186,9 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
       navigatorKey: AppConstants.navigatorKey,
       scaffoldMessengerKey: AppConstants.messengerKey,
       title: AppConstants.appName,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: locale,
       theme: ThemeData(
         colorScheme: lightColorScheme,
         useMaterial3: true,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'user_management_screen.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import '../constants.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -56,6 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context)!;
     final hasUsers = authState.users.isNotEmpty;
 
     return Scaffold(
@@ -80,17 +82,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 48),
                     TextFormField(
                       controller: _serverUrlController,
-                      decoration: const InputDecoration(
-                        labelText: 'Server URL',
-                        hintText: 'http://192.168.1.100:8096',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.dns),
+                      decoration: InputDecoration(
+                        labelText: l10n.serverUrl,
+                        hintText: l10n.serverUrlHint,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.dns),
                       ),
                       keyboardType: TextInputType.url,
                       autofillHints: const [AutofillHints.url],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter server URL';
+                          return l10n.pleaseEnterServerUrl;
                         }
                         return null;
                       },
@@ -98,15 +100,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person),
+                      decoration: InputDecoration(
+                        labelText: l10n.username,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person),
                       ),
                       autofillHints: const [AutofillHints.username],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter username';
+                          return l10n.pleaseEnterUsername;
                         }
                         return null;
                       },
@@ -114,10 +116,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.lock),
+                      decoration: InputDecoration(
+                        labelText: l10n.password,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.lock),
                       ),
                       obscureText: true,
                       autofillHints: const [AutofillHints.password],
@@ -143,13 +145,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Login'),
+                          : Text(l10n.login),
                     ),
                     if (kDebugMode) ...[
                       const SizedBox(height: 12),
                       TextButton(
                         onPressed: authState.isLoading ? null : _loginDemo,
-                        child: const Text("Try on Jellfyn's demo server"),
+                        child: Text(l10n.tryOnJellyfinDemoServer),
                       ),
                     ],
                     if (hasUsers) ...[
@@ -163,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text('Manage Users'),
+                        child: Text(l10n.manageUsers),
                       ),
                     ],
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/billing_provider.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 
 class PremiumScreen extends ConsumerWidget {
   static const routeName = '/premium';
@@ -12,9 +13,10 @@ class PremiumScreen extends ConsumerWidget {
     final isPremium = ref.watch(isPremiumProvider);
     final billingService = ref.read(billingServiceProvider);
     final isAvailable = billingService.isAvailable;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Unlock Premium')),
+      appBar: AppBar(title: Text(l10n.unlockPremium)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -30,7 +32,7 @@ class PremiumScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isPremium ? 'You are Premium!' : 'Unlock Scyphomote Premium',
+                isPremium ? l10n.youArePremium : l10n.unlockScyphomotePremium,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -38,9 +40,7 @@ class PremiumScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                isPremium
-                    ? 'Thank you for supporting the app. You now have full access to current and future premium features!'
-                    : 'This feature is locked behind Scyphomote Premium. Purchasing premium grants you access to current and future premium features, forever.',
+                isPremium ? l10n.premiumThankYou : l10n.premiumDescription,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -55,12 +55,24 @@ class PremiumScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Premium Features:',
+                          l10n.premiumFeatures,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        const Row(
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              size: 20,
+                              color: Colors.green,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(l10n.premiumFeatureWidget)),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
                           children: [
                             Icon(
                               Icons.check_circle,
@@ -69,22 +81,8 @@ class PremiumScreen extends ConsumerWidget {
                             ),
                             SizedBox(width: 8),
                             Expanded(
-                              child: Text(
-                                'Home Screen Widget (control devices without opening the app)',
-                              ),
+                              child: Text(l10n.supportFutureDevelopment),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              size: 20,
-                              color: Colors.green,
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(child: Text('Support future development')),
                           ],
                         ),
                       ],
@@ -100,7 +98,7 @@ class PremiumScreen extends ConsumerWidget {
                       ref.read(isPremiumProvider.notifier).buyPremium();
                     },
                     icon: const Icon(Icons.shopping_cart),
-                    label: const Text('Buy Now'),
+                    label: Text(l10n.buyNow),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,

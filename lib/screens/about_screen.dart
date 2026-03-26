@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   static const routeName = '/about';
@@ -18,13 +19,17 @@ class AboutScreen extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context, String label, String text) {
     Clipboard.setData(ClipboardData(text: text));
-    UiUtils.showSnackBar(context, '$label address copied to clipboard');
+    UiUtils.showSnackBar(
+      context,
+      AppLocalizations.of(context)!.addressCopied(label),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(l10n.aboutSection)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -39,13 +44,13 @@ class AboutScreen extends StatelessWidget {
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const Text('A Remote for Jellyfin'),
-            Text('Version ${AppConstants.appVersion}'),
+            Text(l10n.aRemoteForJellyfin),
+            Text(l10n.version(AppConstants.appVersion)),
             const SizedBox(height: 32),
             const Divider(),
             const SizedBox(height: 24),
             Text(
-              'Author',
+              l10n.author,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -76,7 +81,7 @@ class AboutScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.code_rounded, size: 20),
                     const SizedBox(width: 8),
-                    const Text('GitHub Repository'),
+                    Text(l10n.githubRepository),
                   ],
                 ),
               ),
@@ -85,17 +90,17 @@ class AboutScreen extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 24),
             Text(
-              'Privacy Policy',
+              l10n.privacyPolicy,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Scyphomote does not collect, store, or process any of your personal data. All communication occurs directly between your device and your Jellyfin server.',
+                l10n.privacyPolicyDesc,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14),
               ),
@@ -105,7 +110,7 @@ class AboutScreen extends StatelessWidget {
               const Divider(),
               const SizedBox(height: 24),
               Text(
-                'Support the Developer',
+                l10n.supportDeveloper,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -127,19 +132,18 @@ class AboutScreen extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.favorite, color: Colors.amber),
-                      SizedBox(width: 8),
-                      Text('Donate using Liberapay'),
+                      const Icon(Icons.favorite, color: Colors.amber),
+                      const SizedBox(width: 8),
+                      Text(l10n.donateUsingLiberapay),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               _SupportItem(
-                context: context,
                 label: 'BTC',
                 address: '1CoFc1bY5AHLP6Noe1zmqnJnp7ZWBxyo79',
                 onCopy: () => _copyToClipboard(
@@ -149,7 +153,6 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
               _SupportItem(
-                context: context,
                 label: 'ETH',
                 address: '0xf68f568e21a15934e0e9a6949288c3ca009140ba',
                 onCopy: () => _copyToClipboard(
@@ -159,7 +162,6 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
               _SupportItem(
-                context: context,
                 label: 'XMR',
                 address:
                     '88wjCuhHX3oNhVpEdYeUx3LvrkdTvcTHx7v7L5fQpjCg7QiAReJUVR4LPase5Byj2UhdVdLtvysJaXTFKq2EnuvuLjvQMGL',
@@ -171,13 +173,13 @@ class AboutScreen extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 8),
-            const Text(
-              'Licensed under GNU AGPLv3',
-              style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+            Text(
+              l10n.licenseDev,
+              style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 64),
             Text(
-              '© 2026 EiffelBeef',
+              l10n.copyrightEiffelBeef,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -188,13 +190,11 @@ class AboutScreen extends StatelessWidget {
 }
 
 class _SupportItem extends StatelessWidget {
-  final BuildContext context;
   final String label;
   final String address;
   final VoidCallback onCopy;
 
   const _SupportItem({
-    required this.context,
     required this.label,
     required this.address,
     required this.onCopy,
@@ -219,7 +219,7 @@ class _SupportItem extends StatelessWidget {
           trailing: IconButton(
             icon: const Icon(Icons.copy, size: 20),
             onPressed: onCopy,
-            tooltip: 'Copy address',
+            tooltip: AppLocalizations.of(context)!.copyAddress,
           ),
         ),
       ),

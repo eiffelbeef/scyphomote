@@ -1,0 +1,226 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Scyphomote",
+  "settingsTitle": "Paramètres",
+  "premiumSection": "Premium",
+  "premiumSubtitle": "Scyphomote Premium",
+  "appearanceSection": "Apparence",
+  "themeModeTitle": "Thème",
+  "themeAuto": "Auto",
+  "themeLight": "Clair",
+  "themeDark": "Sombre",
+  "themeFollowSystemName": "Suivre le système",
+  "themeLightModeName": "Mode clair",
+  "themeDarkModeName": "Mode sombre",
+  "performanceSection": "Performance",
+  "playerRefreshRateTitle": "Taux de rafraîchissement du lecteur",
+  "deviceListAutoRefreshTitle": "Rafraîchissement auto de la liste d'appareils",
+  "listRefreshRateTitle": "Taux de rafraîchissement de la liste",
+  "librarySection": "Bibliothèque",
+  "itemsPerRowTitle": "Éléments par ligne",
+  "adminSection": "Administration",
+  "hideOtherUsersSessionsTitle": "Masquer les sessions des autres utilisateurs",
+  "debugSection": "Débogage",
+  "spoofPremiumStatusTitle": "Simuler le statut Premium",
+  "aboutSection": "À propos",
+  "aboutAppTitle": "À propos de {appName}",
+  "@aboutAppTitle": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "secondsPlural": "{count, plural, =1{1 seconde} other{{count} secondes}}",
+  "@secondsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsShort": "{count}s",
+  "@secondsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsPlural": "{count, plural, =1{1 élément} other{{count} éléments}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Annuler",
+  "send": "Envoyer",
+  "aRemoteForJellyfin": "Une télécommande pour Jellyfin",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "githubRepository": "Dépôt GitHub",
+  "donateUsingLiberapay": "Faire un don via Liberapay",
+  "login": "Connexion",
+  "tryOnJellyfinDemoServer": "Essayer sur le serveur démo de Jellyfin",
+  "manageUsers": "Gérer les utilisateurs",
+  "remoteControl": "Télécommande",
+  "noSessionSelected": "Aucune session sélectionnée",
+  "sessionInfo": "Informations de session",
+  "close": "Fermer",
+  "notAuthenticated": "Non authentifié",
+  "library": "Bibliothèque",
+  "errorMsg": "Erreur : {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "typeToSearch": "Rechercher...",
+  "noResultsFound": "Aucun résultat",
+  "lastAdded": "Derniers ajoutés",
+  "oldestAdded": "Plus anciens",
+  "nameAZ": "Nom (A-Z)",
+  "nameZA": "Nom (Z-A)",
+  "noSavedUsers": "Aucun utilisateur enregistré",
+  "deleteUser": "Supprimer l'utilisateur",
+  "deleteUserConfirmation": "Supprimer {username} ?",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
+  "delete": "Supprimer",
+  "addUser": "Ajouter un utilisateur",
+  "unlockPremium": "Débloquer Premium",
+  "supportFutureDevelopment": "Soutenir le développement futur",
+  "pleaseLogInFirst": "Veuillez d'abord vous connecter",
+  "connectingToSession": "Connexion à la session...",
+  "sessionNotFoundOrOffline": "Session introuvable ou hors ligne",
+  "launchedFromRemoteWidget": "Lancé depuis le widget télécommande",
+  "addressCopied": "Adresse {label} copiée dans le presse-papiers",
+  "@addressCopied": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "author": "Auteur",
+  "privacyPolicy": "Politique de confidentialité",
+  "privacyPolicyDesc": "Scyphomote ne collecte, ne stocke et ne traite aucune de vos données personnelles. Toute communication se fait directement entre votre appareil et votre serveur Jellyfin.",
+  "supportDeveloper": "Soutenir le développeur",
+  "licenseDev": "Sous licence GNU AGPLv3",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "copyAddress": "Copier l'adresse",
+  "browse": "Parcourir",
+  "remote": "Télécommande",
+  "failedToLoadItemDetails": "Impossible de charger les détails",
+  "noStreamAvailable": "Aucun {streamType} disponible",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": { "type": "String" }
+    }
+  },
+  "none": "Aucun",
+  "skipType": "Passer {type}",
+  "@skipType": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "playbackDetails": "Détails de lecture",
+  "playMethod": "Méthode : {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": { "type": "String" }
+    }
+  },
+  "mediaDetails": "Détails du média",
+  "labelFormat": "{label} : ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "noCastInfo": "Aucune information sur la distribution disponible",
+  "errorLoadingCast": "Erreur de chargement de la distribution : {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "buyNow": "Acheter",
+  "languageTitle": "Langue",
+  "languageSystem": "Système",
+  "serverUrl": "URL du serveur",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "username": "Nom d'utilisateur",
+  "password": "Mot de passe",
+  "pleaseEnterServerUrl": "Veuillez entrer l'URL du serveur",
+  "pleaseEnterUsername": "Veuillez entrer le nom d'utilisateur",
+  "youArePremium": "Vous êtes Premium !",
+  "unlockScyphomotePremium": "Débloquer Scyphomote Premium",
+  "premiumThankYou": "Merci de soutenir l'application. Vous avez désormais accès à toutes les fonctionnalités premium, actuelles et futures !",
+  "premiumDescription": "Cette fonctionnalité est réservée à Scyphomote Premium. L'achat de Premium vous donne accès à toutes les fonctionnalités premium, actuelles et futures, pour toujours.",
+  "premiumFeatures": "Fonctionnalités Premium :",
+  "premiumFeatureWidget": "Widget d'écran d'accueil (contrôler les appareils sans ouvrir l'application)",
+  "addRemoteWidget": "Ajouter le widget télécommande",
+  "widgetPinned": "Widget épinglé sur l'écran d'accueil",
+  "widgetPinFailed": "Impossible d'épingler le widget : {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "playableMediaTypes": "Types de médias lisibles :",
+  "supportedCommands": "Commandes supportées :",
+  "noActiveDevicesFound": "Aucun appareil actif trouvé",
+  "startPlayingMediaOnJellyfinClient": "Commencez à lire un média sur un client Jellyfin",
+  "activeDevices": "Appareils actifs",
+  "idleDevices": "Appareils inactifs",
+  "messageAllSessions": "Envoyer un message à toutes les sessions",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 session recevra ce message} other{{count} sessions recevront ce message}}",
+  "@sessionsWillReceiveMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "messageSentToSessions": "{count, plural, =1{Message envoyé à 1 session} other{Message envoyé à {count} sessions}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noActiveSessionSelected": "Aucune session active sélectionnée",
+  "transcoding": "Transcodage",
+  "directPlay": "Lecture directe",
+  "noMediaPlaying": "Aucun média en cours de lecture",
+  "useRemoteOrBrowse": "Utilisez la télécommande ou parcourez la bibliothèque pour lire",
+  "castAndCrew": "Distribution et équipe",
+  "message": "Message",
+  "container": "Conteneur",
+  "size": "Taille",
+  "video": "Vidéo",
+  "audio": "Audio",
+  "codec": "Codec",
+  "resolution": "Résolution",
+  "bitrate": "Débit",
+  "framerate": "Fréquence d'images",
+  "language": "Langue",
+  "channels": "Canaux",
+  "noMediaSourcesFound": "Aucune source média trouvée",
+  "user": "Utilisateur",
+  "client": "Client",
+  "deviceName": "Nom de l'appareil",
+  "appVersion": "Version de l'application",
+  "sessionId": "ID de session",
+  "canSeek": "Peut avancer/reculer",
+  "supportsMediaControl": "Supporte le contrôle média",
+  "supportsRemoteControl": "Supporte la télécommande",
+  "transcodeReasons": "Raisons du transcodage :"
+}

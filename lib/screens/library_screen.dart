@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
@@ -62,7 +63,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final user = ref.watch(authProvider).currentUser;
 
     if (user == null) {
-      return const Scaffold(body: Center(child: Text('Not authenticated')));
+      return Scaffold(
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.notAuthenticated),
+        ),
+      );
     }
 
     final sessionState = ref.watch(sessionProvider);
@@ -83,11 +88,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Library')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.librarySection)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-          ? Center(child: Text('Error: $_error'))
+          ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
           : filteredViews.isEmpty &&
                 _resumeItems.isEmpty &&
                 _nextUpItems.isEmpty

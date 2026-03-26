@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../models/session.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import 'ui_utils.dart';
 
 Future<void> playItemOnRemote(
@@ -15,7 +16,10 @@ Future<void> playItemOnRemote(
   final itemId = item['Id'] as String;
 
   if (user == null || session == null) {
-    UiUtils.showSnackBar(context, 'No active session selected');
+    UiUtils.showSnackBar(
+      context,
+      AppLocalizations.of(context)!.noActiveSessionSelected,
+    );
     return;
   }
 

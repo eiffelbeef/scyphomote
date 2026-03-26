@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
@@ -267,11 +268,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
 
   Widget _buildSearchResults() {
     if (!_searchSubmitted) {
-      return const Center(child: Text('Type to search...'));
+      return Center(child: Text(AppLocalizations.of(context)!.typeToSearch));
     }
 
     if (_items.isEmpty) {
-      return const Center(child: Text('No results found'));
+      return Center(child: Text(AppLocalizations.of(context)!.noResultsFound));
     }
 
     final artists = _items.where((i) => i['Type'] == 'MusicArtist').toList();
@@ -408,24 +409,24 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                   value: 'DateCreated,Descending',
                   checked:
                       _sortBy == 'DateCreated' && _sortOrder == 'Descending',
-                  child: const Text('Last Added'),
+                  child: Text(AppLocalizations.of(context)!.lastAdded),
                 ),
                 CheckedPopupMenuItem(
                   value: 'DateCreated,Ascending',
                   checked:
                       _sortBy == 'DateCreated' && _sortOrder == 'Ascending',
-                  child: const Text('Oldest Added'),
+                  child: Text(AppLocalizations.of(context)!.oldestAdded),
                 ),
                 const PopupMenuDivider(),
                 CheckedPopupMenuItem(
                   value: 'SortName,Ascending',
                   checked: _sortBy == 'SortName' && _sortOrder == 'Ascending',
-                  child: const Text('Name (A-Z)'),
+                  child: Text(AppLocalizations.of(context)!.nameAZ),
                 ),
                 CheckedPopupMenuItem(
                   value: 'SortName,Descending',
                   checked: _sortBy == 'SortName' && _sortOrder == 'Descending',
-                  child: const Text('Name (Z-A)'),
+                  child: Text(AppLocalizations.of(context)!.nameZA),
                 ),
               ],
             ),
@@ -435,7 +436,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-          ? Center(child: Text('Error: $_error'))
+          ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
           : _isSearching
           ? _buildSearchResults()
           : widget.parentType == 'MusicAlbum'

@@ -50,8 +50,8 @@ class UiUtils {
     );
   }
 
-  static void showSnackBar(BuildContext context, String message) {
-    if (!context.mounted) return;
+  static void showSnackBar(BuildContext? context, String message) {
+    if (context == null || !context.mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(

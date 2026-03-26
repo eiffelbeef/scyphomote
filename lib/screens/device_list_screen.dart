@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/constants.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/session_provider.dart';
@@ -21,6 +22,7 @@ class DeviceListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final sessionState = ref.watch(sessionProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (sessionState.isLoading && sessionState.sessions.isEmpty) {
       return const LoadingScreen();
@@ -77,13 +79,11 @@ class DeviceListScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No active devices found',
+                            l10n.noActiveDevicesFound,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Start playing media on a Jellyfin client',
-                          ),
+                          Text(l10n.startPlayingMediaOnJellyfinClient),
                         ],
                       ),
                     ),
@@ -139,22 +139,21 @@ class DeviceListScreen extends ConsumerWidget {
   Widget _buildDeviceCard(
     BuildContext context,
     WidgetRef ref,
-    dynamic session,
+    Session session,
   ) {
     final authState = ref.read(authProvider);
+    final l10n = AppLocalizations.of(context)!;
     final isPlaying = session.isPlaying;
     final isPaused = session.isPaused;
     final isActive = isPlaying || isPaused;
 
     // Calculate progress for active sessions
     double progress = 0.0;
-    if (session.nowPlaying != null &&
-        session.nowPlaying!.durationSeconds > 0 &&
-        session.playState != null) {
-      progress =
-          (session.playState!.positionSeconds /
-                  session.nowPlaying!.durationSeconds)
-              .clamp(0.0, 1.0);
+    final duration = session.nowPlaying?.durationSeconds ?? 0;
+    final position = session.playState?.positionSeconds ?? 0;
+
+    if (duration > 0) {
+      progress = (position / duration).clamp(0.0, 1.0);
     }
 
     return Card(
@@ -225,8 +224,8 @@ class DeviceListScreen extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Text(
                               session.playMethod == 'Transcode'
-                                  ? 'Transcoding'
-                                  : 'Direct Play',
+                                  ? l10n.transcoding
+                                  : l10n.directPlay,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             if (session.playState?.positionSeconds != null &&
@@ -343,7 +342,7 @@ class DeviceListScreen extends ConsumerWidget {
     return [
       _buildSectionHeader(
         context,
-        'Active Devices',
+        AppLocalizations.of(context)!.activeDevices,
         Theme.of(context).colorScheme.primary,
         const EdgeInsets.fromLTRB(16, 16, 16, 8),
       ),
@@ -369,7 +368,7 @@ class DeviceListScreen extends ConsumerWidget {
     return [
       _buildSectionHeader(
         context,
-        'Idle Devices',
+        AppLocalizations.of(context)!.idleDevices,
         Theme.of(context).colorScheme.secondary,
         const EdgeInsets.fromLTRB(16, 24, 16, 8),
       ),
@@ -421,11 +420,12 @@ class DeviceListScreen extends ConsumerWidget {
     final sessionState = ref.read(sessionProvider);
     final supportedSessions = _getSessionsSupportingMessaging(sessionState);
 
+    final l10n = AppLocalizations.of(context)!;
+
     TextInputDialog.show(
       context: context,
-      title: 'Message all sessions',
-      subtitle:
-          '${supportedSessions.length} session(s) will receive this message',
+      title: l10n.messageAllSessions,
+      subtitle: l10n.sessionsWillReceiveMessage(supportedSessions.length),
       maxLines: 3,
       onSend: (text) async {
         final authState = ref.read(authProvider);
@@ -451,7 +451,7 @@ class DeviceListScreen extends ConsumerWidget {
         if (context.mounted) {
           UiUtils.showSnackBar(
             context,
-            'Message sent to $successCount session(s)',
+            AppLocalizations.of(context)!.messageSentToSessions(successCount),
           );
         }
       },

@@ -7,6 +7,8 @@ import '../providers/settings_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/billing_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/locale_provider.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 import '../constants.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -17,16 +19,18 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final settings = ref.watch(settingsProvider);
+    final currentLocale = ref.watch(localeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
           if (ref.watch(billingServiceProvider).isAvailable) ...[
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
-                'Premium',
+                AppLocalizations.of(context)!.premiumSection,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -35,7 +39,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.star_outline),
-              title: const Text('Scyphomote Premium'),
+              title: Text(AppLocalizations.of(context)!.premiumSubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.of(context).pushNamed(PremiumScreen.routeName);
@@ -46,7 +50,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Appearance',
+              AppLocalizations.of(context)!.appearanceSection,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -55,8 +59,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.palette_outlined),
-            title: const Text('Theme Mode'),
-            subtitle: Text(_getThemeModeName(themeMode)),
+            title: Text(AppLocalizations.of(context)!.themeModeTitle),
+            subtitle: Text(_getThemeModeName(context, themeMode)),
             trailing: LayoutBuilder(
               builder: (context, constraints) {
                 final showLabels = MediaQuery.of(context).size.width > 450;
@@ -65,17 +69,23 @@ class SettingsScreen extends ConsumerWidget {
                     ButtonSegment(
                       value: ThemeMode.system,
                       icon: const Icon(Icons.settings_brightness_rounded),
-                      label: showLabels ? const Text('Auto') : null,
+                      label: showLabels
+                          ? Text(AppLocalizations.of(context)!.themeAuto)
+                          : null,
                     ),
                     ButtonSegment(
                       value: ThemeMode.light,
                       icon: const Icon(Icons.light_mode_rounded),
-                      label: showLabels ? const Text('Light') : null,
+                      label: showLabels
+                          ? Text(AppLocalizations.of(context)!.themeLight)
+                          : null,
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
                       icon: const Icon(Icons.dark_mode_rounded),
-                      label: showLabels ? const Text('Dark') : null,
+                      label: showLabels
+                          ? Text(AppLocalizations.of(context)!.themeDark)
+                          : null,
                     ),
                   ],
                   selected: {themeMode},
@@ -89,11 +99,34 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(AppLocalizations.of(context)!.languageTitle),
+            trailing: DropdownMenu<String>(
+              initialSelection: currentLocale?.languageCode,
+              requestFocusOnTap: false,
+              dropdownMenuEntries: [
+                DropdownMenuEntry<String>(
+                  value: 'system',
+                  label: AppLocalizations.of(context)!.languageSystem,
+                ),
+                const DropdownMenuEntry<String>(value: 'en', label: 'English'),
+                const DropdownMenuEntry<String>(value: 'fr', label: 'Français'),
+              ],
+              onSelected: (value) {
+                ref
+                    .read(localeProvider.notifier)
+                    .setLocale(
+                      value != null && value != 'system' ? Locale(value) : null,
+                    );
+              },
+            ),
+          ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Performance',
+              AppLocalizations.of(context)!.performanceSection,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -102,8 +135,12 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.speed),
-            title: const Text('Player Refresh Rate'),
-            subtitle: Text('${settings.playerRefreshRate} seconds'),
+            title: Text(AppLocalizations.of(context)!.playerRefreshRateTitle),
+            subtitle: Text(
+              AppLocalizations.of(
+                context,
+              )!.secondsPlural(settings.playerRefreshRate),
+            ),
             trailing: SizedBox(
               width: 200,
               child: Slider(
@@ -111,7 +148,9 @@ class SettingsScreen extends ConsumerWidget {
                 min: 3,
                 max: 30,
                 divisions: 27,
-                label: '${settings.playerRefreshRate}s',
+                label: AppLocalizations.of(
+                  context,
+                )!.secondsShort(settings.playerRefreshRate),
                 onChanged: (value) {
                   ref
                       .read(settingsProvider.notifier)
@@ -122,7 +161,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           SwitchListTile(
             secondary: const Icon(Icons.sync),
-            title: const Text('Device List Auto-Refresh'),
+            title: Text(
+              AppLocalizations.of(context)!.deviceListAutoRefreshTitle,
+            ),
             value: settings.deviceListAutoRefresh,
             onChanged: (value) {
               ref
@@ -133,8 +174,12 @@ class SettingsScreen extends ConsumerWidget {
           if (settings.deviceListAutoRefresh)
             ListTile(
               leading: const Icon(Icons.timer_outlined),
-              title: const Text('List Refresh Rate'),
-              subtitle: Text('${settings.deviceListRefreshRate} seconds'),
+              title: Text(AppLocalizations.of(context)!.listRefreshRateTitle),
+              subtitle: Text(
+                AppLocalizations.of(
+                  context,
+                )!.secondsPlural(settings.deviceListRefreshRate),
+              ),
               trailing: SizedBox(
                 width: 200,
                 child: Slider(
@@ -142,7 +187,9 @@ class SettingsScreen extends ConsumerWidget {
                   min: 5,
                   max: 60,
                   divisions: 11,
-                  label: '${settings.deviceListRefreshRate}s',
+                  label: AppLocalizations.of(
+                    context,
+                  )!.secondsShort(settings.deviceListRefreshRate),
                   onChanged: (value) {
                     ref
                         .read(settingsProvider.notifier)
@@ -155,7 +202,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'Library',
+              AppLocalizations.of(context)!.librarySection,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -164,8 +211,12 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.grid_view_rounded),
-            title: const Text('Items per Row'),
-            subtitle: Text('${settings.libraryItemsPerRow} items'),
+            title: Text(AppLocalizations.of(context)!.itemsPerRowTitle),
+            subtitle: Text(
+              AppLocalizations.of(
+                context,
+              )!.itemsPlural(settings.libraryItemsPerRow),
+            ),
             trailing: SizedBox(
               width: 200,
               child: Slider(
@@ -187,7 +238,7 @@ class SettingsScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
-                'Admin',
+                AppLocalizations.of(context)!.adminSection,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -196,7 +247,9 @@ class SettingsScreen extends ConsumerWidget {
             ),
             SwitchListTile(
               secondary: const Icon(Icons.visibility_off_outlined),
-              title: const Text("Hide other users' sessions"),
+              title: Text(
+                AppLocalizations.of(context)!.hideOtherUsersSessionsTitle,
+              ),
               value: settings.hideOtherUsersSessions,
               onChanged: (value) {
                 ref
@@ -210,7 +263,7 @@ class SettingsScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
-                'Debug',
+                AppLocalizations.of(context)!.debugSection,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -219,7 +272,9 @@ class SettingsScreen extends ConsumerWidget {
             ),
             SwitchListTile(
               secondary: const Icon(Icons.bug_report),
-              title: const Text('Spoof Premium Status'),
+              title: Text(
+                AppLocalizations.of(context)!.spoofPremiumStatusTitle,
+              ),
               value: ref.watch(isPremiumProvider),
               onChanged: (value) {
                 ref.read(isPremiumProvider.notifier).setPremium(value);
@@ -230,7 +285,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
-              'About',
+              AppLocalizations.of(context)!.aboutSection,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -239,7 +294,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info_outline),
-            title: Text('About ${AppConstants.appName}'),
+            title: Text(
+              AppLocalizations.of(context)!.aboutAppTitle(AppConstants.appName),
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.of(context).pushNamed(AboutScreen.routeName);
@@ -251,14 +308,14 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _getThemeModeName(ThemeMode mode) {
+  String _getThemeModeName(BuildContext context, ThemeMode mode) {
     switch (mode) {
       case ThemeMode.system:
-        return 'Follow System';
+        return AppLocalizations.of(context)!.themeFollowSystemName;
       case ThemeMode.light:
-        return 'Light Mode';
+        return AppLocalizations.of(context)!.themeLightModeName;
       case ThemeMode.dark:
-        return 'Dark Mode';
+        return AppLocalizations.of(context)!.themeDarkModeName;
     }
   }
 }
