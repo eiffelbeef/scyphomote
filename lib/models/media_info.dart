@@ -44,6 +44,7 @@ class MediaInfo {
   final int? productionYear;
   final TrickplayManifest? trickplay;
   final List<Person>? people;
+  final double? primaryImageAspectRatio;
 
   MediaInfo({
     required this.id,
@@ -65,6 +66,7 @@ class MediaInfo {
     this.productionYear,
     this.trickplay,
     this.people,
+    this.primaryImageAspectRatio,
   });
 
   int? get durationSeconds =>
@@ -121,5 +123,7 @@ class MediaInfo {
     people: (json['People'] as List?)
         ?.map((p) => Person.fromJson(p as Map<String, dynamic>))
         .toList(),
+    primaryImageAspectRatio: (json['PrimaryImageAspectRatio'] as num?)
+        ?.toDouble(),
   );
 }

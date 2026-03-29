@@ -43,6 +43,24 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final nowPlaying = session.nowPlaying;
     final l10n = AppLocalizations.of(context)!;
 
+    final bool isAudio = nowPlaying?.type == 'Audio';
+    final bool isEpisode = nowPlaying?.type == 'Episode';
+
+    // Fallbacks: 1.0 (album cover) for Audio, 4/3 for episodes, 2/3 (poster) otherwise
+    final double fallbackRatio = isAudio
+        ? 1.0
+        : (isEpisode ? (16 / 9) : (2 / 3));
+    final double aspectRatio =
+        nowPlaying?.primaryImageAspectRatio ?? fallbackRatio;
+
+    double finalWidth = artworkSize * aspectRatio;
+    double finalHeight = artworkSize;
+
+    if (widget.maxWidth != null && finalWidth > widget.maxWidth!) {
+      finalWidth = widget.maxWidth!;
+      finalHeight = finalWidth / aspectRatio;
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -55,17 +73,23 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                 borderRadius: BorderRadius.circular(12),
                 child: CachedNetworkImage(
                   imageUrl: imageUrl,
-                  width: artworkSize,
-                  height: artworkSize,
+                  width: finalWidth,
+                  height: finalHeight,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      _buildPlaceholder(context, size: artworkSize),
-                  errorWidget: (context, url, error) =>
-                      _buildPlaceholder(context, size: artworkSize),
+                  placeholder: (context, url) => _buildPlaceholder(
+                    context,
+                    size: finalHeight,
+                    width: finalWidth,
+                  ),
+                  errorWidget: (context, url, error) => _buildPlaceholder(
+                    context,
+                    size: finalHeight,
+                    width: finalWidth,
+                  ),
                 ),
               )
             else
-              _buildPlaceholder(context, size: artworkSize),
+              _buildPlaceholder(context, size: finalHeight, width: finalWidth),
 
             if (nowPlaying != null && nowPlaying.isVideo)
               Consumer(
@@ -651,9 +675,12 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     );
   }
 
-  Widget _buildPlaceholder(BuildContext context, {double size = 300}) {
+  Widget _buildPlaceholder(
+    BuildContext context, {
+    double size = 300,
+    double width = 2 / 3,
+  }) {
     return Container(
-      width: size,
       height: size,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
