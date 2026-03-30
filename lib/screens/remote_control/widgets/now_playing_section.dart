@@ -43,13 +43,10 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final nowPlaying = session.nowPlaying;
     final l10n = AppLocalizations.of(context)!;
 
-    final bool isAudio = nowPlaying?.type == 'Audio';
+    final bool isMovie = nowPlaying?.type == 'Movie';
     final bool isEpisode = nowPlaying?.type == 'Episode';
 
-    // Fallbacks: 1.0 (album cover) for Audio, 4/3 for episodes, 2/3 (poster) otherwise
-    final double fallbackRatio = isAudio
-        ? 1.0
-        : (isEpisode ? (16 / 9) : (2 / 3));
+    final double fallbackRatio = isEpisode ? 16 / 9 : (isMovie ? 2 / 3 : 1.0);
     final double aspectRatio =
         nowPlaying?.primaryImageAspectRatio ?? fallbackRatio;
 
@@ -677,10 +674,11 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
   Widget _buildPlaceholder(
     BuildContext context, {
-    double size = 300,
-    double width = 2 / 3,
+    required double size,
+    required double width,
   }) {
     return Container(
+      width: width,
       height: size,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
