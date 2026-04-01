@@ -1,0 +1,226 @@
+{
+  "@@locale": "ja",
+  "appTitle": "Scyphomote",
+  "settingsTitle": "設定",
+  "premiumSection": "プレミアム",
+  "premiumSubtitle": "Scyphomote プレミアム",
+  "appearanceSection": "外観",
+  "themeModeTitle": "テーマモード",
+  "themeAuto": "自動",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "themeFollowSystemName": "システムに従う",
+  "themeLightModeName": "ライトモード",
+  "themeDarkModeName": "ダークモード",
+  "performanceSection": "パフォーマンス",
+  "playerRefreshRateTitle": "プレイヤーの更新間隔",
+  "deviceListAutoRefreshTitle": "デバイスリストの自動更新",
+  "listRefreshRateTitle": "リストの更新間隔",
+  "librarySection": "ライブラリ",
+  "itemsPerRowTitle": "1行あたりのアイテム数",
+  "adminSection": "管理者",
+  "hideOtherUsersSessionsTitle": "他のユーザーのセッションを非表示にする",
+  "debugSection": "デバッグ",
+  "spoofPremiumStatusTitle": "プレミアムステータスを偽装する",
+  "aboutSection": "このアプリについて",
+  "aboutAppTitle": "{appName} について",
+  "@aboutAppTitle": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "secondsPlural": "{count, plural, =1{1 秒} other{{count} 秒}}",
+  "@secondsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsShort": "{count}秒",
+  "@secondsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsPlural": "{count, plural, =1{1 個のアイテム} other{{count} 個のアイテム}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "キャンセル",
+  "send": "送信",
+  "aRemoteForJellyfin": "Jellyfin 用リモコン",
+  "version": "バージョン {version}",
+  "@version": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "githubRepository": "GitHub リポジトリ",
+  "donateUsingLiberapay": "Liberapay で寄付する",
+  "login": "ログイン",
+  "tryOnJellyfinDemoServer": "Jellyfin デモサーバーで試す",
+  "manageUsers": "ユーザー管理",
+  "remoteControl": "リモコン",
+  "noSessionSelected": "セッションが選択されていません",
+  "sessionInfo": "セッション情報",
+  "close": "閉じる",
+  "notAuthenticated": "認証されていません",
+  "library": "ライブラリ",
+  "errorMsg": "エラー: {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "typeToSearch": "検索ワードを入力...",
+  "noResultsFound": "結果が見つかりませんでした",
+  "lastAdded": "最近追加されたもの",
+  "oldestAdded": "最も古いもの",
+  "nameAZ": "名前 (A-Z)",
+  "nameZA": "名前 (Z-A)",
+  "noSavedUsers": "保存されたユーザーはいません",
+  "deleteUser": "ユーザーを削除",
+  "deleteUserConfirmation": "{username} を削除しますか？",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
+  "delete": "削除",
+  "addUser": "ユーザーを追加",
+  "unlockPremium": "プレミアムをアンロック",
+  "supportFutureDevelopment": "今後の開発を支援する",
+  "pleaseLogInFirst": "先にログインしてください",
+  "connectingToSession": "セッションに接続中...",
+  "sessionNotFoundOrOffline": "セッションが見つからないか、オフラインです",
+  "launchedFromRemoteWidget": "リモートウィジェットから起動されました",
+  "addressCopied": "{label} のアドレスをクリップボードにコピーしました",
+  "@addressCopied": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "author": "作成者",
+  "privacyPolicy": "プライバシーポリシー",
+  "privacyPolicyDesc": "Scyphomote は、お客様の個人データを収集、保存、または処理しません。すべての通信は、デバイスと Jellyfin サーバーの間で直接行われます。",
+  "supportDeveloper": "開発者を支援する",
+  "licenseDev": "GNU AGPLv3 ライセンス",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "copyAddress": "アドレスをコピー",
+  "browse": "ブラウズ",
+  "remote": "リモート",
+  "failedToLoadItemDetails": "アイテムの詳細の読み込みに失敗しました",
+  "noStreamAvailable": "利用可能な {streamType} はありません",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": { "type": "String" }
+    }
+  },
+  "none": "なし",
+  "skipType": "{type} をスキップ",
+  "@skipType": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "playbackDetails": "再生詳細",
+  "playMethod": "方法: {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": { "type": "String" }
+    }
+  },
+  "mediaDetails": "メディア詳細",
+  "labelFormat": "{label}: ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "noCastInfo": "キャスト情報はありません",
+  "errorLoadingCast": "キャストの読み込みエラー: {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "buyNow": "今すぐ購入",
+  "languageTitle": "言語",
+  "languageSystem": "システム設定",
+  "serverUrl": "サーバー URL",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "username": "ユーザー名",
+  "password": "パスワード",
+  "pleaseEnterServerUrl": "サーバー URL を入力してください",
+  "pleaseEnterUsername": "ユーザー名を入力してください",
+  "youArePremium": "プレミアムユーザーです！",
+  "unlockScyphomotePremium": "Scyphomote プレミアムをアンロック",
+  "premiumThankYou": "アプリを支援していただきありがとうございます。現在および将来のすべてのプレミアム機能にフルアクセスできるようになりました！",
+  "premiumDescription": "この機能は Scyphomote プレミアム限定です。プレミアムを購入すると、現在および将来のすべてのプレミアム機能にいつでもアクセスできます。",
+  "premiumFeatures": "プレミアム機能:",
+  "premiumFeatureWidget": "ホーム画面ウィジェット (アプリを開かずにデバイスを操作)",
+  "addRemoteWidget": "リモートウィジェットを追加",
+  "widgetPinned": "ウィジェットをホーム画面に固定しました",
+  "widgetPinFailed": "ウィジェットの固定に失敗しました: {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "playableMediaTypes": "再生可能なメディアタイプ:",
+  "supportedCommands": "サポートされているコマンド:",
+  "noActiveDevicesFound": "アクティブなデバイスが見つかりません",
+  "startPlayingMediaOnJellyfinClient": "Jellyfin クライアントでメディアの再生を開始してください",
+  "activeDevices": "アクティブなデバイス",
+  "idleDevices": "待機中のデバイス",
+  "messageAllSessions": "全セッションにメッセージを送信",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 つのセッションがこのメッセージを受信します} other{{count} つのセッションがこのメッセージを受信します}}",
+  "@sessionsWillReceiveMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "messageSentToSessions": "{count, plural, =1{1 つのセッションにメッセージを送信しました} other{{count} つのセッションにメッセージを送信しました}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noActiveSessionSelected": "アクティブなセッションが選択されていません",
+  "transcoding": "トランスコーディング",
+  "directPlay": "ダイレクトプレイ",
+  "noMediaPlaying": "再生中のメディアはありません",
+  "useRemoteOrBrowse": "リモコンを使用するか、ライブラリを参照してください",
+  "castAndCrew": "キャスト＆スタッフ",
+  "message": "メッセージ",
+  "container": "コンテナ",
+  "size": "サイズ",
+  "video": "ビデオ",
+  "audio": "オーディオ",
+  "codec": "コーデック",
+  "resolution": "解像度",
+  "bitrate": "ビットレート",
+  "framerate": "フレームレート",
+  "language": "言語",
+  "channels": "チャンネル",
+  "noMediaSourcesFound": "メディアソースが見つかりませんでした",
+  "user": "ユーザー",
+  "client": "クライアント",
+  "deviceName": "デバイス名",
+  "appVersion": "アプリバージョン",
+  "sessionId": "セッション ID",
+  "canSeek": "シーク可能",
+  "supportsMediaControl": "メディアコントロール対応",
+  "supportsRemoteControl": "リモートコントロール対応",
+  "transcodeReasons": "トランスコード理由:"
+}

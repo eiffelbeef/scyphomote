@@ -1,0 +1,226 @@
+{
+  "@@locale": "de",
+  "appTitle": "Scyphomote",
+  "settingsTitle": "Einstellungen",
+  "premiumSection": "Premium",
+  "premiumSubtitle": "Scyphomote Premium",
+  "appearanceSection": "Erscheinungsbild",
+  "themeModeTitle": "Themenmodus",
+  "themeAuto": "Auto",
+  "themeLight": "Hell",
+  "themeDark": "Dunkel",
+  "themeFollowSystemName": "System folgen",
+  "themeLightModeName": "Heller Modus",
+  "themeDarkModeName": "Dunkler Modus",
+  "performanceSection": "Leistung",
+  "playerRefreshRateTitle": "Aktualisierungsrate des Players",
+  "deviceListAutoRefreshTitle": "Automatische Aktualisierung der Geräteliste",
+  "listRefreshRateTitle": "Aktualisierungsrate der Liste",
+  "librarySection": "Bibliothek",
+  "itemsPerRowTitle": "Elemente pro Zeile",
+  "adminSection": "Admin",
+  "hideOtherUsersSessionsTitle": "Sitzungen anderer Benutzer ausblenden",
+  "debugSection": "Debug",
+  "spoofPremiumStatusTitle": "Premium-Status simulieren",
+  "aboutSection": "Über",
+  "aboutAppTitle": "Über {appName}",
+  "@aboutAppTitle": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "secondsPlural": "{count, plural, =1{1 Sekunde} other{{count} Sekunden}}",
+  "@secondsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "secondsShort": "{count}s",
+  "@secondsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsPlural": "{count, plural, =1{1 Element} other{{count} Elemente}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Abbrechen",
+  "send": "Senden",
+  "aRemoteForJellyfin": "Eine Fernbedienung für Jellyfin",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "githubRepository": "GitHub Repository",
+  "donateUsingLiberapay": "Spenden mit Liberapay",
+  "login": "Anmelden",
+  "tryOnJellyfinDemoServer": "Auf dem Jellyfin-Demoserver ausprobieren",
+  "manageUsers": "Benutzer verwalten",
+  "remoteControl": "Fernbedienung",
+  "noSessionSelected": "Keine Sitzung ausgewählt",
+  "sessionInfo": "Sitzungsinformationen",
+  "close": "Schließen",
+  "notAuthenticated": "Nicht authentifiziert",
+  "library": "Bibliothek",
+  "errorMsg": "Fehler: {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "typeToSearch": "Tippen zum Suchen...",
+  "noResultsFound": "Keine Ergebnisse gefunden",
+  "lastAdded": "Zuletzt hinzugefügt",
+  "oldestAdded": "Älteste zuerst",
+  "nameAZ": "Name (A-Z)",
+  "nameZA": "Name (Z-A)",
+  "noSavedUsers": "Keine gespeicherten Benutzer",
+  "deleteUser": "Benutzer löschen",
+  "deleteUserConfirmation": "{username} löschen?",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": { "type": "String" }
+    }
+  },
+  "delete": "Löschen",
+  "addUser": "Benutzer hinzufügen",
+  "unlockPremium": "Premium freischalten",
+  "supportFutureDevelopment": "Zukünftige Entwicklung unterstützen",
+  "pleaseLogInFirst": "Bitte melden Sie sich zuerst an",
+  "connectingToSession": "Verbindung zur Sitzung wird hergestellt...",
+  "sessionNotFoundOrOffline": "Sitzung nicht gefunden oder offline",
+  "launchedFromRemoteWidget": "Vom Remote-Widget gestartet",
+  "addressCopied": "{label}-Adresse in die Zwischenablage kopiert",
+  "@addressCopied": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "author": "Autor",
+  "privacyPolicy": "Datenschutzerklärung",
+  "privacyPolicyDesc": "Scyphomote sammelt, speichert oder verarbeitet keine Ihrer persönlichen Daten. Die gesamte Kommunikation erfolgt direkt zwischen Ihrem Gerät und Ihrem Jellyfin-Server.",
+  "supportDeveloper": "Entwickler unterstützen",
+  "licenseDev": "Lizenziert unter GNU AGPLv3",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "copyAddress": "Adresse kopieren",
+  "browse": "Durchsuchen",
+  "remote": "Fernbedienung",
+  "failedToLoadItemDetails": "Details zum Element konnten nicht geladen werden",
+  "noStreamAvailable": "Keine {streamType} verfügbar",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": { "type": "String" }
+    }
+  },
+  "none": "Keine",
+  "skipType": "{type} überspringen",
+  "@skipType": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "playbackDetails": "Wiedergabedetails",
+  "playMethod": "Methode: {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": { "type": "String" }
+    }
+  },
+  "mediaDetails": "Mediendetails",
+  "labelFormat": "{label}: ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "noCastInfo": "Keine Besetzungsinformationen verfügbar",
+  "errorLoadingCast": "Fehler beim Laden der Besetzung: {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "buyNow": "Jetzt kaufen",
+  "languageTitle": "Sprache",
+  "languageSystem": "System",
+  "serverUrl": "Server-URL",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "username": "Benutzername",
+  "password": "Passwort",
+  "pleaseEnterServerUrl": "Bitte geben Sie die Server-URL ein",
+  "pleaseEnterUsername": "Bitte geben Sie den Benutzernamen ein",
+  "youArePremium": "Sie sind Premium!",
+  "unlockScyphomotePremium": "Scyphomote Premium freischalten",
+  "premiumThankYou": "Vielen Dank für Ihre Unterstützung. Sie haben jetzt vollen Zugriff auf alle aktuellen und zukünftigen Premium-Funktionen!",
+  "premiumDescription": "Diese Funktion ist Scyphomote Premium vorbehalten. Der Kauf von Premium ermöglicht Ihnen den dauerhaften Zugriff auf alle Premium-Funktionen.",
+  "premiumFeatures": "Premium-Funktionen:",
+  "premiumFeatureWidget": "Startbildschirm-Widget (Geräte steuern, ohne die App zu öffnen)",
+  "addRemoteWidget": "Remote-Widget hinzufügen",
+  "widgetPinned": "Widget am Startbildschirm angepinnt",
+  "widgetPinFailed": "Widget konnte nicht angepinnt werden: {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "playableMediaTypes": "Abspielbare Medientypen:",
+  "supportedCommands": "Unterstützte Befehle:",
+  "noActiveDevicesFound": "Keine aktiven Geräte gefunden",
+  "startPlayingMediaOnJellyfinClient": "Wiedergabe auf einem Jellyfin-Client starten",
+  "activeDevices": "Aktive Geräte",
+  "idleDevices": "Inaktive Geräte",
+  "messageAllSessions": "Nachricht an alle Sitzungen senden",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 Sitzung erhält diese Nachricht} other{{count} Sitzungen erhalten diese Nachricht}}",
+  "@sessionsWillReceiveMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "messageSentToSessions": "{count, plural, =1{Nachricht an 1 Sitzung gesendet} other{Nachricht an {count} Sitzungen gesendet}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noActiveSessionSelected": "Keine aktive Sitzung ausgewählt",
+  "transcoding": "Transkodierung",
+  "directPlay": "Direktes Abspielen",
+  "noMediaPlaying": "Keine Medienwiedergabe",
+  "useRemoteOrBrowse": "Verwenden Sie die Fernbedienung oder durchsuchen Sie die Bibliothek",
+  "castAndCrew": "Besetzung & Team",
+  "message": "Nachricht",
+  "container": "Container",
+  "size": "Größe",
+  "video": "Video",
+  "audio": "Audio",
+  "codec": "Codec",
+  "resolution": "Auflösung",
+  "bitrate": "Bitrate",
+  "framerate": "Bildrate",
+  "language": "Sprache",
+  "channels": "Kanäle",
+  "noMediaSourcesFound": "Keine Medienquellen gefunden",
+  "user": "Benutzer",
+  "client": "Client",
+  "deviceName": "Gerätename",
+  "appVersion": "App-Version",
+  "sessionId": "Sitzungs-ID",
+  "canSeek": "Kann suchen",
+  "supportsMediaControl": "Unterstützt Mediensteuerung",
+  "supportsRemoteControl": "Unterstützt Fernbedienung",
+  "transcodeReasons": "Transkodierungsgründe:"
+}

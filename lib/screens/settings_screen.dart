@@ -116,6 +116,13 @@ class SettingsScreen extends ConsumerWidget {
                   value: 'fr',
                   label: 'Français',
                 ),
+                const DropdownMenuEntry<String?>(value: 'es', label: 'Español'),
+                const DropdownMenuEntry<String?>(value: 'de', label: 'Deutsch'),
+                const DropdownMenuEntry<String?>(
+                  value: 'pt',
+                  label: 'Português',
+                ),
+                const DropdownMenuEntry<String?>(value: 'ja', label: '日本語'),
               ],
               onSelected: (value) {
                 ref
