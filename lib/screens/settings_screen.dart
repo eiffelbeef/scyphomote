@@ -102,23 +102,25 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(AppLocalizations.of(context)!.languageTitle),
-            trailing: DropdownMenu<String>(
+            trailing: DropdownMenu<String?>(
+              key: ValueKey(currentLocale?.languageCode),
               initialSelection: currentLocale?.languageCode,
               requestFocusOnTap: false,
               dropdownMenuEntries: [
-                DropdownMenuEntry<String>(
-                  value: 'system',
+                DropdownMenuEntry<String?>(
+                  value: null,
                   label: AppLocalizations.of(context)!.languageSystem,
                 ),
-                const DropdownMenuEntry<String>(value: 'en', label: 'English'),
-                const DropdownMenuEntry<String>(value: 'fr', label: 'Français'),
+                const DropdownMenuEntry<String?>(value: 'en', label: 'English'),
+                const DropdownMenuEntry<String?>(
+                  value: 'fr',
+                  label: 'Français',
+                ),
               ],
               onSelected: (value) {
                 ref
                     .read(localeProvider.notifier)
-                    .setLocale(
-                      value != null && value != 'system' ? Locale(value) : null,
-                    );
+                    .setLocale(value != null ? Locale(value) : null);
               },
             ),
           ),
