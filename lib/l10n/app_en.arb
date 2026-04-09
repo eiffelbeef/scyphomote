@@ -231,5 +231,12 @@
       "ip": { "type": "String" }
     }
   },
-  "open": "Open"
+  "open": "Open",
+  "privateIpTitle": "Private IP",
+  "privateIpMessage": "The IP {ip} is a private address, typically used within a local network or VPN.",
+  "@privateIpMessage": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  }
 }

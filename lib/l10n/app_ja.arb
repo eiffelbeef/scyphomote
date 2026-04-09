@@ -231,5 +231,12 @@
       "ip": { "type": "String" }
     }
   },
-  "open": "開く"
+  "open": "開く",
+  "privateIpTitle": "プライベートIP",
+  "privateIpMessage": "IP {ip} はプライベートアドレスであり、通常はローカルネットワークやVPN内で使用されます。",
+  "@privateIpMessage": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  }
 }

@@ -274,7 +274,11 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                     l10n.remoteEndpoint,
                     session.remoteEndPoint!,
                     onTap: () {
-                      _showIpLookupPrompt(context, session.remoteEndPoint!);
+                      if (_isPrivateIp(session.remoteEndPoint!)) {
+                        _showPrivateIpInfo(context, session.remoteEndPoint!);
+                      } else {
+                        _showIpLookupPrompt(context, session.remoteEndPoint!);
+                      }
                     },
                   ),
                 _infoItem(
@@ -422,6 +426,46 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
               launchUrl(Uri.parse('https://whatismyipaddress.com/ip/$ip'));
             },
             child: Text(l10n.open),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isPrivateIp(String ip) {
+    if (ip == 'localhost' || ip == '::1') return true;
+    final parts = ip.split('.');
+    if (parts.length == 4) {
+      if (parts[0] == '10') return true;
+      if (parts[0] == '127') return true;
+      if (parts[0] == '192' && parts[1] == '168') return true;
+      if (parts[0] == '172') {
+        final second = int.tryParse(parts[1]);
+        if (second != null && second >= 16 && second <= 31) return true;
+      }
+    }
+    final lowerIp = ip.toLowerCase();
+    if (lowerIp.startsWith('fc') || lowerIp.startsWith('fd')) return true;
+    if (lowerIp.startsWith('fe8') ||
+        lowerIp.startsWith('fe9') ||
+        lowerIp.startsWith('fea') ||
+        lowerIp.startsWith('feb')) {
+      return true;
+    }
+    return false;
+  }
+
+  void _showPrivateIpInfo(BuildContext context, String ip) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.privateIpTitle),
+        content: Text(l10n.privateIpMessage(ip)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.close),
           ),
         ],
       ),
