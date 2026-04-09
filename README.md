@@ -47,13 +47,15 @@ This will pull the latest image from GHCR and serve it at `http://localhost:6262
 
 ## Screenshots
 
-<div style="display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px;">
-  <img src="screenshots/player_dark.png" height="500" alt="Player Dark"/>
-  <img src="screenshots/player_light.png" height="500" alt="Player Light"/>
-  <img src="screenshots/sessions_dark.png" height="500" alt="Sessions"/>
-  <img src="screenshots/remote.png" height="500" alt="Remote"/>
-  <img src="screenshots/library.png" height="500" alt="Library"/>
-</div>
+<table>
+  <tr>
+    <td><img src="screenshots/movie_dark.png" height="500" alt="Player Dark"/></td>
+    <td><img src="screenshots/music_light.png" height="500" alt="Player Light"/></td>
+    <td><img src="screenshots/sessions_dark.png" height="500" alt="Sessions"/></td>
+    <td><img src="screenshots/remote_dark.png" height="500" alt="Remote"/></td>
+    <td><img src="screenshots/library_dark.png" height="500" alt="Library"/></td>
+  </tr>
+</table>
 
 ## Building
 
