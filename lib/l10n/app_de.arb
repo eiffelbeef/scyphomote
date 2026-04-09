@@ -222,5 +222,14 @@
   "canSeek": "Kann suchen",
   "supportsMediaControl": "Unterstützt Mediensteuerung",
   "supportsRemoteControl": "Unterstützt Fernbedienung",
-  "transcodeReasons": "Transkodierungsgründe:"
+  "transcodeReasons": "Transkodierungsgründe:",
+  "remoteEndpoint": "Remote-IP",
+  "ipLookupTitle": "IP-Nachschlagen",
+  "ipLookupPrompt": "Möchten Sie Informationen zur IP {ip} auf whatismyipaddress.com nachschlagen?",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  },
+  "open": "Öffnen"
 }

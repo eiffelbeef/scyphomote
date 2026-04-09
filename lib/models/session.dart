@@ -22,6 +22,7 @@ class Session {
   final String userName;
   final String? applicationVersion;
   final DateTime? lastActivityDate;
+  final String? remoteEndPoint;
 
   Session({
     required this.sessionId,
@@ -43,6 +44,7 @@ class Session {
     required this.userName,
     this.applicationVersion,
     this.lastActivityDate,
+    this.remoteEndPoint,
   });
 
   bool get isPlaying => nowPlaying != null && !(playState?.isPaused ?? true);
@@ -117,6 +119,7 @@ class Session {
       lastActivityDate: json['LastActivityDate'] != null
           ? DateTime.tryParse(json['LastActivityDate'] as String)
           : null,
+      remoteEndPoint: json['RemoteEndPoint'] as String?,
     );
   }
 

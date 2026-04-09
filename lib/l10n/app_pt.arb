@@ -222,5 +222,14 @@
   "canSeek": "Pode Buscar",
   "supportsMediaControl": "Suporta Controle de Mídia",
   "supportsRemoteControl": "Suporta Controle Remoto",
-  "transcodeReasons": "Razões de Transcodificação:"
+  "transcodeReasons": "Razões de Transcodificação:",
+  "remoteEndpoint": "IP Remoto",
+  "ipLookupTitle": "Pesquisa de IP",
+  "ipLookupPrompt": "Deseja procurar informações sobre o IP {ip} em whatismyipaddress.com?",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  },
+  "open": "Abrir"
 }

@@ -222,5 +222,14 @@
   "canSeek": "シーク可能",
   "supportsMediaControl": "メディアコントロール対応",
   "supportsRemoteControl": "リモートコントロール対応",
-  "transcodeReasons": "トランスコード理由:"
+  "transcodeReasons": "トランスコード理由:",
+  "remoteEndpoint": "リモートIP",
+  "ipLookupTitle": "IP検索",
+  "ipLookupPrompt": "whatismyipaddress.comでIP {ip} の情報を検索しますか？",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  },
+  "open": "開く"
 }

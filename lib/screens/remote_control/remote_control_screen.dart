@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../../models/session.dart';
 
@@ -268,6 +269,14 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                   session.applicationVersion ?? l10n.none,
                 ),
                 _infoItem(l10n.sessionId, session.sessionId),
+                if (session.remoteEndPoint != null)
+                  _infoItem(
+                    l10n.remoteEndpoint,
+                    session.remoteEndPoint!,
+                    onTap: () {
+                      _showIpLookupPrompt(context, session.remoteEndPoint!);
+                    },
+                  ),
                 _infoItem(
                   l10n.canSeek,
                   session.playState?.canSeek.toString() ?? l10n.none,
@@ -340,19 +349,79 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     );
   }
 
-  Widget _infoItem(String label, String value) {
+  Widget _infoItem(String label, String value, {VoidCallback? onTap}) {
     final l10n = AppLocalizations.of(context)!;
+
+    Widget valueWidget = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          child: Text(value, style: const TextStyle(fontFamily: 'monospace')),
+        ),
+        if (onTap != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0),
+            child: Icon(
+              Icons.info_outline,
+              size: 14,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+      ],
+    );
+
+    if (onTap != null) {
+      valueWidget = InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          child: valueWidget,
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.labelFormat(label),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 2.0,
+            ), // Align with InkWell padding
+            child: Text(
+              l10n.labelFormat(label),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           Expanded(
-            child: Text(value, style: const TextStyle(fontFamily: 'monospace')),
+            child: Align(alignment: Alignment.centerLeft, child: valueWidget),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showIpLookupPrompt(BuildContext context, String ip) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.ipLookupTitle),
+        content: Text(l10n.ipLookupPrompt(ip)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext); // close prompt
+              Navigator.pop(context); // close session info dialog
+              launchUrl(Uri.parse('https://whatismyipaddress.com/ip/$ip'));
+            },
+            child: Text(l10n.open),
           ),
         ],
       ),

@@ -222,5 +222,14 @@
   "canSeek": "Can Seek",
   "supportsMediaControl": "Supports Media Control",
   "supportsRemoteControl": "Supports Remote Control",
-  "transcodeReasons": "Transcode Reasons:"
+  "transcodeReasons": "Transcode Reasons:",
+  "remoteEndpoint": "Remote IP",
+  "ipLookupTitle": "IP Lookup",
+  "ipLookupPrompt": "Do you want to look up info for IP {ip} on whatismyipaddress.com?",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  },
+  "open": "Open"
 }
