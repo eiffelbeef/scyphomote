@@ -163,6 +163,23 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
     return name;
   }
 
+  String? _getItemDuration(Map<String, dynamic> item) {
+    final runTimeTicks = item['RunTimeTicks'] as int?;
+    if (runTimeTicks == null) return null;
+    final totalSeconds = runTimeTicks ~/ 10000000;
+    final hours = totalSeconds ~/ 3600;
+    final minutes = (totalSeconds % 3600) ~/ 60;
+    final seconds = totalSeconds % 60;
+
+    final secondsStr = seconds.toString().padLeft(2, '0');
+    if (hours > 0) {
+      final minutesStr = minutes.toString().padLeft(2, '0');
+      return '$hours:$minutesStr:$secondsStr';
+    } else {
+      return '$minutes:$secondsStr';
+    }
+  }
+
   Widget _buildSection(String title, List<Map<String, dynamic>> items) {
     if (items.isEmpty) return const SizedBox.shrink();
 
@@ -473,18 +490,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                         const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final item = _items[index];
-
-                      final runTimeTicks = item['RunTimeTicks'] as int?;
-                      String? duration;
-                      if (runTimeTicks != null) {
-                        final seconds = runTimeTicks ~/ 10000000;
-                        final minutesStr = (seconds ~/ 60).toString();
-                        final secondsStr = (seconds % 60).toString().padLeft(
-                          2,
-                          '0',
-                        );
-                        duration = '$minutesStr:$secondsStr';
-                      }
+                      final duration = _getItemDuration(item);
 
                       return ListTile(
                         leading: const Icon(Icons.music_note),
@@ -501,6 +507,61 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                   ),
                 ),
               ],
+            )
+          : widget.parentType == 'Season'
+          ? ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: _items.length,
+              separatorBuilder: (context, index) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                final apiService = ref.read(apiServiceProvider);
+                final imageUrl = apiService.getArtworkUrl(
+                  item['Id'],
+                  'Primary',
+                );
+                final duration = _getItemDuration(item);
+
+                return InkWell(
+                  onTap: () => playItemOnRemote(context, ref, item),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 68,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: ItemPoster(
+                              imageUrl: imageUrl,
+                              userData: item['UserData'],
+                              placeholderIcon: Icons.movie,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            _getItemTitle(item),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        if (duration != null) ...[
+                          const SizedBox(width: 8),
+                          Text(
+                            duration,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                );
+              },
             )
           : GridView.builder(
               padding: const EdgeInsets.all(16),
