@@ -440,18 +440,67 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
           : _isSearching
           ? _buildSearchResults()
           : widget.parentType == 'MusicAlbum'
-          ? ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: _items.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                return ListTile(
-                  leading: const Icon(Icons.music_note),
-                  title: Text(_getItemTitle(item)),
-                  onTap: () => playItemOnRemote(context, ref, item),
-                );
-              },
+          ? Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FilledButton.icon(
+                        icon: const Icon(Icons.play_arrow),
+                        label: Text(AppLocalizations.of(context)!.play),
+                        onPressed: () => playItemOnRemote(context, ref, {
+                          'Id': widget.parentId,
+                        }),
+                      ),
+                      const SizedBox(width: 16),
+                      FilledButton.tonalIcon(
+                        icon: const Icon(Icons.shuffle),
+                        label: Text(AppLocalizations.of(context)!.shuffle),
+                        onPressed: () => playItemOnRemote(context, ref, {
+                          'Id': widget.parentId,
+                        }, playCommand: 'PlayShuffle'),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: _items.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final item = _items[index];
+
+                      final runTimeTicks = item['RunTimeTicks'] as int?;
+                      String? duration;
+                      if (runTimeTicks != null) {
+                        final seconds = runTimeTicks ~/ 10000000;
+                        final minutesStr = (seconds ~/ 60).toString();
+                        final secondsStr = (seconds % 60).toString().padLeft(
+                          2,
+                          '0',
+                        );
+                        duration = '$minutesStr:$secondsStr';
+                      }
+
+                      return ListTile(
+                        leading: const Icon(Icons.music_note),
+                        title: Text(_getItemTitle(item)),
+                        trailing: duration != null
+                            ? Text(
+                                duration,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              )
+                            : null,
+                        onTap: () => playItemOnRemote(context, ref, item),
+                      );
+                    },
+                  ),
+                ),
+              ],
             )
           : GridView.builder(
               padding: const EdgeInsets.all(16),

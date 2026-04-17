@@ -238,5 +238,7 @@
     "placeholders": {
       "ip": { "type": "String" }
     }
-  }
+  },
+  "play": "Play",
+  "shuffle": "Shuffle"
 }

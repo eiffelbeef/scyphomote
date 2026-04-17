@@ -238,5 +238,7 @@
     "placeholders": {
       "ip": { "type": "String" }
     }
-  }
+  },
+  "play": "Abspielen",
+  "shuffle": "Zufällig"
 }

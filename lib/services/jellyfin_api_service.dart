@@ -333,13 +333,14 @@ class JellyfinApiService {
     String sessionId,
     String itemId, {
     int? startPositionTicks,
+    String playCommand = 'PlayNow',
   }) async {
     await _postSessionRequest(
       sessionId,
       'Playing',
       queryParameters: {
         'ItemIds': itemId,
-        'PlayCommand': 'PlayNow',
+        'PlayCommand': playCommand,
         if (startPositionTicks != null)
           'StartPositionTicks': startPositionTicks.toString(),
       },

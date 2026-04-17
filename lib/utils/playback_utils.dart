@@ -9,8 +9,9 @@ import 'ui_utils.dart';
 Future<void> playItemOnRemote(
   BuildContext context,
   WidgetRef ref,
-  Map<String, dynamic> item,
-) async {
+  Map<String, dynamic> item, {
+  String playCommand = 'PlayNow',
+}) async {
   final user = ref.read(authProvider).currentUser;
   final session = ref.read(sessionProvider).selectedSession;
   final itemId = item['Id'] as String;
@@ -34,6 +35,7 @@ Future<void> playItemOnRemote(
       session.sessionId,
       itemId,
       startPositionTicks: startPositionTicks,
+      playCommand: playCommand,
     );
 
     if (!context.mounted) return;
