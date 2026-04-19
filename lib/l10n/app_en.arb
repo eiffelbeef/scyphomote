@@ -240,5 +240,7 @@
     }
   },
   "play": "Play",
-  "shuffle": "Shuffle"
+  "shuffle": "Shuffle",
+  "noOverviewAvailable": "No biography available",
+  "externalLinks": "External Links"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../widgets/marquee_text.dart';
@@ -560,96 +561,107 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                     )
                                   : null;
 
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: imageUrl != null
-                                          ? CachedNetworkImage(
-                                              imageUrl: imageUrl,
-                                              width: 80,
-                                              height: 120,
-                                              fit: BoxFit.cover,
-                                              placeholder: (context, url) =>
-                                                  Container(
-                                                    width: 80,
-                                                    height: 120,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceContainerHighest,
-                                                    child: const Icon(
-                                                      Icons.person,
-                                                      size: 32,
+                              return InkWell(
+                                onTap: () =>
+                                    _showPersonDetail(person.id, person.name),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: imageUrl != null
+                                            ? CachedNetworkImage(
+                                                imageUrl: imageUrl,
+                                                width: 80,
+                                                height: 120,
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                      width: 80,
+                                                      height: 120,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceContainerHighest,
+                                                      child: const Icon(
+                                                        Icons.person,
+                                                        size: 32,
+                                                      ),
                                                     ),
-                                                  ),
-                                              errorWidget:
-                                                  (
-                                                    context,
-                                                    url,
-                                                    error,
-                                                  ) => Container(
-                                                    width: 80,
-                                                    height: 120,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .surfaceContainerHighest,
-                                                    child: const Icon(
-                                                      Icons.person,
-                                                      size: 32,
+                                                errorWidget:
+                                                    (
+                                                      context,
+                                                      url,
+                                                      error,
+                                                    ) => Container(
+                                                      width: 80,
+                                                      height: 120,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .surfaceContainerHighest,
+                                                      child: const Icon(
+                                                        Icons.person,
+                                                        size: 32,
+                                                      ),
                                                     ),
-                                                  ),
-                                            )
-                                          : Container(
-                                              width: 80,
-                                              height: 120,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceContainerHighest,
-                                              child: const Icon(
-                                                Icons.person,
-                                                size: 32,
-                                              ),
-                                            ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            person.name,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.bold,
+                                              )
+                                            : Container(
+                                                width: 80,
+                                                height: 120,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceContainerHighest,
+                                                child: const Icon(
+                                                  Icons.person,
+                                                  size: 32,
                                                 ),
-                                          ),
-                                          if (person.role != null) ...[
-                                            const SizedBox(height: 4),
+                                              ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
                                             Text(
-                                              person.role!,
+                                              person.name,
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyMedium
+                                                  .bodyLarge
                                                   ?.copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                             ),
+                                            if (person.role != null) ...[
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                person.role!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurfaceVariant,
+                                                    ),
+                                              ),
+                                            ],
                                           ],
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -670,6 +682,158 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         );
       },
     );
+  }
+
+  void _showPersonDetail(String personId, String personName) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      builder: (sheetContext) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final detailsAsync = ref.watch(itemDetailsProvider(personId));
+
+            return DraggableScrollableSheet(
+              initialChildSize: 0.5,
+              minChildSize: 0.3,
+              maxChildSize: 0.85,
+              expand: false,
+              builder: (context, scrollController) {
+                return detailsAsync.when(
+                  data: (details) {
+                    final name = details?['Name'] as String? ?? personName;
+                    final overview = details?['Overview'] as String?;
+                    final externalUrls =
+                        (details?['ExternalUrls'] as List?)
+                            ?.cast<Map<String, dynamic>>() ??
+                        [];
+
+                    return Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withValues(alpha: 0.4),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            name,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (overview != null && overview.isNotEmpty)
+                                  Text(
+                                    overview,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
+                                  )
+                                else
+                                  Text(
+                                    l10n.noOverviewAvailable,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                  ),
+                                if (externalUrls.isNotEmpty) ...[
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    l10n.externalLinks,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: externalUrls.map((link) {
+                                      final linkName =
+                                          link['Name'] as String? ?? '';
+                                      final linkUrl =
+                                          link['Url'] as String? ?? '';
+                                      return OutlinedButton.icon(
+                                        onPressed: linkUrl.isNotEmpty
+                                            ? () => launchUrl(
+                                                Uri.parse(linkUrl),
+                                                mode: LaunchMode
+                                                    .externalApplication,
+                                              )
+                                            : null,
+                                        icon: Icon(
+                                          _iconForLinkName(linkName),
+                                          size: 18,
+                                        ),
+                                        label: Text(linkName),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(err.toString()),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  IconData _iconForLinkName(String name) {
+    switch (name.toLowerCase()) {
+      case 'imdb':
+        return Icons.movie;
+      case 'tmdb':
+        return Icons.theaters;
+      case 'thetvdb':
+        return Icons.tv;
+      default:
+        return Icons.open_in_new;
+    }
   }
 
   Widget _buildPlaceholder(

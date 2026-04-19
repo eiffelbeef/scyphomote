@@ -240,5 +240,7 @@
     }
   },
   "play": "Abspielen",
-  "shuffle": "Zufällig"
+  "shuffle": "Zufällig",
+  "noOverviewAvailable": "Keine Biografie verfügbar",
+  "externalLinks": "Externe Links"
 }

@@ -240,5 +240,7 @@
     }
   },
   "play": "Lecture",
-  "shuffle": "Aléatoire"
+  "shuffle": "Aléatoire",
+  "noOverviewAvailable": "Aucune biographie disponible",
+  "externalLinks": "Liens externes"
 }

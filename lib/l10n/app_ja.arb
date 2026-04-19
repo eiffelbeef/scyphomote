@@ -240,5 +240,7 @@
     }
   },
   "play": "再生",
-  "shuffle": "シャッフル"
+  "shuffle": "シャッフル",
+  "noOverviewAvailable": "経歴情報はありません",
+  "externalLinks": "外部リンク"
 }
