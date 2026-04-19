@@ -269,6 +269,23 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                   session.applicationVersion ?? l10n.none,
                 ),
                 _infoItem(l10n.sessionId, session.sessionId),
+                if (session.nowPlaying != null)
+                  _infoItem(
+                    'Item ID',
+                    session.nowPlaying!.id,
+                    onTapIcon: Icons.open_in_new,
+                    onTap: () {
+                      final user = ref.read(authProvider).currentUser;
+                      if (user != null) {
+                        final itemId = session.nowPlaying!.id;
+                        final uri = Uri.parse(user.serverUrl).replace(
+                          path: '/web/',
+                          fragment: '/details?id=$itemId',
+                        );
+                        launchUrl(uri, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
                 if (session.remoteEndPoint != null)
                   _infoItem(
                     l10n.remoteEndpoint,
@@ -353,7 +370,12 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     );
   }
 
-  Widget _infoItem(String label, String value, {VoidCallback? onTap}) {
+  Widget _infoItem(
+    String label,
+    String value, {
+    VoidCallback? onTap,
+    IconData onTapIcon = Icons.info_outline,
+  }) {
     final l10n = AppLocalizations.of(context)!;
 
     Widget valueWidget = Row(
@@ -366,7 +388,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
             child: Icon(
-              Icons.info_outline,
+              onTapIcon,
               size: 14,
               color: Theme.of(context).colorScheme.primary,
             ),
