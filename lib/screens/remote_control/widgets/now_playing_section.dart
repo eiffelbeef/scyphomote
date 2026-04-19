@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -782,6 +783,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                           link['Name'] as String? ?? '';
                                       final linkUrl =
                                           link['Url'] as String? ?? '';
+                                      final svgAsset = _svgAssetForLinkName(
+                                        linkName,
+                                      );
                                       return OutlinedButton.icon(
                                         onPressed: linkUrl.isNotEmpty
                                             ? () => launchUrl(
@@ -790,10 +794,22 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                                     .externalApplication,
                                               )
                                             : null,
-                                        icon: Icon(
-                                          _iconForLinkName(linkName),
-                                          size: 18,
-                                        ),
+                                        icon: svgAsset != null
+                                            ? SvgPicture.asset(
+                                                svgAsset,
+                                                width: 18,
+                                                height: 18,
+                                                colorFilter: ColorFilter.mode(
+                                                  Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                                  BlendMode.srcIn,
+                                                ),
+                                              )
+                                            : const Icon(
+                                                Icons.open_in_new,
+                                                size: 18,
+                                              ),
                                         label: Text(linkName),
                                       );
                                     }).toList(),
@@ -823,16 +839,16 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     );
   }
 
-  IconData _iconForLinkName(String name) {
+  String? _svgAssetForLinkName(String name) {
     switch (name.toLowerCase()) {
       case 'imdb':
-        return Icons.movie;
+        return 'assets/imdb.svg';
       case 'tmdb':
-        return Icons.theaters;
+        return 'assets/tmdb.svg';
       case 'thetvdb':
-        return Icons.tv;
+        return 'assets/tvdb.svg';
       default:
-        return Icons.open_in_new;
+        return null;
     }
   }
 
