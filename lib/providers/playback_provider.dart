@@ -78,10 +78,15 @@ class PlaybackNotifier extends Notifier<void> {
     errorMessage: 'Failed to set volume',
   );
 
-  Future<void> sendCommand(String command) => _withSession(
-    (user, session) => _apiService.sendCommand(session.sessionId, command),
-    errorMessage: 'Failed to send command',
-  );
+  Future<void> sendCommand(String command, {Map<String, dynamic>? arguments}) =>
+      _withSession(
+        (user, session) => _apiService.sendCommand(
+          session.sessionId,
+          command,
+          arguments: arguments,
+        ),
+        errorMessage: 'Failed to send command',
+      );
 
   Future<void> sendPlayingCommand(String command) => _withSession(
     (user, session) =>

@@ -175,15 +175,60 @@ class PlaybackControlsSection extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        RemoteIconButton(
-                          icon: Icons.fullscreen_rounded,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.toggleFullscreen,
-                            () => ref
-                                .read(playbackProvider.notifier)
-                                .sendCommand(JellyfinCommands.toggleFullscreen),
+                        if (nowPlaying.type == 'Audio')
+                          Builder(
+                            builder: (context) {
+                              final repeatMode =
+                                  session.playState?.repeatMode ?? 'RepeatNone';
+                              final canRepeat = session.supportedCommands
+                                  .contains(JellyfinCommands.setRepeatMode);
+                              final nextMode = switch (repeatMode) {
+                                'RepeatNone' => 'RepeatAll',
+                                'RepeatAll' => 'RepeatOne',
+                                _ => 'RepeatNone',
+                              };
+                              final icon = switch (repeatMode) {
+                                'RepeatOne' => Icons.repeat_one_rounded,
+                                'RepeatAll' => Icons.repeat_rounded,
+                                _ => Icons.repeat_rounded,
+                              };
+                              return RemoteIconButton(
+                                icon: icon,
+                                style: repeatMode != 'RepeatNone'
+                                    ? IconButton.styleFrom(
+                                        foregroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      )
+                                    : null,
+                                onPressed: canRepeat
+                                    ? () {
+                                        HapticFeedback.lightImpact();
+                                        ref
+                                            .read(playbackProvider.notifier)
+                                            .sendCommand(
+                                              JellyfinCommands.setRepeatMode,
+                                              arguments: {
+                                                'RepeatMode': nextMode,
+                                              },
+                                            );
+                                      }
+                                    : null,
+                              );
+                            },
+                          )
+                        else
+                          RemoteIconButton(
+                            icon: Icons.fullscreen_rounded,
+                            onPressed: session.ifCapable(
+                              JellyfinCommands.toggleFullscreen,
+                              () => ref
+                                  .read(playbackProvider.notifier)
+                                  .sendCommand(
+                                    JellyfinCommands.toggleFullscreen,
+                                  ),
+                            ),
                           ),
-                        ),
                         const SizedBox(width: 12),
                         MessageButton(session: session),
                       ],
@@ -225,7 +270,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        if (nowPlaying.type == 'Audio')
+                        if (nowPlaying.type == 'Audio') ...[
                           Consumer(
                             builder: (context, ref, child) {
                               final lyricsAsync = ref.watch(
@@ -263,8 +308,40 @@ class PlaybackControlsSection extends ConsumerWidget {
                                 ),
                               );
                             },
-                          )
-                        else
+                          ),
+                          const SizedBox(width: 12),
+                          Builder(
+                            builder: (context) {
+                              final canShuffle = session.supportedCommands
+                                  .contains(JellyfinCommands.setShuffleQueue);
+                              final isShuffle =
+                                  session.playState?.playbackOrder == 'Shuffle';
+                              return IconButton.filledTonal(
+                                icon: Icon(
+                                  isShuffle
+                                      ? Icons.shuffle_rounded
+                                      : Icons.format_list_numbered_rounded,
+                                ),
+                                iconSize: 24,
+                                onPressed: canShuffle
+                                    ? () {
+                                        HapticFeedback.lightImpact();
+                                        ref
+                                            .read(playbackProvider.notifier)
+                                            .sendCommand(
+                                              JellyfinCommands.setShuffleQueue,
+                                              arguments: {
+                                                'ShuffleMode': isShuffle
+                                                    ? 'Sorted'
+                                                    : 'Shuffle',
+                                              },
+                                            );
+                                      }
+                                    : null,
+                              );
+                            },
+                          ),
+                        ] else
                           IconButton.filledTonal(
                             icon: const Icon(Icons.subtitles_rounded),
                             iconSize: 24,

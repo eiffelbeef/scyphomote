@@ -8,6 +8,8 @@ class JellyfinCommands {
   static const String previousTrack = 'PreviousTrack';
   static const String rewind = 'Rewind';
   static const String fastForward = 'FastForward';
+  static const String setShuffleQueue = 'SetShuffleQueue';
+  static const String setRepeatMode = 'SetRepeatMode';
 
   // Navigation commands
   static const String moveUp = 'MoveUp';

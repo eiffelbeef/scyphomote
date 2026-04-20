@@ -15,7 +15,7 @@ class JellyfinApiService {
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
           logDebug(
-            'HTTP → ${options.method} ${options.uri}  headers=${options.headers} params=${options.queryParameters}',
+            'HTTP → ${options.method} ${options.uri}  headers=${options.headers} params=${options.queryParameters} data=${options.data}',
           );
           handler.next(options);
         },

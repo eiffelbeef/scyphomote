@@ -8,6 +8,8 @@ class PlayState {
   final int? audioStreamIndex;
   final String? mediaSourceId;
   final bool canSeek;
+  final String? playbackOrder;
+  final String? repeatMode;
 
   PlayState({
     required this.isPaused,
@@ -18,6 +20,8 @@ class PlayState {
     this.audioStreamIndex,
     this.mediaSourceId,
     required this.canSeek,
+    this.playbackOrder,
+    this.repeatMode,
   });
 
   int? get positionSeconds =>
@@ -32,5 +36,7 @@ class PlayState {
     audioStreamIndex: json['AudioStreamIndex'] as int?,
     mediaSourceId: json['MediaSourceId'] as String?,
     canSeek: json['CanSeek'] as bool? ?? false,
+    playbackOrder: json['PlaybackOrder'] as String?,
+    repeatMode: json['RepeatMode'] as String?,
   );
 }
