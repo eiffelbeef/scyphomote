@@ -98,7 +98,7 @@
   },
   "delete": "削除",
   "addUser": "ユーザーを追加",
-  "unlockPremium": "プレミアムをアンロック",
+  "unlockPremium": "プレミアム＆サポート",
   "supportFutureDevelopment": "今後の開発を支援する",
   "pleaseLogInFirst": "先にログインしてください",
   "connectingToSession": "セッションに接続中...",
@@ -166,7 +166,7 @@
   "youArePremium": "プレミアムユーザーです！",
   "unlockScyphomotePremium": "Scyphomote プレミアムをアンロック",
   "premiumThankYou": "アプリを支援していただきありがとうございます。現在および将来のすべてのプレミアム機能にフルアクセスできるようになりました！",
-  "premiumDescription": "この機能は Scyphomote プレミアム限定です。プレミアムを購入すると、現在および将来のすべてのプレミアム機能にいつでもアクセスできます。",
+  "premiumDescription": "プレミアムを購入すると、現在および将来のすべてのプレミアム機能にいつでもアクセスできます。",
   "premiumFeatures": "プレミアム機能:",
   "premiumFeatureWidget": "ホーム画面ウィジェット (アプリを開かずにデバイスを操作)",
   "addRemoteWidget": "リモートウィジェットを追加",
@@ -242,5 +242,14 @@
   "play": "再生",
   "shuffle": "シャッフル",
   "noOverviewAvailable": "経歴情報はありません",
-  "externalLinks": "外部リンク"
+  "externalLinks": "外部リンク",
+  "supportAppTitle": "アプリを支援する",
+  "supportAppDescription": "今後の開発に協力したい場合は、こちらのオプションをご利用いただけます。注意：これらによってアプリ内の追加機能が利用できるようになるわけではありません。",
+  "supportTier1": "支援ティア 1",
+  "supportTier2": "支援ティア 2",
+  "supportTier3": "支援ティア 3",
+  "supportThankYou": "ご支援誠にありがとうございます！",
+  "supportContactMessage": "何でもお気軽にメールしてください。フィードバック、アイデア、あいさつだけでも大歓迎です！",
+  "supportHistory": "履歴",
+  "restorePurchases": "購入を復元"
 }

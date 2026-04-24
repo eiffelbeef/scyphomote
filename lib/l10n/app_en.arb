@@ -98,7 +98,7 @@
   },
   "delete": "Delete",
   "addUser": "Add User",
-  "unlockPremium": "Unlock Premium",
+  "unlockPremium": "Premium & Support",
   "supportFutureDevelopment": "Support future development",
   "pleaseLogInFirst": "Please log in first",
   "connectingToSession": "Connecting to session...",
@@ -166,7 +166,7 @@
   "youArePremium": "You are Premium!",
   "unlockScyphomotePremium": "Unlock Scyphomote Premium",
   "premiumThankYou": "Thank you for supporting the app. You now have full access to current and future premium features!",
-  "premiumDescription": "This feature is locked behind Scyphomote Premium. Purchasing premium grants you access to current and future premium features, forever.",
+  "premiumDescription": "Purchasing premium grants you access to current and future premium features, forever.",
   "premiumFeatures": "Premium Features:",
   "premiumFeatureWidget": "Home Screen Widget (control devices without opening the app)",
   "addRemoteWidget": "Add Remote Widget",
@@ -242,5 +242,14 @@
   "play": "Play",
   "shuffle": "Shuffle",
   "noOverviewAvailable": "No biography available",
-  "externalLinks": "External Links"
+  "externalLinks": "External Links",
+  "supportAppTitle": "Support the App",
+  "supportAppDescription": "If you want to help development further, you can use these options. Note: these do not unlock any additional features in the app.",
+  "supportTier1": "Support Tier 1",
+  "supportTier2": "Support Tier 2",
+  "supportTier3": "Support Tier 3",
+  "supportThankYou": "Thank you so much for your support!",
+  "supportContactMessage": "Feel free to shoot me an email about anything: feedback, ideas, or just to say hi!",
+  "supportHistory": "History",
+  "restorePurchases": "Restore Purchases"
 }

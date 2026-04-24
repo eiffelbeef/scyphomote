@@ -98,7 +98,7 @@
   },
   "delete": "Supprimer",
   "addUser": "Ajouter un utilisateur",
-  "unlockPremium": "Débloquer Premium",
+  "unlockPremium": "Premium & Soutien",
   "supportFutureDevelopment": "Soutenir le développement futur",
   "pleaseLogInFirst": "Veuillez d'abord vous connecter",
   "connectingToSession": "Connexion à la session...",
@@ -166,7 +166,7 @@
   "youArePremium": "Vous êtes Premium !",
   "unlockScyphomotePremium": "Débloquer Scyphomote Premium",
   "premiumThankYou": "Merci de soutenir l'application. Vous avez désormais accès à toutes les fonctionnalités premium, actuelles et futures !",
-  "premiumDescription": "Cette fonctionnalité est réservée à Scyphomote Premium. L'achat de Premium vous donne accès à toutes les fonctionnalités premium, actuelles et futures, pour toujours.",
+  "premiumDescription": "L'achat de Premium vous donne accès à toutes les fonctionnalités premium, actuelles et futures, pour toujours.",
   "premiumFeatures": "Fonctionnalités Premium :",
   "premiumFeatureWidget": "Widget d'écran d'accueil (contrôler les appareils sans ouvrir l'application)",
   "addRemoteWidget": "Ajouter le widget télécommande",
@@ -242,5 +242,14 @@
   "play": "Lecture",
   "shuffle": "Aléatoire",
   "noOverviewAvailable": "Aucune biographie disponible",
-  "externalLinks": "Liens externes"
+  "externalLinks": "Liens externes",
+  "supportAppTitle": "Soutenir l'application",
+  "supportAppDescription": "Si vous souhaitez aider davantage au développement, vous pouvez utiliser ces options. Note : celles-ci ne débloquent aucune fonctionnalité supplémentaire.",
+  "supportTier1": "Soutien Niveau 1",
+  "supportTier2": "Soutien Niveau 2",
+  "supportTier3": "Soutien Niveau 3",
+  "supportThankYou": "Merci beaucoup pour votre soutien !",
+  "supportContactMessage": "N'hésitez pas à m'envoyer un e-mail pour quoi que ce soit : retours, idées, ou juste pour dire bonjour !",
+  "supportHistory": "Historique",
+  "restorePurchases": "Restaurer les achats"
 }

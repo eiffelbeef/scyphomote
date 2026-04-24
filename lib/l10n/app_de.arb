@@ -98,7 +98,7 @@
   },
   "delete": "Löschen",
   "addUser": "Benutzer hinzufügen",
-  "unlockPremium": "Premium freischalten",
+  "unlockPremium": "Premium & Unterstützung",
   "supportFutureDevelopment": "Zukünftige Entwicklung unterstützen",
   "pleaseLogInFirst": "Bitte melden Sie sich zuerst an",
   "connectingToSession": "Verbindung zur Sitzung wird hergestellt...",
@@ -166,7 +166,7 @@
   "youArePremium": "Sie sind Premium!",
   "unlockScyphomotePremium": "Scyphomote Premium freischalten",
   "premiumThankYou": "Vielen Dank für Ihre Unterstützung. Sie haben jetzt vollen Zugriff auf alle aktuellen und zukünftigen Premium-Funktionen!",
-  "premiumDescription": "Diese Funktion ist Scyphomote Premium vorbehalten. Der Kauf von Premium ermöglicht Ihnen den dauerhaften Zugriff auf alle Premium-Funktionen.",
+  "premiumDescription": "Der Kauf von Premium ermöglicht Ihnen den dauerhaften Zugriff auf alle Premium-Funktionen.",
   "premiumFeatures": "Premium-Funktionen:",
   "premiumFeatureWidget": "Startbildschirm-Widget (Geräte steuern, ohne die App zu öffnen)",
   "addRemoteWidget": "Remote-Widget hinzufügen",
@@ -242,5 +242,14 @@
   "play": "Abspielen",
   "shuffle": "Zufällig",
   "noOverviewAvailable": "Keine Biografie verfügbar",
-  "externalLinks": "Externe Links"
+  "externalLinks": "Externe Links",
+  "supportAppTitle": "App unterstützen",
+  "supportAppDescription": "Wenn Sie die Entwicklung weiter fördern möchten, können Sie diese Optionen nutzen. Hinweis: Diese schalten keine zusätzlichen Funktionen in der App frei.",
+  "supportTier1": "Support-Stufe 1",
+  "supportTier2": "Support-Stufe 2",
+  "supportTier3": "Support-Stufe 3",
+  "supportThankYou": "Vielen Dank für Ihre Unterstützung!",
+  "supportContactMessage": "Schreib mir gerne eine E-Mail: ob Feedback, Ideen oder einfach nur zum Hallo sagen!",
+  "supportHistory": "Verlauf",
+  "restorePurchases": "Käufe wiederherstellen"
 }
