@@ -106,7 +106,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
             IconButton(
               icon: const Icon(Icons.add_to_home_screen),
               tooltip: l10n.addRemoteWidget,
-              onPressed: () => _pinWidget(context, session),
+              onPressed: () => _showPinWidgetOptions(context, session),
             ),
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -213,7 +213,48 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     );
   }
 
-  Future<void> _pinWidget(BuildContext context, Session session) async {
+  void _showPinWidgetOptions(BuildContext context, Session session) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.gamepad),
+                title: const Text('Full Remote Widget'),
+                subtitle: const Text(
+                  'Includes D-Pad and full playback controls',
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pinWidget(context, session, 'RemoteWidgetProvider');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.fast_forward),
+                title: const Text('Compact Remote Widget'),
+                subtitle: const Text(
+                  'Single line with basic playback controls',
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pinWidget(context, session, 'CompactRemoteWidgetProvider');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pinWidget(
+    BuildContext context,
+    Session session,
+    String providerName,
+  ) async {
     try {
       final authState = ref.read(authProvider);
       final user = authState.currentUser;
@@ -232,6 +273,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
         clientDeviceId: session.deviceId,
         clientDeviceName: session.deviceName,
         sessionId: session.sessionId,
+        providerName: providerName,
       );
       if (context.mounted) {
         UiUtils.showSnackBar(

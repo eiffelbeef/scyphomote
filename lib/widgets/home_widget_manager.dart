@@ -69,6 +69,12 @@ Future<void> backgroundCallback(Uri? uri) async {
         case 'play_pause':
           await apiService.playPause(sessionId);
           break;
+        case 'rewind':
+          await apiService.sendPlayingCommand(sessionId, 'Rewind');
+          break;
+        case 'fast_forward':
+          await apiService.sendPlayingCommand(sessionId, 'FastForward');
+          break;
         case 'stop':
           await apiService.stop(sessionId);
           break;
@@ -102,6 +108,7 @@ class HomeWidgetManager {
     required String clientDeviceId,
     required String clientDeviceName,
     required String sessionId,
+    String providerName = 'RemoteWidgetProvider',
   }) async {
     if (!isWidgetSupported) return;
 
@@ -131,13 +138,14 @@ class HomeWidgetManager {
       sessionId,
     );
 
-    await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
-    await HomeWidget.requestPinWidget(name: 'RemoteWidgetProvider');
+    await HomeWidget.updateWidget(name: providerName);
+    await HomeWidget.requestPinWidget(name: providerName);
   }
 
   static Future<void> syncPremiumStatus(bool isPremium) async {
     if (!isWidgetSupported) return;
     await HomeWidget.saveWidgetData<bool>('is_premium', isPremium);
     await HomeWidget.updateWidget(name: 'RemoteWidgetProvider');
+    await HomeWidget.updateWidget(name: 'CompactRemoteWidgetProvider');
   }
 }
