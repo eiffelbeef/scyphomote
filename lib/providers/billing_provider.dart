@@ -30,12 +30,6 @@ class IsPremiumNotifier extends Notifier<bool> {
     await _billing.setPremiumLocal(value);
     state = value;
   }
-
-  Future<void> restorePurchases() async {
-    await _billing.restorePurchases();
-    state = _billing.isPremium;
-    ref.read(supportHistoryProvider.notifier).refresh();
-  }
 }
 
 final isPremiumProvider = NotifierProvider<IsPremiumNotifier, bool>(

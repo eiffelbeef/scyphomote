@@ -40,7 +40,7 @@ class PremiumScreen extends ConsumerWidget {
                 FilledButton.icon(
                   onPressed: () =>
                       ref.read(isPremiumProvider.notifier).buyPremium(),
-                  icon: const Icon(Icons.shopping_cart),
+                  icon: const Icon(Icons.shopping_cart_rounded),
                   label: Text(l10n.buyNow),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -91,17 +91,6 @@ class PremiumScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _SupportHistory(history: history, l10n: l10n, theme: theme),
             ],
-
-            if (isAvailable) ...[
-              const SizedBox(height: 32),
-              TextButton.icon(
-                onPressed: () =>
-                    ref.read(isPremiumProvider.notifier).restorePurchases(),
-                icon: const Icon(Icons.refresh, size: 18),
-                label: Text(l10n.restorePurchases),
-              ),
-            ],
-            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -130,7 +119,7 @@ class _PremiumHeader extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Icon(
-        isPremium ? Icons.verified : Icons.lock_outline,
+        isPremium ? Icons.verified_rounded : Icons.lock_outline_rounded,
         size: 80,
         color: isPremium ? Colors.green : theme.colorScheme.primary,
       ),
@@ -184,7 +173,7 @@ class _PremiumFeatures extends StatelessWidget {
 
   Widget _featureRow(String text) => Row(
     children: [
-      const Icon(Icons.check_circle, size: 20, color: Colors.green),
+      const Icon(Icons.check_circle_rounded, size: 20, color: Colors.green),
       const SizedBox(width: 8),
       Expanded(child: Text(text)),
     ],
@@ -205,7 +194,7 @@ class _SupportThankYou extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const Icon(Icons.favorite, size: 40, color: Colors.red),
+          const Icon(Icons.favorite_rounded, size: 40, color: Colors.red),
           const SizedBox(height: 12),
           Text(
             l10n.supportThankYou,
@@ -279,7 +268,7 @@ class _SupportHistory extends StatelessWidget {
           return ListTile(
             dense: true,
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.volunteer_activism, size: 20),
+            leading: const Icon(Icons.volunteer_activism_rounded, size: 20),
             title: Text(tierName),
             trailing: Text(formatted, style: theme.textTheme.bodySmall),
           );

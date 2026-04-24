@@ -2,7 +2,9 @@
     <application
         android:label="Scyphomote"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:allowBackup="true"
+        android:fullBackupContent="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

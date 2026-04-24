@@ -57,11 +57,6 @@ class BillingService {
   Future<void> buySupport(String productId) =>
       _buy(productId, consumable: true);
 
-  Future<void> restorePurchases() async {
-    if (!_isAvailable) return;
-    await _iap.restorePurchases();
-  }
-
   Future<void> setPremiumLocal(bool value) async {
     await _setPremium(value);
   }
