@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/constants.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
+import '../utils/ui_utils.dart';
 import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/session_provider.dart';
 import '../models/session.dart';
-import '../utils/ui_utils.dart';
 import '../widgets/user_avatar.dart';
 import 'remote_control/remote_control_screen.dart';
 import 'user_management_screen.dart';
@@ -28,111 +29,82 @@ class DeviceListScreen extends ConsumerWidget {
       return const LoadingScreen();
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset('assets/scyphomote.png', width: 40, height: 40),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).bottomSystemUiOverlayStyleOverScrolled,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/scyphomote.png', width: 40, height: 40),
+          ),
+          title: const Text(AppConstants.appName),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.message),
+              onPressed:
+                  _getSessionsSupportingMessaging(sessionState).isNotEmpty
+                  ? () => _showMessageAllDialog(context, ref)
+                  : null,
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.of(context).pushNamed(SettingsScreen.routeName);
+              },
+            ),
+            IconButton(
+              icon: authState.currentUser != null
+                  ? UserAvatar(user: authState.currentUser!, radius: 12)
+                  : const Icon(Icons.person),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const UserManagementScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-        title: const Text(AppConstants.appName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.message),
-            onPressed: _getSessionsSupportingMessaging(sessionState).isNotEmpty
-                ? () => _showMessageAllDialog(context, ref)
-                : null,
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.of(context).pushNamed(SettingsScreen.routeName);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const UserManagementScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
-        child: sessionState.sessions.isEmpty
-            ? CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.devices_other,
-                            size: 64,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            l10n.noActiveDevicesFound,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(l10n.startPlayingMediaOnJellyfinClient),
-                        ],
+        body: RefreshIndicator(
+          onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
+          child: sessionState.sessions.isEmpty
+              ? CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.devices_other,
+                              size: 64,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.noActiveDevicesFound,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(l10n.startPlayingMediaOnJellyfinClient),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            : CustomScrollView(
-                slivers: [
-                  ..._buildActiveSessions(context, ref, sessionState),
-                  ..._buildIdleSessions(context, ref, sessionState),
-                  const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
-                ],
-              ),
+                  ],
+                )
+              : CustomScrollView(
+                  slivers: [
+                    ..._buildActiveSessions(context, ref, sessionState),
+                    ..._buildIdleSessions(context, ref, sessionState),
+                    const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+                  ],
+                ),
+        ),
       ),
-      bottomNavigationBar: authState.currentUser != null
-          ? Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              child: Row(
-                children: [
-                  UserAvatar(
-                    user: authState.currentUser!,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          authState.currentUser!.username,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          authState.currentUser!.serverUrl,
-                          style: Theme.of(context).textTheme.bodySmall,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : null,
     );
   }
 

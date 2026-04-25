@@ -23,14 +23,11 @@ class RemoteControlScreen extends ConsumerStatefulWidget {
 }
 
 class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
-  // Drag values (interacting)
   double? _dragVolume;
 
-  // Optimistic values (released, waiting for confirmation)
   double? _optimisticSeek;
   double? _optimisticVolume;
 
-  // Last known server values (change detection)
   int? _lastServerSeek;
   int? _lastServerVolume;
 
@@ -63,17 +60,13 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     final currentServerSeek = playState?.positionSeconds ?? 0;
     final currentServerVolume = playState?.volumeLevel ?? 0;
 
-    // If we have an optimistic seek, check if server has moved
     if (_optimisticSeek != null) {
-      // If server value changed from what we last saw, assume it's a new update
-      // and drop our optimistic value to sync with server.
       if (_lastServerSeek != null && currentServerSeek != _lastServerSeek) {
         _optimisticSeek = null;
       }
     }
     _lastServerSeek = currentServerSeek;
 
-    // If we have an optimistic volume, check if server has changed
     if (_optimisticVolume != null) {
       if (_lastServerVolume != null &&
           currentServerVolume != _lastServerVolume) {
@@ -82,10 +75,8 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     }
     _lastServerVolume = currentServerVolume;
 
-    // Calculate display values
     final currentVolume =
         _dragVolume ?? _optimisticVolume ?? currentServerVolume.toDouble();
-    // ----------------------------
 
     String? imageUrl;
     if (nowPlaying != null) {
@@ -97,118 +88,125 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(session.deviceName),
-        centerTitle: true,
-        actions: [
-          if (HomeWidgetManager.isWidgetSupported)
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).bottomSystemUiOverlayStyleOnBackground,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(session.deviceName),
+          centerTitle: true,
+          actions: [
+            if (HomeWidgetManager.isWidgetSupported)
+              IconButton(
+                icon: const Icon(Icons.add_to_home_screen),
+                tooltip: l10n.addRemoteWidget,
+                onPressed: () => _showPinWidgetOptions(context, session),
+              ),
             IconButton(
-              icon: const Icon(Icons.add_to_home_screen),
-              tooltip: l10n.addRemoteWidget,
-              onPressed: () => _showPinWidgetOptions(context, session),
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => _showSessionInfoDialog(context, session),
             ),
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => _showSessionInfoDialog(context, session),
-          ),
-        ],
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Calculate available space to determine ideal artwork size
-          // We subtract fixed margins and estimated heights of controls
-          // Controls height estimate (safe values):
-          // - Status/Bitrate: 60
-          // - Titles: 80
-          // - Progress Bar: 40
-          // - Play/Pause Row: 100
-          // - Message/Stop Row: 70
-          // - Volume Slider: 60
-          // - Bottom Buttons: 80
-          // - Paddings/Spacings: ~150
-          final fixedHeights = 60 + 80 + 40 + 100 + 70 + 60 + 80 + 150;
-          final availableForArtwork = constraints.maxHeight - fixedHeights;
+          ],
+        ),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // Calculate available space to determine ideal artwork size
+            // We subtract fixed margins and estimated heights of controls
+            // Controls height estimate (safe values):
+            // - Status/Bitrate: 60
+            // - Titles: 80
+            // - Progress Bar: 40
+            // - Play/Pause Row: 100
+            // - Message/Stop Row: 70
+            // - Volume Slider: 60
+            // - Bottom Buttons: 80
+            // - Paddings/Spacings: ~150
+            final fixedHeights = 60 + 80 + 40 + 100 + 70 + 60 + 80 + 150;
+            final availableForArtwork = constraints.maxHeight - fixedHeights;
 
-          // Constrain artwork size between a min and max
-          final artworkSize = availableForArtwork.clamp(120.0, 500.0);
+            // Constrain artwork size between a min and max
+            final artworkSize = availableForArtwork.clamp(120.0, 500.0);
 
-          return RefreshIndicator(
-            onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(
-                context,
-              ).copyWith(overscroll: false),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: ClampingScrollPhysics(),
-                ),
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24.0,
-                        vertical: 16.0,
-                      ),
-                      child: Column(
-                        children: [
-                          const Spacer(),
-                          // Top Section: Artwork and Identifiers
-                          NowPlayingSection(
-                            session: session,
-                            imageUrl: imageUrl,
-                            artworkSize: artworkSize,
-                            maxWidth: constraints.maxWidth - 48.0,
-                          ),
-                          const Spacer(),
-                          // Bottom Section: Playback Controls and Volume
-                          // Bottom Section: Playback Controls and Volume
-                          PlaybackControlsSection(
-                            session: session,
-                            currentPositionSeconds:
-                                (_optimisticSeek ?? currentServerSeek).toInt(),
-                            durationSeconds: duration,
-                            isPaused: isPaused,
-                            currentVolume: currentVolume,
-                            availableWidth: constraints.maxWidth - 48.0,
-                            onSeek: (value) {
-                              setState(() {
-                                _optimisticSeek = value;
-                              });
-                            },
-                            onSeekEnd: (value) {
-                              HapticFeedback.lightImpact();
-                              ref
-                                  .read(playbackProvider.notifier)
-                                  .seek(value.toInt());
-                              setState(() {
-                                _optimisticSeek = value;
-                              });
-                            },
-                            onVolumeChanged: (value) =>
-                                setState(() => _dragVolume = value),
-                            onVolumeChangeEnd: (value) {
-                              HapticFeedback.lightImpact();
-                              ref
-                                  .read(playbackProvider.notifier)
-                                  .setVolume(value.toInt());
-                              setState(() {
-                                _dragVolume = null;
-                                _optimisticVolume = value;
-                              });
-                            },
-                          ),
-                          const Spacer(),
-                        ],
+            return RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(sessionProvider.notifier).fetchSessions(),
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(
+                  context,
+                ).copyWith(overscroll: false),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: ClampingScrollPhysics(),
+                  ),
+                  slivers: [
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          24.0,
+                          16.0,
+                          24.0,
+                          16.0 + MediaQuery.paddingOf(context).bottom,
+                        ),
+                        child: Column(
+                          children: [
+                            const Spacer(),
+                            // Top Section: Artwork and Identifiers
+                            NowPlayingSection(
+                              session: session,
+                              imageUrl: imageUrl,
+                              artworkSize: artworkSize,
+                              maxWidth: constraints.maxWidth - 48.0,
+                            ),
+                            const Spacer(),
+                            // Bottom Section: Playback Controls and Volume
+                            // Bottom Section: Playback Controls and Volume
+                            PlaybackControlsSection(
+                              session: session,
+                              currentPositionSeconds:
+                                  (_optimisticSeek ?? currentServerSeek)
+                                      .toInt(),
+                              durationSeconds: duration,
+                              isPaused: isPaused,
+                              currentVolume: currentVolume,
+                              availableWidth: constraints.maxWidth - 48.0,
+                              onSeek: (value) {
+                                setState(() {
+                                  _optimisticSeek = value;
+                                });
+                              },
+                              onSeekEnd: (value) {
+                                HapticFeedback.lightImpact();
+                                ref
+                                    .read(playbackProvider.notifier)
+                                    .seek(value.toInt());
+                                setState(() {
+                                  _optimisticSeek = value;
+                                });
+                              },
+                              onVolumeChanged: (value) =>
+                                  setState(() => _dragVolume = value),
+                              onVolumeChangeEnd: (value) {
+                                HapticFeedback.lightImpact();
+                                ref
+                                    .read(playbackProvider.notifier)
+                                    .setVolume(value.toInt());
+                                setState(() {
+                                  _dragVolume = null;
+                                  _optimisticVolume = value;
+                                });
+                              },
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

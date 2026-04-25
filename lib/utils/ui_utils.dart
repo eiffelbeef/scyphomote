@@ -1,5 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants.dart';
+
+extension ThemeSystemUiExtension on ThemeData {
+  SystemUiOverlayStyle get bottomSystemUiOverlayStyleOnBackground {
+    return SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+      systemNavigationBarContrastEnforced: false,
+    );
+  }
+
+  SystemUiOverlayStyle get bottomSystemUiOverlayStyleOverScrolled {
+    return SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: brightness == Brightness.light
+          ? Brightness.dark
+          : Brightness.light,
+      systemNavigationBarContrastEnforced: true,
+    );
+  }
+}
 
 String formatDuration(int seconds) {
   final h = seconds ~/ 3600;
