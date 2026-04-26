@@ -40,14 +40,14 @@ class DeviceListScreen extends ConsumerWidget {
           title: const Text(AppConstants.appName),
           actions: [
             IconButton(
-              icon: const Icon(Icons.message),
+              icon: const Icon(Icons.message_rounded),
               onPressed:
                   _getSessionsSupportingMessaging(sessionState).isNotEmpty
                   ? () => _showMessageAllDialog(context, ref)
                   : null,
             ),
             IconButton(
-              icon: const Icon(Icons.settings),
+              icon: const Icon(Icons.settings_rounded),
               onPressed: () {
                 Navigator.of(context).pushNamed(SettingsScreen.routeName);
               },
@@ -55,7 +55,7 @@ class DeviceListScreen extends ConsumerWidget {
             IconButton(
               icon: authState.currentUser != null
                   ? UserAvatar(user: authState.currentUser!, radius: 12)
-                  : const Icon(Icons.person),
+                  : const Icon(Icons.person_rounded),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -151,7 +151,7 @@ class DeviceListScreen extends ConsumerWidget {
                       ? Icons.play_arrow_rounded
                       : isPaused
                       ? Icons.pause_rounded
-                      : Icons.devices,
+                      : Icons.devices_rounded,
                   color: isPlaying || isPaused ? Colors.white : null,
                 ),
               ),

@@ -98,7 +98,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.language),
+            leading: const Icon(Icons.language_rounded),
             title: Text(AppLocalizations.of(context)!.languageTitle),
             trailing: DropdownMenu<String?>(
               key: ValueKey(currentLocale?.languageCode),
@@ -141,7 +141,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.speed),
+            leading: const Icon(Icons.speed_rounded),
             title: Text(AppLocalizations.of(context)!.playerRefreshRateTitle),
             subtitle: Text(
               AppLocalizations.of(
@@ -167,7 +167,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           SwitchListTile(
-            secondary: const Icon(Icons.sync),
+            secondary: const Icon(Icons.sync_rounded),
             title: Text(
               AppLocalizations.of(context)!.deviceListAutoRefreshTitle,
             ),

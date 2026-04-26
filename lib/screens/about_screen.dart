@@ -135,7 +135,7 @@ class AboutScreen extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.favorite, color: Colors.amber),
+                      const Icon(Icons.favorite_rounded, color: Colors.amber),
                       const SizedBox(width: 8),
                       Text(l10n.donateUsingLiberapay),
                     ],
@@ -217,7 +217,7 @@ class _SupportItem extends StatelessWidget {
           ),
           subtitle: Text(address, maxLines: 1, overflow: TextOverflow.ellipsis),
           trailing: IconButton(
-            icon: const Icon(Icons.copy, size: 20),
+            icon: const Icon(Icons.copy_rounded, size: 20),
             onPressed: onCopy,
             tooltip: AppLocalizations.of(context)!.copyAddress,
           ),

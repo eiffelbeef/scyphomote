@@ -70,7 +70,7 @@ class MediaItemCard extends ConsumerWidget {
                   userData: item['UserData'],
                   placeholderIcon: collectionType == 'music'
                       ? Icons.music_note
-                      : Icons.movie,
+                      : Icons.movie_rounded,
                 ),
               ),
               Padding(

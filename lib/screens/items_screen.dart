@@ -240,7 +240,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                             userData: item['UserData'],
                             placeholderIcon: widget.collectionType == 'music'
                                 ? Icons.music_note
-                                : Icons.movie,
+                                : Icons.movie_rounded,
                           ),
                         ),
                         Padding(
@@ -371,7 +371,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         actions: [
           if (_isSearching)
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: const Icon(Icons.close_rounded),
               onPressed: () {
                 setState(() {
                   _isSearching = false;
@@ -383,7 +383,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             )
           else ...[
             IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search_rounded),
               onPressed: () {
                 setState(() {
                   _isSearching = true;
@@ -393,7 +393,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               },
             ),
             PopupMenuButton<String>(
-              icon: const Icon(Icons.sort),
+              icon: const Icon(Icons.sort_rounded),
               tooltip: 'Sort By',
               onSelected: (value) async {
                 final storage = ref.read(storageServiceProvider);
@@ -473,7 +473,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                       ),
                       const SizedBox(width: 16),
                       FilledButton.tonalIcon(
-                        icon: const Icon(Icons.shuffle),
+                        icon: const Icon(Icons.shuffle_rounded),
                         label: Text(AppLocalizations.of(context)!.shuffle),
                         onPressed: () => playItemOnRemote(context, ref, {
                           'Id': widget.parentId,
@@ -539,7 +539,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                             child: ItemPoster(
                               imageUrl: imageUrl,
                               userData: item['UserData'],
-                              placeholderIcon: Icons.movie,
+                              placeholderIcon: Icons.movie_rounded,
                             ),
                           ),
                         ),
@@ -609,7 +609,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                             userData: item['UserData'],
                             placeholderIcon: isMusic
                                 ? Icons.music_note
-                                : Icons.movie,
+                                : Icons.movie_rounded,
                           ),
                         ),
                         Padding(

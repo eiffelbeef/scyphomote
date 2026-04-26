@@ -471,7 +471,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                icon: const Icon(Icons.gamepad, size: 20),
+                icon: const Icon(Icons.gamepad_rounded, size: 20),
                 label: const Text('Remote'),
               ),
             ),

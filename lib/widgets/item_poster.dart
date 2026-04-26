@@ -11,7 +11,7 @@ class ItemPoster extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.userData,
-    this.placeholderIcon = Icons.movie,
+    this.placeholderIcon = Icons.movie_rounded,
     this.fit = BoxFit.cover,
   });
 
@@ -69,7 +69,7 @@ class ItemPoster extends StatelessWidget {
                         ),
                       )
                     : Icon(
-                        Icons.check,
+                        Icons.check_rounded,
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                         size: 16,
                       ),

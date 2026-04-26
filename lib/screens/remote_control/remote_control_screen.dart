@@ -220,7 +220,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.gamepad),
+                leading: const Icon(Icons.gamepad_rounded),
                 title: const Text('Full Remote Widget'),
                 subtitle: const Text(
                   'Includes D-Pad and full playback controls',

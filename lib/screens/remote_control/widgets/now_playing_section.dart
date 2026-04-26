@@ -589,7 +589,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                                           .colorScheme
                                                           .surfaceContainerHighest,
                                                       child: const Icon(
-                                                        Icons.person,
+                                                        Icons.person_rounded,
                                                         size: 32,
                                                       ),
                                                     ),
@@ -605,7 +605,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                                           .colorScheme
                                                           .surfaceContainerHighest,
                                                       child: const Icon(
-                                                        Icons.person,
+                                                        Icons.person_rounded,
                                                         size: 32,
                                                       ),
                                                     ),
@@ -617,7 +617,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                                     .colorScheme
                                                     .surfaceContainerHighest,
                                                 child: const Icon(
-                                                  Icons.person,
+                                                  Icons.person_rounded,
                                                   size: 32,
                                                 ),
                                               ),

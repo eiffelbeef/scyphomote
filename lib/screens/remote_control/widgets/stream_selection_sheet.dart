@@ -84,7 +84,7 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
                     return ListTile(
                       title: const Text('None'),
                       trailing: isNone
-                          ? const Icon(Icons.check, color: Colors.green)
+                          ? const Icon(Icons.check_rounded, color: Colors.green)
                           : null,
                       onTap: () => _handleSelection(-1),
                     );
@@ -143,7 +143,7 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
       title: Text(titleText),
       subtitle: Text(subtitleText),
       trailing: isSelected
-          ? const Icon(Icons.check, color: Colors.green)
+          ? const Icon(Icons.check_rounded, color: Colors.green)
           : null,
       onTap: onTap,
     );

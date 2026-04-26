@@ -86,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         labelText: l10n.serverUrl,
                         hintText: l10n.serverUrlHint,
                         border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.dns),
+                        prefixIcon: const Icon(Icons.dns_rounded),
                       ),
                       keyboardType: TextInputType.url,
                       autofillHints: const [AutofillHints.url],
@@ -103,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.username,
                         border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person_rounded),
                       ),
                       autofillHints: const [AutofillHints.username],
                       validator: (value) {
@@ -119,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.password,
                         border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock_rounded),
                       ),
                       obscureText: true,
                       autofillHints: const [AutofillHints.password],

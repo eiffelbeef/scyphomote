@@ -264,7 +264,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                     context,
                                   ).colorScheme.surfaceContainerHighest,
                                   child: const Center(
-                                    child: Icon(Icons.folder),
+                                    child: Icon(Icons.folder_rounded),
                                   ),
                                 ),
                                 errorWidget: (context, url, error) => Container(

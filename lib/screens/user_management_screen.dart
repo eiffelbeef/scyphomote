@@ -85,7 +85,7 @@ class UserManagementScreen extends ConsumerWidget {
             MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         },
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded),
         label: Text(l10n.addUser),
       ),
     );
