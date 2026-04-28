@@ -251,5 +251,10 @@
   "supportThankYou": "Thank you so much for your support!",
   "supportContactMessage": "Feel free to shoot me an email about anything: feedback, ideas, or just to say hi!",
   "supportHistory": "History",
-  "restorePurchases": "Restore Purchases"
+  "restorePurchases": "Restore Purchases",
+  "showMore": "Show more",
+  "showLess": "Show less",
+  "episodeCast": "Episode",
+  "seasonCast": "Season",
+  "showCast": "Show"
 }

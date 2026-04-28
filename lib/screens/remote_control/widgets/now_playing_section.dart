@@ -11,10 +11,42 @@ import '../../../providers/remote_providers.dart';
 import '../../../models/media_info.dart';
 import '../../../models/media_segment.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../services/jellyfin_api_service.dart';
 import '../../../utils/logger.dart';
 import '../../../utils/ui_utils.dart';
 import 'remote_button.dart';
 import '../../../../l10n/app_localizations.dart';
+
+String? _svgAssetForLinkName(String name) {
+  switch (name.toLowerCase()) {
+    case 'imdb':
+      return 'assets/imdb.svg';
+    case 'tmdb':
+      return 'assets/tmdb.svg';
+    case 'thetvdb':
+      return 'assets/tvdb.svg';
+    default:
+      return null;
+  }
+}
+
+class _DragHandle extends StatelessWidget {
+  const _DragHandle();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 40,
+      height: 4,
+      decoration: BoxDecoration(
+        color: Theme.of(
+          context,
+        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
+}
 
 class NowPlayingSection extends ConsumerStatefulWidget {
   final Session session;
@@ -152,7 +184,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         if (nowPlaying != null) ...[
           InkWell(
             onTap: nowPlaying.isVideo
-                ? () => _showCastAndCrew(nowPlaying.seriesId ?? nowPlaying.id)
+                ? () => _showMediaDetails(nowPlaying)
                 : null,
             borderRadius: BorderRadius.circular(8),
             child: Padding(
@@ -186,38 +218,15 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           ),
           const SizedBox(height: 4),
           if (nowPlaying.displaySubtitle != null)
-            InkWell(
-              onTap: nowPlaying.type == 'Episode'
-                  ? () => _showCastAndCrew(nowPlaying.id)
-                  : null,
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: MarqueeText(
-                        text: nowPlaying.displaySubtitle!,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxWidth: widget.maxWidth,
-                      ),
-                    ),
-                    if (nowPlaying.type == 'Episode')
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 16,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                  ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: MarqueeText(
+                text: nowPlaying.displaySubtitle!,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
+                textAlign: TextAlign.center,
+                maxWidth: widget.maxWidth,
               ),
             ),
 
@@ -485,9 +494,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     );
   }
 
-  void _showCastAndCrew(String itemId) async {
-    final nowPlaying = widget.session.nowPlaying;
-    if (nowPlaying == null) return;
+  void _showMediaDetails(MediaInfo nowPlaying) {
+    final isEpisode = nowPlaying.type == 'Episode';
+    final mainItemId = nowPlaying.seriesId ?? nowPlaying.id;
 
     showModalBottomSheet(
       context: context,
@@ -495,11 +504,11 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       useSafeArea: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      builder: (context) {
+      builder: (sheetContext) {
         return Consumer(
           builder: (context, ref, child) {
             final apiService = ref.read(apiServiceProvider);
-            final detailsAsync = ref.watch(itemDetailsProvider(itemId));
+            final detailsAsync = ref.watch(itemDetailsProvider(mainItemId));
 
             return DraggableScrollableSheet(
               initialChildSize: 0.6,
@@ -508,174 +517,66 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
               expand: false,
               builder: (context, scrollController) {
                 final l10n = AppLocalizations.of(context)!;
-                return Column(
-                  children: [
-                    const SizedBox(height: 12),
-                    Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        l10n.castAndCrew,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    Expanded(
-                      child: detailsAsync.when(
-                        data: (details) {
-                          final people = (details != null
-                              ? (details['People'] as List?)
-                                        ?.map(
-                                          (p) => Person.fromJson(
-                                            p as Map<String, dynamic>,
-                                          ),
-                                        )
-                                        .toList() ??
-                                    []
-                              : []);
+                return detailsAsync.when(
+                  data: (details) {
+                    final overview = details?['Overview'] as String?;
+                    final externalUrls =
+                        (details?['ExternalUrls'] as List?)
+                            ?.cast<Map<String, dynamic>>() ??
+                        [];
+                    final people =
+                        (details?['People'] as List?)
+                            ?.map(
+                              (p) => Person.fromJson(p as Map<String, dynamic>),
+                            )
+                            .toList() ??
+                        [];
 
-                          if (people.isEmpty) {
-                            return Center(child: Text(l10n.noCastInfo));
-                          }
-
-                          return ListView.builder(
-                            controller: scrollController,
-                            itemCount: people.length,
-                            itemBuilder: (context, index) {
-                              final person = people[index];
-                              final imageUrl = person.primaryImageTag != null
-                                  ? apiService.getArtworkUrl(
-                                      person.id,
-                                      'Primary',
-                                      maxWidth: 200,
-                                      tag: person.primaryImageTag,
-                                    )
-                                  : null;
-
-                              return InkWell(
-                                onTap: () =>
-                                    _showPersonDetail(person.id, person.name),
-                                borderRadius: BorderRadius.circular(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: imageUrl != null
-                                            ? CachedNetworkImage(
-                                                imageUrl: imageUrl,
-                                                width: 80,
-                                                height: 120,
-                                                fit: BoxFit.cover,
-                                                placeholder: (context, url) =>
-                                                    Container(
-                                                      width: 80,
-                                                      height: 120,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .surfaceContainerHighest,
-                                                      child: const Icon(
-                                                        Icons.person_rounded,
-                                                        size: 32,
-                                                      ),
-                                                    ),
-                                                errorWidget:
-                                                    (
-                                                      context,
-                                                      url,
-                                                      error,
-                                                    ) => Container(
-                                                      width: 80,
-                                                      height: 120,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .surfaceContainerHighest,
-                                                      child: const Icon(
-                                                        Icons.person_rounded,
-                                                        size: 32,
-                                                      ),
-                                                    ),
-                                              )
-                                            : Container(
-                                                width: 80,
-                                                height: 120,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surfaceContainerHighest,
-                                                child: const Icon(
-                                                  Icons.person_rounded,
-                                                  size: 32,
-                                                ),
-                                              ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              person.name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                            ),
-                                            if (person.role != null) ...[
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                person.role!,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurfaceVariant,
-                                                    ),
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.chevron_right,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (err, stack) => Center(
-                          child: Text(l10n.errorLoadingCast(err.toString())),
+                    return Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        const _DragHandle(),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            details?['Name'] as String? ??
+                                nowPlaying.displayTitle,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
+                        const Divider(height: 1),
+                        Expanded(
+                          child: isEpisode
+                              ? _MediaDetailsTabs(
+                                  scrollController: scrollController,
+                                  overview: overview,
+                                  externalUrls: externalUrls,
+                                  episodeId: nowPlaying.id,
+                                  seasonId: nowPlaying.seasonId,
+                                  seriesId: nowPlaying.seriesId,
+                                  showPeople: people,
+                                  apiService: apiService,
+                                  onPersonTap: _showPersonDetail,
+                                )
+                              : _MediaDetailsContent(
+                                  scrollController: scrollController,
+                                  overview: overview,
+                                  externalUrls: externalUrls,
+                                  people: people,
+                                  apiService: apiService,
+                                  onPersonTap: _showPersonDetail,
+                                ),
+                        ),
+                      ],
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => Center(
+                    child: Text(l10n.errorLoadingCast(err.toString())),
+                  ),
                 );
               },
             );
@@ -686,8 +587,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
   }
 
   void _showPersonDetail(String personId, String personName) async {
-    final l10n = AppLocalizations.of(context)!;
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -705,6 +604,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
               maxChildSize: 0.85,
               expand: false,
               builder: (context, scrollController) {
+                final l10n = AppLocalizations.of(context)!;
                 return detailsAsync.when(
                   data: (details) {
                     final name = details?['Name'] as String? ?? personName;
@@ -717,17 +617,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                     return Column(
                       children: [
                         const SizedBox(height: 12),
-                        Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant
-                                .withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
+                        const _DragHandle(),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -775,44 +665,8 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                         ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 12),
-                                  Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: externalUrls.map((link) {
-                                      final linkName =
-                                          link['Name'] as String? ?? '';
-                                      final linkUrl =
-                                          link['Url'] as String? ?? '';
-                                      final svgAsset = _svgAssetForLinkName(
-                                        linkName,
-                                      );
-                                      return OutlinedButton.icon(
-                                        onPressed: linkUrl.isNotEmpty
-                                            ? () => launchUrl(
-                                                Uri.parse(linkUrl),
-                                                mode: LaunchMode
-                                                    .externalApplication,
-                                              )
-                                            : null,
-                                        icon: svgAsset != null
-                                            ? SvgPicture.asset(
-                                                svgAsset,
-                                                width: 18,
-                                                height: 18,
-                                                colorFilter: ColorFilter.mode(
-                                                  Theme.of(
-                                                    context,
-                                                  ).colorScheme.primary,
-                                                  BlendMode.srcIn,
-                                                ),
-                                              )
-                                            : const Icon(
-                                                Icons.open_in_new,
-                                                size: 18,
-                                              ),
-                                        label: Text(linkName),
-                                      );
-                                    }).toList(),
+                                  _ExternalLinksSection(
+                                    externalUrls: externalUrls,
                                   ),
                                 ],
                               ],
@@ -839,19 +693,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     );
   }
 
-  String? _svgAssetForLinkName(String name) {
-    switch (name.toLowerCase()) {
-      case 'imdb':
-        return 'assets/imdb.svg';
-      case 'tmdb':
-        return 'assets/tmdb.svg';
-      case 'thetvdb':
-        return 'assets/tvdb.svg';
-      default:
-        return null;
-    }
-  }
-
   Widget _buildPlaceholder(
     BuildContext context, {
     required double size,
@@ -871,6 +712,424 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
+    );
+  }
+}
+
+class _MediaDetailsContent extends StatefulWidget {
+  final ScrollController scrollController;
+  final String? overview;
+  final List<Map<String, dynamic>> externalUrls;
+  final List<Person> people;
+  final JellyfinApiService apiService;
+  final void Function(String, String) onPersonTap;
+
+  const _MediaDetailsContent({
+    required this.scrollController,
+    required this.overview,
+    required this.externalUrls,
+    required this.people,
+    required this.apiService,
+    required this.onPersonTap,
+  });
+
+  @override
+  State<_MediaDetailsContent> createState() => _MediaDetailsContentState();
+}
+
+class _MediaDetailsContentState extends State<_MediaDetailsContent> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ListView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.all(16),
+      children: [
+        if (widget.overview != null && widget.overview!.isNotEmpty)
+          _OverviewSection(
+            overview: widget.overview!,
+            expanded: _expanded,
+            onToggle: () => setState(() => _expanded = !_expanded),
+          ),
+        if (widget.externalUrls.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _ExternalLinksSection(externalUrls: widget.externalUrls),
+        ],
+        if (widget.people.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          Text(
+            l10n.castAndCrew,
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ...widget.people.map(
+            (person) => _PersonRow(
+              person: person,
+              apiService: widget.apiService,
+              onTap: widget.onPersonTap,
+            ),
+          ),
+        ],
+        if (widget.people.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 32),
+              child: Text(l10n.noCastInfo),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _MediaDetailsTabs extends StatefulWidget {
+  final ScrollController scrollController;
+  final String? overview;
+  final List<Map<String, dynamic>> externalUrls;
+  final String episodeId;
+  final String? seasonId;
+  final String? seriesId;
+  final List<Person> showPeople;
+  final JellyfinApiService apiService;
+  final void Function(String, String) onPersonTap;
+
+  const _MediaDetailsTabs({
+    required this.scrollController,
+    required this.overview,
+    required this.externalUrls,
+    required this.episodeId,
+    this.seasonId,
+    this.seriesId,
+    required this.showPeople,
+    required this.apiService,
+    required this.onPersonTap,
+  });
+
+  @override
+  State<_MediaDetailsTabs> createState() => _MediaDetailsTabsState();
+}
+
+class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  bool _expanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Consumer(
+      builder: (context, ref, child) {
+        final selectedIndex = _tabController.index;
+        final String? selectedItemId;
+        List<Person>? preloadedPeople;
+
+        switch (selectedIndex) {
+          case 0:
+            selectedItemId = widget.episodeId;
+          case 1:
+            selectedItemId = widget.seasonId;
+          default:
+            selectedItemId = null;
+            preloadedPeople = widget.showPeople;
+        }
+
+        final List<Person> people;
+        final bool isLoading;
+        final String? errorMessage;
+
+        if (preloadedPeople != null) {
+          people = preloadedPeople;
+          isLoading = false;
+          errorMessage = null;
+        } else if (selectedItemId != null) {
+          final detailsAsync = ref.watch(itemDetailsProvider(selectedItemId));
+          people = detailsAsync.maybeWhen(
+            data: (details) =>
+                (details?['People'] as List?)
+                    ?.map((p) => Person.fromJson(p as Map<String, dynamic>))
+                    .toList() ??
+                [],
+            orElse: () => [],
+          );
+          isLoading = detailsAsync.isLoading;
+          errorMessage = detailsAsync.maybeWhen(
+            error: (err, _) => err.toString(),
+            orElse: () => null,
+          );
+        } else {
+          people = [];
+          isLoading = false;
+          errorMessage = null;
+        }
+
+        return CustomScrollView(
+          controller: widget.scrollController,
+          slivers: [
+            if (widget.overview != null && widget.overview!.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: _OverviewSection(
+                    overview: widget.overview!,
+                    expanded: _expanded,
+                    onToggle: () => setState(() => _expanded = !_expanded),
+                  ),
+                ),
+              ),
+            if (widget.externalUrls.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: _ExternalLinksSection(
+                    externalUrls: widget.externalUrls,
+                  ),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  l10n.castAndCrew,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: TabBar(
+                controller: _tabController,
+                tabs: [
+                  Tab(text: l10n.episodeCast),
+                  Tab(text: l10n.seasonCast),
+                  Tab(text: l10n.showCast),
+                ],
+              ),
+            ),
+            if (isLoading)
+              const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (errorMessage != null)
+              SliverFillRemaining(
+                child: Center(child: Text(l10n.errorLoadingCast(errorMessage))),
+              )
+            else if (people.isEmpty)
+              SliverFillRemaining(child: Center(child: Text(l10n.noCastInfo)))
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _PersonRow(
+                    person: people[index],
+                    apiService: widget.apiService,
+                    onTap: widget.onPersonTap,
+                  ),
+                  childCount: people.length,
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _PersonRow extends StatelessWidget {
+  final Person person;
+  final JellyfinApiService apiService;
+  final void Function(String, String) onTap;
+
+  const _PersonRow({
+    required this.person,
+    required this.apiService,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final imageUrl = person.primaryImageTag != null
+        ? apiService.getArtworkUrl(
+            person.id,
+            'Primary',
+            maxWidth: 200,
+            tag: person.primaryImageTag,
+          )
+        : null;
+
+    return InkWell(
+      onTap: () => onTap(person.id, person.name),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: imageUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: 80,
+                      height: 120,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          _personPlaceholder(context),
+                      errorWidget: (context, url, error) =>
+                          _personPlaceholder(context),
+                    )
+                  : _personPlaceholder(context),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    person.name,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (person.role != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      person.role!,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _personPlaceholder(BuildContext context) => Container(
+    width: 80,
+    height: 120,
+    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+    child: const Icon(Icons.person_rounded, size: 32),
+  );
+}
+
+class _OverviewSection extends StatelessWidget {
+  final String overview;
+  final bool expanded;
+  final VoidCallback onToggle;
+
+  const _OverviewSection({
+    required this.overview,
+    required this.expanded,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textSpan = TextSpan(
+          text: overview,
+          style: Theme.of(context).textTheme.bodyMedium,
+        );
+        final tp = TextPainter(
+          text: textSpan,
+          maxLines: 3,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+        final isTruncated = tp.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              overview,
+              maxLines: expanded ? null : 3,
+              overflow: expanded ? null : TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            if (isTruncated) ...[
+              const SizedBox(height: 4),
+              GestureDetector(
+                onTap: onToggle,
+                child: Text(
+                  expanded ? l10n.showLess : l10n.showMore,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ExternalLinksSection extends StatelessWidget {
+  final List<Map<String, dynamic>> externalUrls;
+
+  const _ExternalLinksSection({required this.externalUrls});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: externalUrls.map((link) {
+        final linkName = link['Name'] as String? ?? '';
+        final linkUrl = link['Url'] as String? ?? '';
+        final svgAsset = _svgAssetForLinkName(linkName);
+        return OutlinedButton.icon(
+          onPressed: linkUrl.isNotEmpty
+              ? () => launchUrl(
+                  Uri.parse(linkUrl),
+                  mode: LaunchMode.externalApplication,
+                )
+              : null,
+          icon: svgAsset != null
+              ? SvgPicture.asset(
+                  svgAsset,
+                  width: 18,
+                  height: 18,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                )
+              : const Icon(Icons.open_in_new, size: 18),
+          label: Text(linkName),
+        );
+      }).toList(),
     );
   }
 }

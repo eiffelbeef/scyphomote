@@ -251,5 +251,10 @@
   "supportThankYou": "ご支援誠にありがとうございます！",
   "supportContactMessage": "何でもお気軽にメールしてください。フィードバック、アイデア、あいさつだけでも大歓迎です！",
   "supportHistory": "履歴",
-  "restorePurchases": "購入を復元"
+  "restorePurchases": "購入を復元",
+  "showMore": "もっと見る",
+  "showLess": "閉じる",
+  "episodeCast": "エピソード",
+  "seasonCast": "シーズン",
+  "showCast": "シリーズ"
 }

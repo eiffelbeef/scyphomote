@@ -251,5 +251,10 @@
   "supportThankYou": "Merci beaucoup pour votre soutien !",
   "supportContactMessage": "N'hésitez pas à m'envoyer un e-mail pour quoi que ce soit : retours, idées, ou juste pour dire bonjour !",
   "supportHistory": "Historique",
-  "restorePurchases": "Restaurer les achats"
+  "restorePurchases": "Restaurer les achats",
+  "showMore": "Voir plus",
+  "showLess": "Voir moins",
+  "episodeCast": "Épisode",
+  "seasonCast": "Saison",
+  "showCast": "Série"
 }
