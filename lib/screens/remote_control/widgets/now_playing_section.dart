@@ -496,7 +496,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
   void _showMediaDetails(MediaInfo nowPlaying) {
     final isEpisode = nowPlaying.type == 'Episode';
-    final mainItemId = nowPlaying.seriesId ?? nowPlaying.id;
+    final mainItemId = nowPlaying.id;
 
     showModalBottomSheet(
       context: context,
@@ -551,12 +551,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                           child: isEpisode
                               ? _MediaDetailsTabs(
                                   scrollController: scrollController,
-                                  overview: overview,
-                                  externalUrls: externalUrls,
                                   episodeId: nowPlaying.id,
                                   seasonId: nowPlaying.seasonId,
                                   seriesId: nowPlaying.seriesId,
-                                  showPeople: people,
                                   apiService: apiService,
                                   onPersonTap: _showPersonDetail,
                                 )
@@ -788,23 +785,17 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
 
 class _MediaDetailsTabs extends StatefulWidget {
   final ScrollController scrollController;
-  final String? overview;
-  final List<Map<String, dynamic>> externalUrls;
   final String episodeId;
   final String? seasonId;
   final String? seriesId;
-  final List<Person> showPeople;
   final JellyfinApiService apiService;
   final void Function(String, String) onPersonTap;
 
   const _MediaDetailsTabs({
     required this.scrollController,
-    required this.overview,
-    required this.externalUrls,
     required this.episodeId,
     this.seasonId,
     this.seriesId,
-    required this.showPeople,
     required this.apiService,
     required this.onPersonTap,
   });
@@ -823,7 +814,10 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) setState(() {});
+      if (!_tabController.indexIsChanging) {
+        _expanded = false;
+        setState(() {});
+      }
     });
   }
 
@@ -840,33 +834,41 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
       builder: (context, ref, child) {
         final selectedIndex = _tabController.index;
         final String? selectedItemId;
-        List<Person>? preloadedPeople;
-
         switch (selectedIndex) {
           case 0:
             selectedItemId = widget.episodeId;
           case 1:
             selectedItemId = widget.seasonId;
+          case 2:
+            selectedItemId = widget.seriesId;
           default:
             selectedItemId = null;
-            preloadedPeople = widget.showPeople;
         }
 
         final List<Person> people;
+        final String? overview;
+        final List<Map<String, dynamic>> externalUrls;
         final bool isLoading;
         final String? errorMessage;
 
-        if (preloadedPeople != null) {
-          people = preloadedPeople;
-          isLoading = false;
-          errorMessage = null;
-        } else if (selectedItemId != null) {
+        if (selectedItemId != null) {
           final detailsAsync = ref.watch(itemDetailsProvider(selectedItemId));
           people = detailsAsync.maybeWhen(
             data: (details) =>
                 (details?['People'] as List?)
                     ?.map((p) => Person.fromJson(p as Map<String, dynamic>))
                     .toList() ??
+                [],
+            orElse: () => [],
+          );
+          overview = detailsAsync.maybeWhen(
+            data: (details) => details?['Overview'] as String?,
+            orElse: () => null,
+          );
+          externalUrls = detailsAsync.maybeWhen(
+            data: (details) =>
+                (details?['ExternalUrls'] as List?)
+                    ?.cast<Map<String, dynamic>>() ??
                 [],
             orElse: () => [],
           );
@@ -877,6 +879,8 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
           );
         } else {
           people = [];
+          overview = null;
+          externalUrls = [];
           isLoading = false;
           errorMessage = null;
         }
@@ -884,37 +888,6 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
         return CustomScrollView(
           controller: widget.scrollController,
           slivers: [
-            if (widget.overview != null && widget.overview!.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: _OverviewSection(
-                    overview: widget.overview!,
-                    expanded: _expanded,
-                    onToggle: () => setState(() => _expanded = !_expanded),
-                  ),
-                ),
-              ),
-            if (widget.externalUrls.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: _ExternalLinksSection(
-                    externalUrls: widget.externalUrls,
-                  ),
-                ),
-              ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  l10n.castAndCrew,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
             SliverToBoxAdapter(
               child: TabBar(
                 controller: _tabController,
@@ -933,19 +906,53 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
               SliverFillRemaining(
                 child: Center(child: Text(l10n.errorLoadingCast(errorMessage))),
               )
-            else if (people.isEmpty)
-              SliverFillRemaining(child: Center(child: Text(l10n.noCastInfo)))
-            else
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) => _PersonRow(
-                    person: people[index],
-                    apiService: widget.apiService,
-                    onTap: widget.onPersonTap,
+            else ...[
+              if (overview != null && overview.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: _OverviewSection(
+                      overview: overview,
+                      expanded: _expanded,
+                      onToggle: () => setState(() => _expanded = !_expanded),
+                    ),
                   ),
-                  childCount: people.length,
                 ),
-              ),
+              if (externalUrls.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: _ExternalLinksSection(externalUrls: externalUrls),
+                  ),
+                ),
+              if (people.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      l10n.castAndCrew,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _PersonRow(
+                      person: people[index],
+                      apiService: widget.apiService,
+                      onTap: widget.onPersonTap,
+                    ),
+                    childCount: people.length,
+                  ),
+                ),
+              ],
+              if (people.isEmpty)
+                SliverFillRemaining(
+                  child: Center(child: Text(l10n.noCastInfo)),
+                ),
+            ],
           ],
         );
       },
