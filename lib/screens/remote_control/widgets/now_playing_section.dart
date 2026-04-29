@@ -25,6 +25,8 @@ String? _svgAssetForLinkName(String name) {
       return 'assets/tmdb.svg';
     case 'thetvdb':
       return 'assets/tvdb.svg';
+    case 'anilist':
+      return 'assets/anilist.svg';
     default:
       return null;
   }
