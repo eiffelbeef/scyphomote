@@ -256,5 +256,16 @@
   "showLess": "Voir moins",
   "episodeCast": "Épisode",
   "seasonCast": "Saison",
-  "showCast": "Série"
+  "showCast": "Série",
+  "reviewTheApp": "Évaluer l'application",
+  "reviewTheAppDesc": "Si vous appréciez {appName}, n'hésitez pas à laisser un avis. Cela aide d'autres utilisateurs à découvrir l'application et soutient le développement !",
+  "@reviewTheAppDesc": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "rateAndReview": "Évaluer et Commenter"
 }

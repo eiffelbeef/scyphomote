@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class AboutScreen extends StatelessWidget {
   static const routeName = '/about';
@@ -48,6 +49,63 @@ class AboutScreen extends StatelessWidget {
             Text(l10n.version(AppConstants.appVersion)),
             const SizedBox(height: 32),
             const Divider(),
+            FutureBuilder<bool>(
+              future: InAppReview.instance.isAvailable(),
+              builder: (context, snapshot) {
+                if (snapshot.data != true) return const SizedBox.shrink();
+                return Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.reviewTheApp,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        l10n.reviewTheAppDesc(AppConstants.appName),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () => InAppReview.instance.requestReview(),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star_rate_rounded,
+                              color: Colors.amber,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(l10n.rateAndReview),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    const Divider(),
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 24),
             Text(
               l10n.author,
@@ -102,9 +160,10 @@ class AboutScreen extends StatelessWidget {
               child: Text(
                 l10n.privacyPolicyDesc,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14),
               ),
             ),
+            const SizedBox(height: 8),
             if (kDebugMode) ...[
               const SizedBox(height: 32),
               const Divider(),

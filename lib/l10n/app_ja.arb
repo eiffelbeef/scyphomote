@@ -256,5 +256,16 @@
   "showLess": "閉じる",
   "episodeCast": "エピソード",
   "seasonCast": "シーズン",
-  "showCast": "シリーズ"
+  "showCast": "シリーズ",
+  "reviewTheApp": "アプリを評価する",
+  "reviewTheAppDesc": "{appName} を気に入っていただけましたら、レビューを書いていただけると幸いです。他のユーザーがアプリを見つける助けになり、開発の励みになります！",
+  "@reviewTheAppDesc": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "rateAndReview": "評価とレビュー"
 }

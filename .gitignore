@@ -46,6 +46,9 @@ app.*.map.json
 
 session.json
 
+# LLM stuff
+.antigravitycli
+
 # Generated l10n files
 lib/l10n/app_localizations.dart
 lib/l10n/app_localizations_*.dart
