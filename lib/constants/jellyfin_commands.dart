@@ -28,6 +28,7 @@ class JellyfinCommands {
   // Display commands
   static const String displayMessage = 'DisplayMessage';
   static const String sendString = 'SendString';
+  static const String displayContent = 'DisplayContent';
 
   // Audio/Video commands
   static const String setAudioStreamIndex = 'SetAudioStreamIndex';

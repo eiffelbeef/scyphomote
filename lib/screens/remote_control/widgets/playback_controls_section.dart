@@ -446,14 +446,13 @@ class PlaybackControlsSection extends ConsumerWidget {
             Expanded(
               flex: 2,
               child: FilledButton.tonalIcon(
-                onPressed: session.ifCapable(
-                  'DisplayContent',
-                  () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const LibraryScreen(),
-                    ),
-                  ),
-                ),
+                onPressed: session.canPlayOn
+                    ? () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const LibraryScreen(),
+                          ),
+                        )
+                    : null,
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),

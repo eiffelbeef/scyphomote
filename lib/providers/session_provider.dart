@@ -118,12 +118,12 @@ class SessionNotifier extends Notifier<SessionState> {
     try {
       final allSessions = await _apiService.getSessions(
         deviceId: state.selectedSession?.deviceId,
-        activeWithinSeconds: AppConstants.sessionActivityThreshold,
       );
 
-      final sessions = allSessions
-          .where((s) => s.clientName != AppConstants.appName)
-          .toList();
+      final sessions = allSessions.where((s) {
+        if (s.clientName == AppConstants.appName) return false;
+        return s.playableMediaTypes.isNotEmpty;
+      }).toList();
 
       Session? updatedSelectedSession;
       if (state.selectedSession != null) {

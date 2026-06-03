@@ -172,7 +172,19 @@ class DeviceListScreen extends ConsumerWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(session.clientName),
+                  Row(
+                    children: [
+                      Text(session.clientName),
+                      if (session.canPlayOn) ...[
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.cast_rounded,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ],
+                  ),
                   if (session.nowPlaying != null) ...[
                     Text(
                       session.nowPlaying!.displayTitle,
@@ -289,6 +301,9 @@ class DeviceListScreen extends ConsumerWidget {
 
     if (sortByLastActivity) {
       return sessions..sort((a, b) {
+        if (a.canPlayOn != b.canPlayOn) {
+          return a.canPlayOn ? -1 : 1;
+        }
         if (a.lastActivityDate == null && b.lastActivityDate == null) {
           return 0;
         }
