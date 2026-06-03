@@ -182,17 +182,20 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
           );
         }
 
-        return CustomScrollView(
-          controller: widget.scrollController,
-          physics: widget.scrollController == null
-              ? const AlwaysScrollableScrollPhysics()
-              : null,
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: content,
-            ),
-          ],
+        return ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+          child: CustomScrollView(
+            controller: widget.scrollController,
+            physics: widget.scrollController == null
+                ? const AlwaysScrollableScrollPhysics()
+                : null,
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: content,
+              ),
+            ],
+          ),
         );
       },
     );
