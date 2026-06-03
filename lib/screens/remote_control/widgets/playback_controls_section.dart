@@ -16,6 +16,7 @@ import '../../../widgets/text_input_dialog.dart';
 import 'trickplay_overlay.dart';
 import '../../../utils/playback_utils.dart';
 import 'remote_button.dart';
+import 'basic_controls_row.dart';
 
 class PlaybackControlsSection extends ConsumerWidget {
   final Session session;
@@ -28,6 +29,8 @@ class PlaybackControlsSection extends ConsumerWidget {
   final Function(double) onSeekEnd;
   final Function(double) onVolumeChanged;
   final Function(double) onVolumeChangeEnd;
+  final bool showBottomButtons;
+  final bool showBasicControls;
   const PlaybackControlsSection({
     super.key,
     required this.session,
@@ -40,6 +43,8 @@ class PlaybackControlsSection extends ConsumerWidget {
     required this.onSeekEnd,
     required this.onVolumeChanged,
     required this.onVolumeChangeEnd,
+    this.showBottomButtons = true,
+    this.showBasicControls = true,
   });
 
   @override
@@ -85,90 +90,13 @@ class PlaybackControlsSection extends ConsumerWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RemoteIconButton(
-                    icon: Icons.skip_previous_rounded,
-                    iconSize: 28,
-                    onPressed:
-                        (session.nowPlayingQueueSize > 1 &&
-                            session.supportsMediaControl)
-                        ? () => ref
-                              .read(playbackProvider.notifier)
-                              .sendPlayingCommand(
-                                JellyfinCommands.previousTrack,
-                              )
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  RemoteIconButton(
-                    icon: Icons.fast_rewind_rounded,
-                    iconSize: 28,
-                    onPressed: session.supportsMediaControl
-                        ? () => ref.read(playbackProvider.notifier).rewind()
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  IconButton.filled(
-                    icon: Icon(
-                      isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                    ),
-                    iconSize: 40,
-                    style: IconButton.styleFrom(
-                      padding: const EdgeInsets.all(12),
-                    ),
-                    onPressed: session.supportsMediaControl
-                        ? () {
-                            HapticFeedback.mediumImpact();
-                            ref.read(playbackProvider.notifier).playPause();
-                          }
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  RemoteIconButton(
-                    icon: Icons.fast_forward_rounded,
-                    iconSize: 28,
-                    onPressed: session.supportsMediaControl
-                        ? () =>
-                              ref.read(playbackProvider.notifier).fastForward()
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  Builder(
-                    builder: (context) {
-                      final isEnding = isEpisodeNearEnd(session);
-                      final isNextEnabled =
-                          session.nowPlayingQueueSize > 1 &&
-                          session.supportsMediaControl;
-                      final showHighlight = isEnding && isNextEnabled;
-
-                      return RemoteIconButton(
-                        icon: Icons.skip_next_rounded,
-                        iconSize: 28,
-                        onPressed: isNextEnabled
-                            ? () => ref
-                                  .read(playbackProvider.notifier)
-                                  .sendPlayingCommand(
-                                    JellyfinCommands.nextTrack,
-                                  )
-                            : null,
-                        style: showHighlight
-                            ? IconButton.styleFrom(
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.primary,
-                                foregroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimary,
-                              )
-                            : null,
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+              if (showBasicControls) ...[
+                BasicControlsRow(
+                  session: session,
+                  isPaused: isPaused,
+                ),
+                const SizedBox(height: 16),
+              ],
               Row(
                 children: [
                   Expanded(
@@ -441,9 +369,10 @@ class PlaybackControlsSection extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // Browse & Remote Buttons
-        Row(
-          children: [
-            Expanded(
+        if (showBottomButtons)
+          Row(
+            children: [
+              Expanded(
               flex: 2,
               child: FilledButton.tonalIcon(
                 onPressed: session.canPlayOn

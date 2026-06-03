@@ -38,11 +38,6 @@ Future<void> playItemOnRemote(
       playCommand: playCommand,
     );
 
-    if (!context.mounted) return;
-
-    Navigator.of(context).popUntil((route) {
-      return route.settings.name == '/remote';
-    });
   } catch (e) {
     if (!context.mounted) return;
 

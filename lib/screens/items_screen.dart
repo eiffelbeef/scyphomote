@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/marquee_text.dart';
 import '../widgets/item_poster.dart';
+import '../widgets/remote_control_drawer.dart';
 import '../utils/playback_utils.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
@@ -206,7 +207,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             itemBuilder: (context, index) {
               final item = items[index];
               final apiService = ref.read(apiServiceProvider);
-              final imageUrl = apiService.getArtworkUrl(item['Id'], 'Primary');
+              final imageUrl = apiService.getItemImageUrl(item);
               final isFolder = item['IsFolder'] ?? false;
 
               return SizedBox(
@@ -318,7 +319,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               .toList();
 
     return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.12 + 24),
       children: [
         _buildSection('Artists', artists),
         _buildSection('Albums', albums),
@@ -450,9 +451,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
           ],
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
+      body: Stack(
+        children: [
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
           ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
           : _isSearching
           ? _buildSearchResults()
@@ -484,7 +487,12 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 ),
                 Expanded(
                   child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.fromLTRB(
+                      0,
+                      8,
+                      0,
+                      MediaQuery.of(context).size.height * 0.12 + 8,
+                    ),
                     itemCount: _items.length,
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1),
@@ -510,16 +518,18 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             )
           : widget.parentType == 'Season'
           ? ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.fromLTRB(
+                0,
+                8,
+                0,
+                MediaQuery.of(context).size.height * 0.12 + 8,
+              ),
               itemCount: _items.length,
               separatorBuilder: (context, index) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final item = _items[index];
                 final apiService = ref.read(apiServiceProvider);
-                final imageUrl = apiService.getArtworkUrl(
-                  item['Id'],
-                  'Primary',
-                );
+                final imageUrl = apiService.getItemImageUrl(item);
                 final duration = _getItemDuration(item);
 
                 return InkWell(
@@ -564,7 +574,12 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               },
             )
           : GridView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.fromLTRB(
+                16,
+                16,
+                16,
+                MediaQuery.of(context).size.height * 0.12 + 16,
+              ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
                 childAspectRatio: isMusic ? 1 : 2 / 3,
@@ -575,10 +590,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               itemBuilder: (context, index) {
                 final item = _items[index];
                 final apiService = ref.read(apiServiceProvider);
-                final imageUrl = apiService.getArtworkUrl(
-                  item['Id'],
-                  'Primary',
-                );
+                final imageUrl = apiService.getItemImageUrl(item);
                 final isFolder = item['IsFolder'] ?? false;
 
                 return Card(
@@ -646,6 +658,9 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 );
               },
             ),
+          const RemoteControlDrawer(),
+        ],
+      ),
     );
   }
 }

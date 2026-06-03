@@ -201,7 +201,7 @@ class _PlaybackProgressControlState extends State<PlaybackProgressControl>
                 minHeight: 6,
                 backgroundColor: Theme.of(
                   context,
-                ).colorScheme.surfaceContainerHighest,
+                ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
               ),
             ),
           ),

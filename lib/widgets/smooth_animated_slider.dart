@@ -72,6 +72,7 @@ class _SmoothAnimatedSliderState extends State<SmoothAnimatedSlider> {
               value: clampedDisplay,
               min: rangeMin,
               max: rangeMax,
+              inactiveColor: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
               onChanged: widget.onChanged != null
                   ? (value) {
                       setState(() {

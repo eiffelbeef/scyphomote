@@ -500,6 +500,26 @@ class JellyfinApiService {
     return url;
   }
 
+  String getItemImageUrl(
+    Map<String, dynamic> item, {
+    String imageType = 'Primary',
+    int maxWidth = 500,
+  }) {
+    final imageId = (item['Type'] == 'Audio' && item['AlbumId'] != null)
+        ? item['AlbumId'] as String
+        : item['Id'] as String;
+
+    final imageTags = item['ImageTags'] as Map<String, dynamic>?;
+    final tag = imageTags?[imageType] as String?;
+
+    return getArtworkUrl(
+      imageId,
+      imageType,
+      maxWidth: maxWidth,
+      tag: tag,
+    );
+  }
+
   Future<String?> downloadUserImage(
     String userId, {
     String format = 'Webp',
