@@ -33,14 +33,17 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
       return const SizedBox.shrink();
     }
 
+    final screenHeight = MediaQuery.of(context).size.height;
+    final minExtent = (110.0 / screenHeight).clamp(0.05, 0.5);
+
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (notification) {
         _dragExtent.value = notification.extent;
         return false;
       },
       child: DraggableScrollableSheet(
-        initialChildSize: 0.12,
-        minChildSize: 0.12,
+        initialChildSize: minExtent,
+        minChildSize: minExtent,
         maxChildSize: 0.9,
         builder: (context, scrollController) {
           return Container(
@@ -84,6 +87,7 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                         showBottomButtons: false,
                         isDrawer: false, // Use normal layout
                         dragExtent: _dragExtent, // Pass extent
+                        minExtent: minExtent,
                         miniControls: Align(
                           alignment: Alignment.topCenter,
                           child: Padding(

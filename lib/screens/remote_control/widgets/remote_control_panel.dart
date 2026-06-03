@@ -15,6 +15,7 @@ class RemoteControlPanel extends ConsumerStatefulWidget {
   final bool isDrawer;
   final ValueListenable<double>? dragExtent;
   final Widget? miniControls;
+  final double minExtent;
 
   const RemoteControlPanel({
     super.key,
@@ -23,6 +24,7 @@ class RemoteControlPanel extends ConsumerStatefulWidget {
     this.isDrawer = false,
     this.dragExtent,
     this.miniControls,
+    this.minExtent = 0.12,
   });
 
   @override
@@ -93,8 +95,10 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
             16.0 + MediaQuery.paddingOf(context).bottom,
           ),
           child: Column(
+            mainAxisAlignment: widget.scrollController == null
+                ? MainAxisAlignment.spaceEvenly
+                : MainAxisAlignment.start,
             children: [
-              if (widget.scrollController == null) const Spacer(),
               if (widget.isDrawer) ...[
                 BasicControlsRow(session: session, isPaused: isPaused),
                 const SizedBox(height: 16),
@@ -105,7 +109,7 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
                 artworkSize: artworkSize,
                 maxWidth: constraints.maxWidth - 48.0,
               ),
-              if (widget.scrollController == null) const Spacer() else const SizedBox(height: 24),
+              if (widget.scrollController != null) const SizedBox(height: 24),
               PlaybackControlsSection(
                 session: session,
                 currentPositionSeconds: (_optimisticSeek ?? currentServerSeek).toInt(),
@@ -137,7 +141,6 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
                   });
                 },
               ),
-              if (widget.scrollController == null) const Spacer(),
             ],
           ),
         );
@@ -147,21 +150,21 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
           content = ValueListenableBuilder<double>(
             valueListenable: widget.dragExtent!,
             builder: (context, extent, _) {
-              final isCollapsed = extent <= 0.2;
+              final isCollapsed = extent <= widget.minExtent + 0.08;
               
               if (widget.miniControls != null) {
                 return Stack(
                   children: [
                     Opacity(
-                      opacity: ((extent - 0.12) / 0.78).clamp(0.0, 1.0),
+                      opacity: ((extent - widget.minExtent) / (0.9 - widget.minExtent)).clamp(0.0, 1.0),
                       child: IgnorePointer(
                         ignoring: isCollapsed,
                         child: child,
                       ),
                     ),
-                    if (extent < 0.4)
+                    if (extent < widget.minExtent + 0.28)
                       Opacity(
-                        opacity: (1 - ((extent - 0.12) / 0.1)).clamp(0.0, 1.0),
+                        opacity: (1 - ((extent - widget.minExtent) / 0.1)).clamp(0.0, 1.0),
                         child: IgnorePointer(
                           ignoring: !isCollapsed,
                           child: widget.miniControls!,
@@ -179,14 +182,18 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
           );
         }
 
-        if (widget.scrollController != null) {
-          return SingleChildScrollView(
-            controller: widget.scrollController,
-            child: content,
-          );
-        }
-
-        return content;
+        return CustomScrollView(
+          controller: widget.scrollController,
+          physics: widget.scrollController == null
+              ? const AlwaysScrollableScrollPhysics()
+              : null,
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: content,
+            ),
+          ],
+        );
       },
     );
   }
