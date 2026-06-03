@@ -139,6 +139,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                                               arguments: {
                                                 'RepeatMode': nextMode,
                                               },
+                                              refreshAfter: true,
                                             );
                                       }
                                     : null,
@@ -263,6 +264,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                                                     ? 'Sorted'
                                                     : 'Shuffle',
                                               },
+                                              refreshAfter: true,
                                             );
                                       }
                                     : null,
