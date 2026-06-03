@@ -7,6 +7,7 @@ import '../widgets/marquee_text.dart';
 import '../widgets/item_poster.dart';
 import '../widgets/remote_control_drawer.dart';
 import '../utils/playback_utils.dart';
+import '../constants.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   final String title;
@@ -42,10 +43,27 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
 
   bool _searchSubmitted = false;
 
+  // Pagination State
+  final ScrollController _scrollController = ScrollController();
+  int _startIndex = 0;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _loadPreferences().then((_) => _fetchItems());
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoading &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _fetchMoreItems();
+    }
   }
 
   Future<void> _loadPreferences() async {
@@ -91,25 +109,35 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _searchController.dispose();
     _tabController?.dispose();
     super.dispose();
   }
 
-  Future<void> _fetchItems() async {
+  Future<void> _fetchItems({bool loadMore = false}) async {
     final user = ref.read(authProvider).currentUser;
     if (user == null) return;
 
     if (!mounted) return;
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+
+    if (loadMore) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+    } else {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+        _startIndex = 0;
+        _hasMore = true;
+        _items.clear();
+      });
+    }
 
     try {
       final apiService = ref.read(apiServiceProvider);
 
-      // Apply specialized sorting for Albums and Seasons
       String? sortBy = _sortBy;
       String? sortOrder = _sortOrder;
 
@@ -121,7 +149,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         sortOrder = 'Ascending';
       }
 
-      final items = await apiService.getItems(
+      final data = await apiService.getItems(
         user.userId,
         parentId: widget.parentId,
         sortBy: sortBy,
@@ -133,23 +161,45 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             : null,
         recursive:
             _isSearching ||
-            (widget.collectionType == 'music' &&
-                widget.isRoot), // Search or root music view needs recursion
+            (widget.collectionType == 'music' && widget.isRoot),
+        startIndex: _startIndex,
+        limit: AppConstants.paginationLimit,
       );
+
+      final newItems = (data['Items'] as List).map((e) => e as Map<String, dynamic>).toList();
+      final totalRecordCount = data['TotalRecordCount'] as int? ?? 0;
+
       if (mounted) {
         setState(() {
-          _items = items;
-          _isLoading = false;
+          if (loadMore) {
+            _items.addAll(newItems);
+            _isLoadingMore = false;
+          } else {
+            _items = newItems;
+            _isLoading = false;
+          }
+
+          _startIndex += newItems.length;
+          _hasMore = _startIndex < totalRecordCount;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
-          _isLoading = false;
+          if (loadMore) {
+            _isLoadingMore = false;
+          } else {
+            _error = e.toString();
+            _isLoading = false;
+          }
         });
       }
     }
+  }
+
+  Future<void> _fetchMoreItems() async {
+    if (_isLoadingMore || !_hasMore) return;
+    await _fetchItems(loadMore: true);
   }
 
   String _getItemTitle(Map<String, dynamic> item) {
@@ -205,82 +255,93 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             itemCount: items.length,
             separatorBuilder: (context, index) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
-              final item = items[index];
-              final apiService = ref.read(apiServiceProvider);
-              final imageUrl = apiService.getItemImageUrl(item);
-              final isFolder = item['IsFolder'] ?? false;
-
               return SizedBox(
                 width: 140,
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  // Standard card shape for everyone (artists too)
-                  child: InkWell(
-                    onTap: () {
-                      if (isFolder) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ItemsScreen(
-                              title: item['Name'],
-                              parentId: item['Id'],
-                              collectionType: widget.collectionType,
-                              parentType: item['Type'],
-                            ),
-                          ),
-                        );
-                      } else {
-                        playItemOnRemote(context, ref, item);
-                      }
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: ItemPoster(
-                            imageUrl: imageUrl,
-                            userData: item['UserData'],
-                            placeholderIcon: widget.collectionType == 'music'
-                                ? Icons.music_note
-                                : Icons.movie_rounded,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              MarqueeText(
-                                text: _getItemTitle(item),
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              if (item['ProductionYear'] != null &&
-                                  (item['Type'] == 'Movie' ||
-                                      item['Type'] == 'Series'))
-                                Text(
-                                  item['ProductionYear'].toString(),
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                child: _buildItemCard(items[index], widget.collectionType == 'music'),
               );
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBottomPadding(double extraSpace) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.12 + extraSpace,
+      child: _isLoadingMore
+          ? const Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildItemCard(Map<String, dynamic> item, bool isMusic) {
+    final apiService = ref.read(apiServiceProvider);
+    final imageUrl = apiService.getItemImageUrl(item);
+    final isFolder = item['IsFolder'] ?? false;
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          if (isFolder) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ItemsScreen(
+                  title: item['Name'],
+                  parentId: item['Id'],
+                  collectionType: widget.collectionType,
+                  parentType: item['Type'],
+                ),
+              ),
+            );
+          } else {
+            playItemOnRemote(context, ref, item);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ItemPoster(
+                imageUrl: imageUrl,
+                userData: item['UserData'],
+                placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MarqueeText(
+                    text: _getItemTitle(item),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  if (item['ProductionYear'] != null &&
+                      (item['Type'] == 'Movie' || item['Type'] == 'Series'))
+                    Text(
+                      item['ProductionYear'].toString(),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -319,7 +380,8 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               .toList();
 
     return ListView(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.12 + 24),
+      controller: _scrollController,
+      padding: EdgeInsets.zero,
       children: [
         _buildSection('Artists', artists),
         _buildSection('Albums', albums),
@@ -329,6 +391,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         _buildSection('Episodes', episodes),
         _buildSection('Movies', movies),
         if (others.isNotEmpty) _buildSection('Other Results', others),
+        _buildBottomPadding(24),
       ],
     );
   }
@@ -487,16 +550,20 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 ),
                 Expanded(
                   child: ListView.separated(
-                    padding: EdgeInsets.fromLTRB(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(
                       0,
                       8,
                       0,
-                      MediaQuery.of(context).size.height * 0.12 + 8,
+                      0,
                     ),
-                    itemCount: _items.length,
+                    itemCount: _items.length + 1,
                     separatorBuilder: (context, index) =>
                         const Divider(height: 1),
                     itemBuilder: (context, index) {
+                      if (index == _items.length) {
+                        return _buildBottomPadding(8);
+                      }
                       final item = _items[index];
                       final duration = _getItemDuration(item);
 
@@ -518,15 +585,19 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             )
           : widget.parentType == 'Season'
           ? ListView.separated(
-              padding: EdgeInsets.fromLTRB(
+              padding: const EdgeInsets.fromLTRB(
                 0,
                 8,
                 0,
-                MediaQuery.of(context).size.height * 0.12 + 8,
+                0,
               ),
-              itemCount: _items.length,
+              controller: _scrollController,
+              itemCount: _items.length + 1,
               separatorBuilder: (context, index) => const Divider(height: 1),
               itemBuilder: (context, index) {
+                if (index == _items.length) {
+                  return _buildBottomPadding(8);
+                }
                 final item = _items[index];
                 final apiService = ref.read(apiServiceProvider);
                 final imageUrl = apiService.getItemImageUrl(item);
@@ -573,91 +644,36 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 );
               },
             )
-          : GridView.builder(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                16,
-                16,
-                MediaQuery.of(context).size.height * 0.12 + 16,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
-                childAspectRatio: isMusic ? 1 : 2 / 3,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                final apiService = ref.read(apiServiceProvider);
-                final imageUrl = apiService.getItemImageUrl(item);
-                final isFolder = item['IsFolder'] ?? false;
-
-                return Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () {
-                      if (isFolder) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ItemsScreen(
-                              title: item['Name'],
-                              parentId: item['Id'],
-                              collectionType: widget.collectionType,
-                              parentType: item['Type'],
-                            ),
-                          ),
-                        );
-                      } else {
-                        playItemOnRemote(context, ref, item);
-                      }
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: ItemPoster(
-                            imageUrl: imageUrl,
-                            userData: item['UserData'],
-                            placeholderIcon: isMusic
-                                ? Icons.music_note
-                                : Icons.movie_rounded,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              MarqueeText(
-                                text: _getItemTitle(item),
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              if (item['ProductionYear'] != null &&
-                                  (item['Type'] == 'Movie' ||
-                                      item['Type'] == 'Series'))
-                                Text(
-                                  item['ProductionYear'].toString(),
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+          : CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    16,
                   ),
-                );
-              },
-            ),
+                  sliver: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
+                      childAspectRatio: isMusic ? 1 : 2 / 3,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _buildItemCard(_items[index], isMusic);
+                      },
+                      childCount: _items.length,
+                    ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: _buildBottomPadding(16),
+        ),
+      ],
+    ),
           const RemoteControlDrawer(),
         ],
       ),

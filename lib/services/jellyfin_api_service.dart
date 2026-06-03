@@ -359,7 +359,7 @@ class JellyfinApiService {
         .toList();
   }
 
-  Future<List<Map<String, dynamic>>> getItems(
+  Future<Map<String, dynamic>> getItems(
     String userId, {
     String? parentId,
     String? sortBy,
@@ -367,12 +367,16 @@ class JellyfinApiService {
     String? searchTerm,
     String? includeItemTypes,
     bool recursive = false,
+    int? startIndex,
+    int? limit,
   }) async {
     final queryParams = <String, dynamic>{
       if (parentId != null) 'ParentId': parentId,
       if (sortBy != null) 'SortBy': sortBy,
       if (sortOrder != null) 'SortOrder': sortOrder,
       if (includeItemTypes != null) 'IncludeItemTypes': includeItemTypes,
+      if (startIndex != null) 'StartIndex': startIndex,
+      if (limit != null) 'Limit': limit,
       if (searchTerm != null && searchTerm.isNotEmpty) ...{
         'SearchTerm': searchTerm,
         'Recursive': true,
@@ -392,9 +396,7 @@ class JellyfinApiService {
       errorMessage: 'Failed to fetch items',
     );
 
-    return (data['Items'] as List)
-        .map((e) => e as Map<String, dynamic>)
-        .toList();
+    return data;
   }
 
   Future<List<Map<String, dynamic>>> getResumeItems(String userId) async {
