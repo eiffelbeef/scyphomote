@@ -164,13 +164,13 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          if (session.nowPlaying?.seriesName !=
-                                                  null ||
-                                              session.nowPlaying?.artist !=
-                                                  null)
+                                          if (session.nowPlaying?.seriesName != null ||
+                                              session.nowPlaying?.artist != null ||
+                                              session.nowPlaying?.productionYear != null)
                                             Text(
                                               session.nowPlaying?.seriesName ??
                                                   session.nowPlaying?.artist ??
+                                                  session.nowPlaying?.productionYear?.toString() ??
                                                   '',
                                               style: Theme.of(context)
                                                   .textTheme
