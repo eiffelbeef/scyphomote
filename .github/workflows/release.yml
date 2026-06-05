@@ -36,6 +36,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1 # https://github.com/fluttercommunity/plus_plugins/issues/3811
+        with:
+          xcode-version: '26.1.1'
       - uses: subosito/flutter-action@v2
         with: { channel: stable }
       - run: flutter pub get
