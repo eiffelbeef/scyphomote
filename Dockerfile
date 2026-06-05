@@ -8,7 +8,7 @@ RUN flutter pub get
 
 COPY . .
 
-RUN flutter build web --release --no-source-maps
+RUN flutter build web --wasm --release --no-source-maps
 
 FROM nginx:alpine
 

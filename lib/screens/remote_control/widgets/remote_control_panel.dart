@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -183,7 +184,14 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
         }
 
         return ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+          behavior: ScrollConfiguration.of(context).copyWith(
+            overscroll: false,
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.trackpad,
+            },
+          ),
           child: CustomScrollView(
             controller: widget.scrollController,
             physics: widget.scrollController == null
