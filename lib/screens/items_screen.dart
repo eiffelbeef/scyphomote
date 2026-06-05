@@ -7,6 +7,7 @@ import '../widgets/marquee_text.dart';
 import '../widgets/item_poster.dart';
 import '../widgets/remote_control_drawer.dart';
 import '../utils/playback_utils.dart';
+import '../utils/ui_utils.dart';
 import '../constants.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
@@ -268,7 +269,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
 
   Widget _buildBottomPadding(double extraSpace) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.12 + extraSpace,
+      height: UiUtils.getBottomPaddingForDrawer(context, ref) + extraSpace,
       child: _isLoadingMore
           ? const Center(
               child: SizedBox(

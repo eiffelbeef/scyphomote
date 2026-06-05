@@ -12,6 +12,7 @@ class AppConstants {
       GlobalKey<NavigatorState>();
 
   static bool isInForeground = true;
+  static const double remoteDrawerMinHeight = 120.0;
 }
 
 class AppColors {

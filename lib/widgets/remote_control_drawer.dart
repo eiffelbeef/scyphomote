@@ -36,7 +36,7 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
 
     final screenHeight = MediaQuery.of(context).size.height;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
-    final minExtent = ((120.0 + bottomPadding) / screenHeight).clamp(0.05, 0.5);
+    final minExtent = ((AppConstants.remoteDrawerMinHeight + bottomPadding) / screenHeight).clamp(0.05, 0.5);
 
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (notification) {

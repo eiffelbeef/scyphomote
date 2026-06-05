@@ -9,6 +9,7 @@ import '../widgets/marquee_text.dart';
 import '../widgets/media_item_card.dart';
 import '../widgets/remote_control_drawer.dart';
 import '../utils/playback_utils.dart';
+import '../utils/ui_utils.dart';
 import 'items_screen.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
@@ -327,7 +328,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ),
                     SliverToBoxAdapter(
                       child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.12,
+                        height: UiUtils.getBottomPaddingForDrawer(context, ref),
                       ),
                     ),
                   ],

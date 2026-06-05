@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/session_provider.dart';
 import '../constants.dart';
 
 extension ThemeSystemUiExtension on ThemeData {
@@ -80,5 +82,14 @@ class UiUtils {
       ..showSnackBar(
         SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
+  }
+
+  static double getBottomPaddingForDrawer(BuildContext context, WidgetRef ref) {
+    final sessionState = ref.watch(sessionProvider);
+    final session = sessionState.selectedSession;
+    if (session == null || session.nowPlaying == null) {
+      return 0.0;
+    }
+    return AppConstants.remoteDrawerMinHeight + MediaQuery.paddingOf(context).bottom;
   }
 }
