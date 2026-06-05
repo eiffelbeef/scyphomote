@@ -38,6 +38,9 @@ Future<void> playItemOnRemote(
       playCommand: playCommand,
     );
 
+    await Future.delayed(const Duration(seconds: 1));
+    await ref.read(sessionProvider.notifier).fetchSessions();
+
   } catch (e) {
     if (!context.mounted) return;
 
