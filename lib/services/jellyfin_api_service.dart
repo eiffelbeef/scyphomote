@@ -409,7 +409,6 @@ class JellyfinApiService {
         'ImageTypeLimit': 1,
         'EnableImageTypes': 'Primary,Thumb',
         'EnableTotalRecordCount': false,
-        'MediaTypes': 'Video',
       },
       errorMessage: 'Failed to fetch resume items',
     );

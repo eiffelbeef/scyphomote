@@ -80,13 +80,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       if (selectedSession == null || playableTypes.isEmpty) return true;
 
       final collectionType = view['CollectionType'] as String?;
-      final mediaType = _mapCollectionTypeToMediaType(collectionType);
+      final mediaType = _mapToMediaType(collectionType);
 
-      // User requested to ignore unknown
       if (mediaType == null) return false;
 
       return playableTypes.contains(mediaType);
     }).toList();
+    bool isItemPlayable(Map<String, dynamic> item) {
+      if (selectedSession == null || playableTypes.isEmpty) return true;
+      final mediaType =
+          item['MediaType'] as String? ??
+          _mapToMediaType(item['Type'] as String?);
+      if (mediaType == null) return false;
+      return playableTypes.contains(mediaType);
+    }
+
+    final filteredResumeItems = _resumeItems.where(isItemPlayable).toList();
+    final filteredNextUpItems = _nextUpItems.where(isItemPlayable).toList();
 
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.librarySection)),
@@ -95,17 +105,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-              ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
+              ? Center(
+                  child: Text(AppLocalizations.of(context)!.errorMsg(_error!)),
+                )
               : filteredViews.isEmpty &&
-                    _resumeItems.isEmpty &&
-                    _nextUpItems.isEmpty
+                    filteredResumeItems.isEmpty &&
+                    filteredNextUpItems.isEmpty
               ? const Center(
                   child: Padding(
                     padding: EdgeInsets.all(32.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.filter_list_off, size: 64, color: Colors.grey),
+                        Icon(
+                          Icons.filter_list_off,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
                         SizedBox(height: 16),
                         Text(
                           'No supported libraries',
@@ -126,16 +142,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 )
               : CustomScrollView(
                   slivers: [
-                    if (_resumeItems.isNotEmpty) ...[
+                    if (filteredResumeItems.isNotEmpty) ...[
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                           child: Text(
                             'Resume',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                         ),
                       ),
@@ -145,18 +162,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                           child: ListView.separated(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             scrollDirection: Axis.horizontal,
-                            itemCount: _resumeItems.length,
+                            itemCount: filteredResumeItems.length,
                             separatorBuilder: (context, index) =>
                                 const SizedBox(width: 12),
                             itemBuilder: (context, index) {
-                              final item = _resumeItems[index];
+                              final item = filteredResumeItems[index];
                               final apiService = ref.read(apiServiceProvider);
                               final imageUrl = apiService.getItemImageUrl(item);
 
                               return MediaItemCard(
                                 item: item,
                                 imageUrl: imageUrl,
-                                onTap: () => playItemOnRemote(context, ref, item),
+                                onTap: () =>
+                                    playItemOnRemote(context, ref, item),
                               );
                             },
                           ),
@@ -164,16 +182,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       ),
                       const SliverToBoxAdapter(child: SizedBox(height: 16)),
                     ],
-                    if (_nextUpItems.isNotEmpty) ...[
+                    if (filteredNextUpItems.isNotEmpty) ...[
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                           child: Text(
                             'Next Up',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                         ),
                       ),
@@ -183,18 +202,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                           child: ListView.separated(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             scrollDirection: Axis.horizontal,
-                            itemCount: _nextUpItems.length,
+                            itemCount: filteredNextUpItems.length,
                             separatorBuilder: (context, index) =>
                                 const SizedBox(width: 12),
                             itemBuilder: (context, index) {
-                              final item = _nextUpItems[index];
+                              final item = filteredNextUpItems[index];
                               final apiService = ref.read(apiServiceProvider);
                               final imageUrl = apiService.getItemImageUrl(item);
 
                               return MediaItemCard(
                                 item: item,
                                 imageUrl: imageUrl,
-                                onTap: () => playItemOnRemote(context, ref, item),
+                                onTap: () =>
+                                    playItemOnRemote(context, ref, item),
                               );
                             },
                           ),
@@ -207,10 +227,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                         child: Text(
                           'Libraries',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ),
                     ),
@@ -261,14 +282,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                                         child: Icon(Icons.folder_rounded),
                                       ),
                                     ),
-                                    errorWidget: (context, url, error) => Container(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceContainerHighest,
-                                      child: const Center(
-                                        child: Icon(Icons.folder_off),
-                                      ),
-                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest,
+                                          child: const Center(
+                                            child: Icon(Icons.folder_off),
+                                          ),
+                                        ),
                                   ),
                                   Container(
                                     decoration: const BoxDecoration(
@@ -316,19 +338,28 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  String? _mapCollectionTypeToMediaType(String? collectionType) {
-    switch (collectionType?.toLowerCase()) {
+  String? _mapToMediaType(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'movie':
       case 'movies':
       case 'tvshows':
+      case 'episode':
+      case 'musicvideo':
       case 'musicvideos':
       case 'homevideos':
+      case 'video':
       case 'boxsets':
+      case 'trailer':
       case 'trailers':
         return 'Video';
+      case 'audio':
       case 'music':
+      case 'song':
         return 'Audio';
+      case 'book':
       case 'books':
         return 'Book';
+      case 'photo':
       case 'photos':
         return 'Photo';
       default:
