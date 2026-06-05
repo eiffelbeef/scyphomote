@@ -17,6 +17,8 @@ import '../../../utils/ui_utils.dart';
 import 'remote_button.dart';
 import '../../../../l10n/app_localizations.dart';
 
+import 'package:intl/intl.dart' hide TextDirection;
+
 String? _svgAssetForLinkName(String name) {
   switch (name.toLowerCase()) {
     case 'imdb':
@@ -562,6 +564,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                               : _MediaDetailsContent(
                                   scrollController: scrollController,
                                   overview: overview,
+                                  premiereDate: details?['PremiereDate'] as String?,
                                   externalUrls: externalUrls,
                                   people: people,
                                   apiService: apiService,
@@ -718,6 +721,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 class _MediaDetailsContent extends StatefulWidget {
   final ScrollController scrollController;
   final String? overview;
+  final String? premiereDate;
   final List<Map<String, dynamic>> externalUrls;
   final List<Person> people;
   final JellyfinApiService apiService;
@@ -726,6 +730,7 @@ class _MediaDetailsContent extends StatefulWidget {
   const _MediaDetailsContent({
     required this.scrollController,
     required this.overview,
+    this.premiereDate,
     required this.externalUrls,
     required this.people,
     required this.apiService,
@@ -746,6 +751,13 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
       controller: widget.scrollController,
       padding: const EdgeInsets.all(16),
       children: [
+        if (widget.premiereDate != null)
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: (widget.overview != null && widget.overview!.isNotEmpty) ? 8 : 0,
+            ),
+            child: _PremiereDateText(premiereDate: widget.premiereDate!),
+          ),
         if (widget.overview != null && widget.overview!.isNotEmpty)
           _OverviewSection(
             overview: widget.overview!,
@@ -849,6 +861,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
 
         final List<Person> people;
         final String? overview;
+        final String? premiereDate;
         final List<Map<String, dynamic>> externalUrls;
         final bool isLoading;
         final String? errorMessage;
@@ -867,6 +880,10 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
             data: (details) => details?['Overview'] as String?,
             orElse: () => null,
           );
+          premiereDate = detailsAsync.maybeWhen(
+            data: (details) => details?['PremiereDate'] as String?,
+            orElse: () => null,
+          );
           externalUrls = detailsAsync.maybeWhen(
             data: (details) =>
                 (details?['ExternalUrls'] as List?)
@@ -882,6 +899,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
         } else {
           people = [];
           overview = null;
+          premiereDate = null;
           externalUrls = [];
           isLoading = false;
           errorMessage = null;
@@ -909,10 +927,17 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                 child: Center(child: Text(l10n.errorLoadingCast(errorMessage))),
               )
             else ...[
-              if (overview != null && overview.isNotEmpty)
+              if (premiereDate != null)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: _PremiereDateText(premiereDate: premiereDate),
+                  ),
+                ),
+              if (overview != null && overview.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(16, premiereDate != null ? 8 : 16, 16, 0),
                     child: _OverviewSection(
                       overview: overview,
                       expanded: _expanded,
@@ -1100,6 +1125,28 @@ class _OverviewSection extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _PremiereDateText extends StatelessWidget {
+  final String premiereDate;
+
+  const _PremiereDateText({required this.premiereDate});
+
+  @override
+  Widget build(BuildContext context) {
+    final parsedDate = DateTime.tryParse(premiereDate);
+    if (parsedDate == null) return const SizedBox.shrink();
+
+    final formattedDate = DateFormat.yMMMd().format(parsedDate.toLocal());
+    final l10n = AppLocalizations.of(context)!;
+
+    return Text(
+      '${l10n.premiered}: $formattedDate',
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+      ),
     );
   }
 }
