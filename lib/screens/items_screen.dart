@@ -314,6 +314,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 imageUrl: imageUrl,
                 userData: item['UserData'],
                 placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
+                showPlayedIndicator: !isMusic,
               ),
             ),
             Padding(

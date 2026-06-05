@@ -6,6 +6,7 @@ class ItemPoster extends StatelessWidget {
   final Map<String, dynamic>? userData;
   final IconData placeholderIcon;
   final BoxFit fit;
+  final bool showPlayedIndicator;
 
   const ItemPoster({
     super.key,
@@ -13,6 +14,7 @@ class ItemPoster extends StatelessWidget {
     this.userData,
     this.placeholderIcon = Icons.movie_rounded,
     this.fit = BoxFit.cover,
+    this.showPlayedIndicator = true,
   });
 
   @override
@@ -37,7 +39,7 @@ class ItemPoster extends StatelessWidget {
           // Playback status badges
           () {
             final unplayedCount = userData!['UnplayedItemCount'] as int?;
-            final isPlayed = userData!['Played'] == true;
+            final isPlayed = userData!['Played'] == true && showPlayedIndicator;
 
             if (unplayedCount == null && !isPlayed) {
               return const SizedBox.shrink();

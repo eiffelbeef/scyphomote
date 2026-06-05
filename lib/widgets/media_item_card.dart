@@ -71,6 +71,7 @@ class MediaItemCard extends ConsumerWidget {
                   placeholderIcon: collectionType == 'music'
                       ? Icons.music_note
                       : Icons.movie_rounded,
+                  showPlayedIndicator: collectionType != 'music' && item['Type'] != 'Audio',
                 ),
               ),
               Padding(
