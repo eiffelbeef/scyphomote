@@ -13,3 +13,8 @@ class AppConstants {
 
   static bool isInForeground = true;
 }
+
+class AppColors {
+  static const Color drawerDark = Color.fromARGB(255, 41, 33, 51);
+  static const Color drawerLight = Color.fromARGB(255, 211, 202, 223);
+}

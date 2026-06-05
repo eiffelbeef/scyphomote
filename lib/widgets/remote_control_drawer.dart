@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../screens/remote_control/widgets/remote_control_panel.dart';
 import '../screens/remote_control/widgets/basic_controls_row.dart';
+import '../constants.dart';
 
 class RemoteControlDrawer extends ConsumerStatefulWidget {
   const RemoteControlDrawer({super.key});
@@ -47,9 +48,13 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
         minChildSize: minExtent,
         maxChildSize: 0.9,
         builder: (context, scrollController) {
+          final drawerColor = Theme.of(context).brightness == Brightness.dark
+              ? AppColors.drawerDark
+              : AppColors.drawerLight;
+
           return Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: drawerColor,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
