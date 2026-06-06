@@ -122,7 +122,7 @@ class SessionNotifier extends Notifier<SessionState> {
 
       final sessions = allSessions.where((s) {
         if (s.clientName == AppConstants.appName) return false;
-        return s.playableMediaTypes.isNotEmpty;
+        return s.playableMediaTypes.isNotEmpty || s.nowPlaying != null;
       }).toList();
 
       Session? updatedSelectedSession;
