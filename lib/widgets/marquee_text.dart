@@ -23,63 +23,63 @@ class MarqueeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveStyle = style ?? Theme.of(context).textTheme.bodyMedium;
+    final effectiveStyle = DefaultTextStyle.of(context).style.merge(style);
 
-    if (maxWidth != null) {
-      return _buildContent(
-        context,
-        BoxConstraints.tightFor(width: maxWidth!),
-        effectiveStyle,
-      );
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return _buildContent(context, constraints, effectiveStyle);
-      },
-    );
-  }
-
-  Widget _buildContent(
-    BuildContext context,
-    BoxConstraints constraints,
-    TextStyle? style,
-  ) {
     final textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: TextSpan(text: text, style: effectiveStyle),
       maxLines: 1,
       textDirection: TextDirection.ltr,
     )..layout(maxWidth: double.infinity);
 
-    final textWidth = textPainter.width;
+    Widget buildContent(BoxConstraints constraints) {
+      final textWidth = textPainter.width;
 
-    if (textWidth <= constraints.maxWidth) {
-      return Text(
-        text,
-        style: style,
-        textAlign: textAlign,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      if (textWidth <= constraints.maxWidth) {
+        return Text(
+          text,
+          style: effectiveStyle,
+          textAlign: textAlign,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        );
+      }
+
+      return SizedBox(
+        width: constraints.maxWidth,
+        height: textPainter.height,
+        child: RepaintBoundary(
+          child: Marquee(
+            text: text,
+            style: effectiveStyle,
+            scrollAxis: Axis.horizontal,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            blankSpace: blankSpace,
+            velocity: scrollSpeed,
+            pauseAfterRound: pauseAfterRound,
+            accelerationDuration: const Duration(milliseconds: 500),
+            accelerationCurve: Curves.linear,
+            decelerationDuration: const Duration(milliseconds: 200),
+            decelerationCurve: Curves.easeOut,
+          ),
+        ),
+      );
+    }
+
+    if (maxWidth != null) {
+      return SizedBox(
+        height: textPainter.height,
+        child: buildContent(BoxConstraints.tightFor(width: maxWidth!)),
       );
     }
 
     return SizedBox(
       height: textPainter.height,
-      child: RepaintBoundary(
-        child: Marquee(
-          text: text,
-          style: style,
-          scrollAxis: Axis.horizontal,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          blankSpace: blankSpace,
-          velocity: scrollSpeed,
-          pauseAfterRound: pauseAfterRound,
-          accelerationDuration: const Duration(milliseconds: 500),
-          accelerationCurve: Curves.linear,
-          decelerationDuration: const Duration(milliseconds: 200),
-          decelerationCurve: Curves.easeOut,
-        ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return buildContent(constraints);
+        },
       ),
     );
   }
 }
+

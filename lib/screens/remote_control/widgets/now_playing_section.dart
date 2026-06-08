@@ -204,7 +204,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
-                      maxWidth: widget.maxWidth,
                     ),
                   ),
                   if (nowPlaying.isVideo)
