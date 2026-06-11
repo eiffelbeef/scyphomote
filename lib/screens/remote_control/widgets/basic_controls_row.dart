@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../constants/jellyfin_commands.dart';
 import '../../../utils/playback_utils.dart';
 import 'remote_button.dart';
@@ -21,6 +22,11 @@ class BasicControlsRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isEmby = ref.watch(authProvider).currentUser?.isEmby ?? false;
+    final canJump = isEmby
+        ? (session.playState?.canSeek ?? false)
+        : session.supportsRemoteControl;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -40,7 +46,7 @@ class BasicControlsRow extends ConsumerWidget {
           RemoteIconButton(
             icon: Icons.fast_rewind_rounded,
             iconSize: 28.0,
-            onPressed: session.supportsRemoteControl
+            onPressed: canJump
                 ? () => ref.read(playbackProvider.notifier).rewind()
                 : null,
           ),
@@ -62,7 +68,7 @@ class BasicControlsRow extends ConsumerWidget {
           RemoteIconButton(
             icon: Icons.fast_forward_rounded,
             iconSize: 28.0,
-            onPressed: session.supportsRemoteControl
+            onPressed: canJump
                 ? () => ref.read(playbackProvider.notifier).fastForward()
                 : null,
           ),

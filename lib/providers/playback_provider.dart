@@ -96,9 +96,44 @@ class PlaybackNotifier extends Notifier<void> {
     errorMessage: 'Failed to send playing command',
   );
 
-  Future<void> rewind() => sendPlayingCommand(JellyfinCommands.rewind);
-      Future<void> fastForward() =>
-      sendPlayingCommand(JellyfinCommands.fastForward);
+  Future<void> rewind() => _withSession(
+    (user, session) {
+      if (user.isEmby) {
+        final current = session.playState?.positionSeconds ?? 0;
+        final newPos = current - 10;
+        return _apiService.seek(
+          session.sessionId,
+          newPos < 0 ? 0 : newPos,
+          controllingUserId: user.userId,
+        );
+      }
+      return _apiService.sendPlayingCommand(
+        session.sessionId,
+        JellyfinCommands.rewind,
+      );
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to rewind',
+  );
+
+  Future<void> fastForward() => _withSession(
+    (user, session) {
+      if (user.isEmby) {
+        final current = session.playState?.positionSeconds ?? 0;
+        return _apiService.seek(
+          session.sessionId,
+          current + 30,
+          controllingUserId: user.userId,
+        );
+      }
+      return _apiService.sendPlayingCommand(
+        session.sessionId,
+        JellyfinCommands.fastForward,
+      );
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to fast forward',
+  );
 
   Future<void> toggleMute() => _withSession(
     (user, session) async {
