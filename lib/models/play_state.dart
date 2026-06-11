@@ -36,7 +36,20 @@ class PlayState {
     audioStreamIndex: json['AudioStreamIndex'] as int?,
     mediaSourceId: json['MediaSourceId'] as String?,
     canSeek: json['CanSeek'] as bool? ?? false,
-    playbackOrder: json['PlaybackOrder'] as String?,
+    playbackOrder: _determinePlaybackOrder(json),
     repeatMode: json['RepeatMode'] as String?,
   );
+}
+
+String? _determinePlaybackOrder(Map<String, dynamic> json) {
+  final playbackOrder = json['PlaybackOrder'];
+  if (playbackOrder is String) return playbackOrder;
+
+  // Fallback for servers that use a boolean Shuffle flag (e.g., Emby).
+  final shuffle = json['Shuffle'];
+  if (shuffle is bool) {
+    return shuffle ? 'Shuffle' : 'Sorted';
+  }
+
+  return null;
 }

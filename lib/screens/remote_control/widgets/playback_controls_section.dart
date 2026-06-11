@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
-import '../../../providers/auth_provider.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
 import '../../../constants/jellyfin_commands.dart';
@@ -52,7 +51,6 @@ class PlaybackControlsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nowPlaying = session.nowPlaying;
     final playState = session.playState;
-    final isEmby = ref.watch(authProvider).currentUser?.isEmby ?? false;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -110,8 +108,6 @@ class PlaybackControlsSection extends ConsumerWidget {
                             builder: (context) {
                               final repeatMode =
                                   session.playState?.repeatMode ?? 'RepeatNone';
-                              final canRepeat = session.supportedCommands
-                                  .contains(JellyfinCommands.setRepeatMode);
                               final nextMode = switch (repeatMode) {
                                 'RepeatNone' => 'RepeatAll',
                                 'RepeatAll' => 'RepeatOne',
@@ -131,18 +127,12 @@ class PlaybackControlsSection extends ConsumerWidget {
                                         ).colorScheme.primary,
                                       )
                                     : null,
-                                onPressed: canRepeat
+                                onPressed: session.canRepeat
                                     ? () {
                                         HapticFeedback.lightImpact();
                                         ref
                                             .read(playbackProvider.notifier)
-                                            .sendCommand(
-                                              JellyfinCommands.setRepeatMode,
-                                              arguments: {
-                                                'RepeatMode': nextMode,
-                                              },
-                                              refreshAfter: true,
-                                            );
+                                            .setRepeatMode(nextMode);
                                       }
                                     : null,
                               );
@@ -243,9 +233,6 @@ class PlaybackControlsSection extends ConsumerWidget {
                           const SizedBox(width: 12),
                           Builder(
                             builder: (context) {
-                              final canShuffle = isEmby
-                                  ? session.supportedCommands.contains('SetShuffle')
-                                  : session.supportedCommands.contains(JellyfinCommands.setShuffleQueue);
                               final isShuffle =
                                   session.playState?.playbackOrder == 'Shuffle';
                               return IconButton.filledTonal(
@@ -255,24 +242,12 @@ class PlaybackControlsSection extends ConsumerWidget {
                                       : Icons.format_list_numbered_rounded,
                                 ),
                                 iconSize: 24,
-                                onPressed: canShuffle
+                                onPressed: session.canShuffle
                                     ? () {
                                         HapticFeedback.lightImpact();
                                         ref
                                             .read(playbackProvider.notifier)
-                                            .sendCommand(
-                                              isEmby ? 'SetShuffle' : JellyfinCommands.setShuffleQueue,
-                                              arguments: isEmby
-                                                  ? {
-                                                      'Shuffle': !isShuffle,
-                                                    }
-                                                  : {
-                                                      'ShuffleMode': isShuffle
-                                                          ? 'Sorted'
-                                                          : 'Shuffle',
-                                                    },
-                                              refreshAfter: true,
-                                            );
+                                            .toggleShuffle(isShuffle);
                                       }
                                     : null,
                               );

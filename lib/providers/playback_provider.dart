@@ -97,7 +97,7 @@ class PlaybackNotifier extends Notifier<void> {
   );
 
   Future<void> rewind() => sendPlayingCommand(JellyfinCommands.rewind);
-  Future<void> fastForward() =>
+      Future<void> fastForward() =>
       sendPlayingCommand(JellyfinCommands.fastForward);
 
   Future<void> toggleMute() => _withSession(
@@ -110,6 +110,31 @@ class PlaybackNotifier extends Notifier<void> {
     },
     refreshAfter: true,
     errorMessage: 'Failed to toggle mute',
+  );
+
+  Future<void> toggleShuffle(bool isCurrentlyShuffle) => _withSession(
+    (user, session) {
+      final isEmby = user.isEmby;
+      return _apiService.sendCommand(
+        session.sessionId,
+        isEmby ? 'SetShuffle' : JellyfinCommands.setShuffleQueue,
+        arguments: isEmby
+            ? {'Shuffle': !isCurrentlyShuffle}
+            : {'ShuffleMode': isCurrentlyShuffle ? 'Sorted' : 'Shuffle'},
+      );
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to toggle shuffle',
+  );
+
+  Future<void> setRepeatMode(String nextMode) => _withSession(
+    (user, session) => _apiService.sendCommand(
+      session.sessionId,
+      JellyfinCommands.setRepeatMode,
+      arguments: {'RepeatMode': nextMode},
+    ),
+    refreshAfter: true,
+    errorMessage: 'Failed to set repeat mode',
   );
 
   Future<void> setSubtitleStreamIndex(int index) => _withSession(

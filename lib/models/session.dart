@@ -62,6 +62,14 @@ class Session {
   /// Check if this session supports displaying messages
   bool get canDisplayMessages => hasCapability(JellyfinCommands.displayMessage);
 
+  /// Check if this session supports shuffling
+  bool get canShuffle =>
+      hasCapability(JellyfinCommands.setShuffleQueue) ||
+      hasCapability('SetShuffle');
+
+  /// Check if this session supports repeat
+  bool get canRepeat => hasCapability(JellyfinCommands.setRepeatMode);
+
   factory Session.fromJson(Map<String, dynamic> json) {
     final List<String> supportedCommands =
         (json['SupportedCommands'] as List<dynamic>?)
