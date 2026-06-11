@@ -179,6 +179,7 @@
   },
   "playableMediaTypes": "Types de médias lisibles :",
   "supportedCommands": "Commandes supportées :",
+  "playstateCommands": "Commandes d'état de lecture :",
   "noActiveDevicesFound": "Aucun appareil actif trouvé",
   "startPlayingMediaOnJellyfinClient": "Commencez à lire un média sur un client Jellyfin",
   "activeDevices": "Appareils actifs",

@@ -159,7 +159,7 @@ final mediaSegmentsProvider = FutureProvider.family<List<MediaSegment>, String>(
     final user = authState.currentUser;
     final apiService = ref.read(apiServiceProvider);
 
-    if (user == null) return [];
+    if (user == null || user.isEmby) return [];
 
     try {
       final segmentsJson = await apiService.getMediaSegments(itemId);

@@ -41,8 +41,6 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
       );
     }
 
-
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).bottomSystemUiOverlayStyleOnBackground,
       child: Scaffold(
@@ -180,9 +178,16 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                       final user = ref.read(authProvider).currentUser;
                       if (user != null) {
                         final itemId = session.nowPlaying!.id;
-                        final uri = Uri.parse(user.serverUrl).replace(
-                          path: '/web/',
-                          fragment: '/details?id=$itemId',
+                        final baseUri = Uri.parse(user.serverUrl);
+                        final basePath = baseUri.path.endsWith('/')
+                            ? baseUri.path.substring(0, baseUri.path.length - 1)
+                            : baseUri.path;
+
+                        final uri = baseUri.replace(
+                          path: '$basePath/web/index.html',
+                          fragment: user.isEmby
+                              ? '!/item?id=$itemId&serverId=${user.serverId}'
+                              : '!/details?id=$itemId',
                         );
                         launchUrl(uri, mode: LaunchMode.externalApplication);
                       }

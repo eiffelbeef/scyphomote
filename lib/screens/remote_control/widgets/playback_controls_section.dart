@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
 import '../../../constants/jellyfin_commands.dart';
@@ -51,6 +52,7 @@ class PlaybackControlsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nowPlaying = session.nowPlaying;
     final playState = session.playState;
+    final isEmby = ref.watch(authProvider).currentUser?.isEmby ?? false;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -168,7 +170,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                   Builder(
                     builder: (context) {
                       final isEnding = isEpisodeNearEnd(session);
-                      final isStopEnabled = session.supportsMediaControl;
+                      final isStopEnabled = session.supportsRemoteControl;
                       final hasNext = session.nowPlayingQueueSize > 1;
                       final showHighlight = isEnding && !hasNext;
 
@@ -241,8 +243,9 @@ class PlaybackControlsSection extends ConsumerWidget {
                           const SizedBox(width: 12),
                           Builder(
                             builder: (context) {
-                              final canShuffle = session.supportedCommands
-                                  .contains(JellyfinCommands.setShuffleQueue);
+                              final canShuffle = isEmby
+                                  ? session.supportedCommands.contains('SetShuffle')
+                                  : session.supportedCommands.contains(JellyfinCommands.setShuffleQueue);
                               final isShuffle =
                                   session.playState?.playbackOrder == 'Shuffle';
                               return IconButton.filledTonal(
@@ -258,12 +261,16 @@ class PlaybackControlsSection extends ConsumerWidget {
                                         ref
                                             .read(playbackProvider.notifier)
                                             .sendCommand(
-                                              JellyfinCommands.setShuffleQueue,
-                                              arguments: {
-                                                'ShuffleMode': isShuffle
-                                                    ? 'Sorted'
-                                                    : 'Shuffle',
-                                              },
+                                              isEmby ? 'SetShuffle' : JellyfinCommands.setShuffleQueue,
+                                              arguments: isEmby
+                                                  ? {
+                                                      'Shuffle': !isShuffle,
+                                                    }
+                                                  : {
+                                                      'ShuffleMode': isShuffle
+                                                          ? 'Sorted'
+                                                          : 'Shuffle',
+                                                    },
                                               refreshAfter: true,
                                             );
                                       }
@@ -375,38 +382,38 @@ class PlaybackControlsSection extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-              flex: 2,
-              child: FilledButton.tonalIcon(
-                onPressed: session.canPlayOn
-                    ? () => Navigator.of(context).push(
+                flex: 2,
+                child: FilledButton.tonalIcon(
+                  onPressed: session.canPlayOn
+                      ? () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const LibraryScreen(),
                           ),
                         )
-                    : null,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                      : null,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.video_library, size: 20),
+                  label: const Text('Browse'),
                 ),
-                icon: const Icon(Icons.video_library, size: 20),
-                label: const Text('Browse'),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 1,
-              child: FilledButton.tonalIcon(
-                onPressed: session.canUseRemote
-                    ? () => _showRemoteSheet(context, ref)
-                    : null,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 1,
+                child: FilledButton.tonalIcon(
+                  onPressed: session.canUseRemote
+                      ? () => _showRemoteSheet(context, ref)
+                      : null,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.gamepad_rounded, size: 20),
+                  label: const Text('Remote'),
                 ),
-                icon: const Icon(Icons.gamepad_rounded, size: 20),
-                label: const Text('Remote'),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
     );
   }

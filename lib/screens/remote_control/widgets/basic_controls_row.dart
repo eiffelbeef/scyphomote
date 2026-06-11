@@ -29,7 +29,7 @@ class BasicControlsRow extends ConsumerWidget {
           icon: Icons.skip_previous_rounded,
           iconSize: 28.0,
           onPressed:
-              (session.nowPlayingQueueSize > 1 && session.supportsMediaControl)
+              (session.nowPlayingQueueSize > 1 && session.supportsRemoteControl)
               ? () => ref
                     .read(playbackProvider.notifier)
                     .sendPlayingCommand(JellyfinCommands.previousTrack)
@@ -40,7 +40,7 @@ class BasicControlsRow extends ConsumerWidget {
           RemoteIconButton(
             icon: Icons.fast_rewind_rounded,
             iconSize: 28.0,
-            onPressed: session.supportsMediaControl
+            onPressed: session.supportsRemoteControl
                 ? () => ref.read(playbackProvider.notifier).rewind()
                 : null,
           ),
@@ -50,7 +50,7 @@ class BasicControlsRow extends ConsumerWidget {
           icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded),
           iconSize: 40.0,
           style: IconButton.styleFrom(padding: const EdgeInsets.all(12.0)),
-          onPressed: session.supportsMediaControl
+          onPressed: session.supportsRemoteControl
               ? () {
                   HapticFeedback.mediumImpact();
                   ref.read(playbackProvider.notifier).playPause();
@@ -62,7 +62,7 @@ class BasicControlsRow extends ConsumerWidget {
           RemoteIconButton(
             icon: Icons.fast_forward_rounded,
             iconSize: 28.0,
-            onPressed: session.supportsMediaControl
+            onPressed: session.supportsRemoteControl
                 ? () => ref.read(playbackProvider.notifier).fastForward()
                 : null,
           ),
@@ -72,7 +72,8 @@ class BasicControlsRow extends ConsumerWidget {
           builder: (context) {
             final isEnding = isEpisodeNearEnd(session);
             final isNextEnabled =
-                session.nowPlayingQueueSize > 1 && session.supportsMediaControl;
+                session.nowPlayingQueueSize > 1 &&
+                session.supportsRemoteControl;
             final showHighlight = isEnding && isNextEnabled;
 
             return RemoteIconButton(

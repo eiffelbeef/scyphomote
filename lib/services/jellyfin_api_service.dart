@@ -86,6 +86,15 @@ class JellyfinApiService {
         options: Options(headers: {'Authorization': _buildAuthHeader('')}),
       );
 
+      bool isEmby = false;
+      try {
+        final infoResponse = await _dio.get('/System/Info/Public');
+        final productName = infoResponse.data['ProductName'] as String?;
+        if (productName == null || !productName.toLowerCase().contains('jellyfin')) {
+          isEmby = true;
+        }
+      } catch (_) {}
+
       return UserAccount(
         userId: response.data['User']['Id'] as String,
         username: response.data['User']['Name'] as String,
@@ -95,6 +104,7 @@ class JellyfinApiService {
         isAdmin:
             response.data['User']?['Policy']?['IsAdministrator'] as bool? ??
             false,
+        isEmby: isEmby,
       );
     } catch (e) {
       throw Exception('Authentication failed: $e');
@@ -221,6 +231,7 @@ class JellyfinApiService {
     await _postSessionRequest(
       sessionId,
       'Playing',
+      queryParameters: {'ItemIds': mediaId, 'PlayCommand': 'PlayNow'},
       data: {
         'ItemIds': [mediaId],
         'PlayCommand': 'PlayNow',
@@ -249,6 +260,7 @@ class JellyfinApiService {
     await _postSessionRequest(
       sessionId,
       'Playing/$command',
+      data: {'Command': command},
       errorMessage: 'Failed to send playing command $command',
     );
   }
@@ -283,6 +295,7 @@ class JellyfinApiService {
     await _postSessionRequest(
       sessionId,
       'Message',
+      queryParameters: {'Header': header, 'Text': text, 'TimeoutMs': timeoutMs},
       data: {'Header': header, 'Text': text, 'TimeoutMs': timeoutMs},
       errorMessage: 'Failed to send display message',
     );
@@ -310,6 +323,11 @@ class JellyfinApiService {
       sessionId,
       'Playing/Seek',
       queryParameters: {
+        'SeekPositionTicks': positionTicks,
+        if (controllingUserId != null) 'ControllingUserId': controllingUserId,
+      },
+      data: {
+        'Command': 'Seek',
         'SeekPositionTicks': positionTicks,
         if (controllingUserId != null) 'ControllingUserId': controllingUserId,
       },
@@ -513,12 +531,7 @@ class JellyfinApiService {
     final imageTags = item['ImageTags'] as Map<String, dynamic>?;
     final tag = imageTags?[imageType] as String?;
 
-    return getArtworkUrl(
-      imageId,
-      imageType,
-      maxWidth: maxWidth,
-      tag: tag,
-    );
+    return getArtworkUrl(imageId, imageType, maxWidth: maxWidth, tag: tag);
   }
 
   Future<String?> downloadUserImage(
@@ -536,7 +549,18 @@ class JellyfinApiService {
         return base64Encode(response.data!);
       }
     } catch (e) {
-      logError('Failed to download user image for $userId: $e');
+      try {
+        final response = await _dio.get<List<int>>(
+          'Users/$userId/Images/Primary',
+          queryParameters: {'Format': format},
+          options: Options(responseType: ResponseType.bytes),
+        );
+        if (response.data != null) {
+          return base64Encode(response.data!);
+        }
+      } catch (e2) {
+        logError('Failed to download user image for $userId: $e2');
+      }
     }
     return null;
   }

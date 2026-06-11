@@ -179,6 +179,7 @@
   },
   "playableMediaTypes": "Abspielbare Medientypen:",
   "supportedCommands": "Unterstützte Befehle:",
+  "playstateCommands": "Wiedergabestatus-Befehle:",
   "noActiveDevicesFound": "Keine aktiven Geräte gefunden",
   "startPlayingMediaOnJellyfinClient": "Wiedergabe auf einem Jellyfin-Client starten",
   "activeDevices": "Aktive Geräte",

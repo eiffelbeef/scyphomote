@@ -79,6 +79,8 @@ flutter:
     - assets/tmdb.svg
     - assets/tvdb.svg
     - assets/anilist.svg
+    - assets/emby.svg
+    - assets/jellyfin.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

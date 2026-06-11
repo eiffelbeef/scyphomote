@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../widgets/user_avatar.dart';
 import 'login_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class UserManagementScreen extends ConsumerWidget {
   const UserManagementScreen({super.key});
@@ -26,7 +27,28 @@ class UserManagementScreen extends ConsumerWidget {
                 return ListTile(
                   leading: UserAvatar(user: user),
                   title: Text(user.username),
-                  subtitle: Text(user.serverUrl),
+                  subtitle: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        user.isEmby
+                            ? 'assets/emby.svg'
+                            : 'assets/jellyfin.svg',
+                        height: 14.0,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).colorScheme.onSurfaceVariant,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 6.0),
+                      Flexible(
+                        child: Text(
+                          user.serverUrl,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                   trailing: isActive
                       ? Icon(
                           Icons.check_circle,

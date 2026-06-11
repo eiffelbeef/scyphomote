@@ -115,7 +115,7 @@ class MediaInfo {
     albumId: json['AlbumId'],
     runTimeTicks: json['RunTimeTicks'],
     hasLyrics: json['HasLyrics'] ?? false,
-    hasSubtitles: json['HasSubtitles'] ?? false,
+    hasSubtitles: _determineHasSubtitles(json),
     productionYear: json['ProductionYear'],
     trickplay: json['Trickplay'] != null
         ? TrickplayManifest.fromJson(json['Trickplay'])
@@ -126,4 +126,18 @@ class MediaInfo {
     primaryImageAspectRatio: (json['PrimaryImageAspectRatio'] as num?)
         ?.toDouble(),
   );
+}
+
+bool _determineHasSubtitles(Map<String, dynamic> json) {
+  final hasSubtitles = json['HasSubtitles'];
+  if (hasSubtitles is bool) return hasSubtitles;
+
+  // Fallback if flag isn't present (as is the case for emby)
+  final streams = json['MediaStreams'];
+  if (streams is List) {
+    return streams.any(
+      (stream) => stream is Map && stream['Type'] == 'Subtitle',
+    );
+  }
+  return false;
 }

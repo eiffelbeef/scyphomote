@@ -179,6 +179,7 @@
   },
   "playableMediaTypes": "再生可能なメディアタイプ:",
   "supportedCommands": "サポートされているコマンド:",
+  "playstateCommands": "再生状態コマンド:",
   "noActiveDevicesFound": "アクティブなデバイスが見つかりません",
   "startPlayingMediaOnJellyfinClient": "Jellyfin クライアントでメディアの再生を開始してください",
   "activeDevices": "アクティブなデバイス",
