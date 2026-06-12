@@ -270,5 +270,7 @@
     }
   },
   "rateAndReview": "Calificar y Reseñar",
-  "premiered": "Estreno"
+  "premiered": "Estreno",
+  "home": "Inicio",
+  "favorites": "Favoritos"
 }

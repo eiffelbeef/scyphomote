@@ -81,10 +81,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final nowPlaying = session.nowPlaying;
     final l10n = AppLocalizations.of(context)!;
 
-    final bool isMovie = nowPlaying?.type == 'Movie';
-    final bool isEpisode = nowPlaying?.type == 'Episode';
-
-    final double fallbackRatio = isEpisode ? 16 / 9 : (isMovie ? 2 / 3 : 1.0);
+    final double fallbackRatio = UiUtils.getFallbackAspectRatio(nowPlaying?.type);
     final double aspectRatio =
         nowPlaying?.primaryImageAspectRatio ?? fallbackRatio;
 

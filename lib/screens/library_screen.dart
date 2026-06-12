@@ -12,14 +12,42 @@ import '../utils/playback_utils.dart';
 import '../utils/ui_utils.dart';
 import 'items_screen.dart';
 
-class LibraryScreen extends ConsumerStatefulWidget {
+class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
 
   @override
-  ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.librarySection),
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: const Icon(Icons.home_rounded), text: AppLocalizations.of(context)!.home),
+              Tab(icon: const Icon(Icons.favorite_rounded), text: AppLocalizations.of(context)!.favorites),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _HomeTab(),
+            _FavoritesTab(),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _LibraryScreenState extends ConsumerState<LibraryScreen> {
+class _HomeTab extends ConsumerStatefulWidget {
+  const _HomeTab();
+
+  @override
+  ConsumerState<_HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends ConsumerState<_HomeTab> {
   List<Map<String, dynamic>> _views = [];
   List<Map<String, dynamic>> _resumeItems = [];
   List<Map<String, dynamic>> _nextUpItems = [];
@@ -38,15 +66,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
     try {
       final apiService = ref.read(apiServiceProvider);
-      final views = await apiService.getViews(user.userId);
-      final resumeItems = await apiService.getResumeItems(user.userId);
-      final nextUpItems = await apiService.getNextUpItems(user.userId);
+      
+      final futures = [
+        apiService.getViews(user.userId).then((views) {
+          if (mounted) setState(() => _views = views);
+        }),
+        apiService.getResumeItems(user.userId).then((items) {
+          if (mounted) setState(() => _resumeItems = items);
+        }),
+        apiService.getNextUpItems(user.userId).then((items) {
+          if (mounted) setState(() => _nextUpItems = items);
+        }),
+      ];
+      
+      await Future.wait(futures);
 
       if (mounted) {
         setState(() {
-          _views = views;
-          _resumeItems = resumeItems;
-          _nextUpItems = nextUpItems;
           _isLoading = false;
         });
       }
@@ -81,7 +117,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       if (selectedSession == null || playableTypes.isEmpty) return true;
 
       final collectionType = view['CollectionType'] as String?;
-      final mediaType = _mapToMediaType(collectionType);
+      final mediaType = UiUtils.mapToMediaType(collectionType);
 
       if (mediaType == null) return false;
 
@@ -91,7 +127,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       if (selectedSession == null || playableTypes.isEmpty) return true;
       final mediaType =
           item['MediaType'] as String? ??
-          _mapToMediaType(item['Type'] as String?);
+          UiUtils.mapToMediaType(item['Type'] as String?);
       if (mediaType == null) return false;
       return playableTypes.contains(mediaType);
     }
@@ -100,16 +136,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final filteredNextUpItems = _nextUpItems.where(isItemPlayable).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.librarySection)),
+      
       body: Stack(
         children: [
-          _isLoading
+          _isLoading && filteredViews.isEmpty && filteredResumeItems.isEmpty && filteredNextUpItems.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : _error != null
               ? Center(
                   child: Text(AppLocalizations.of(context)!.errorMsg(_error!)),
                 )
-              : filteredViews.isEmpty &&
+              : !_isLoading && filteredViews.isEmpty &&
                     filteredResumeItems.isEmpty &&
                     filteredNextUpItems.isEmpty
               ? const Center(
@@ -339,32 +375,227 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  String? _mapToMediaType(String? type) {
-    switch (type?.toLowerCase()) {
-      case 'movie':
-      case 'movies':
-      case 'tvshows':
-      case 'episode':
-      case 'musicvideo':
-      case 'musicvideos':
-      case 'homevideos':
-      case 'video':
-      case 'boxsets':
-      case 'trailer':
-      case 'trailers':
-        return 'Video';
-      case 'audio':
-      case 'music':
-      case 'song':
-        return 'Audio';
-      case 'book':
-      case 'books':
-        return 'Book';
-      case 'photo':
-      case 'photos':
-        return 'Photo';
-      default:
-        return null; // Unknown
+}
+
+class _FavoritesTab extends ConsumerStatefulWidget {
+  const _FavoritesTab();
+
+  @override
+  ConsumerState<_FavoritesTab> createState() => _FavoritesTabState();
+}
+
+class _FavoritesTabState extends ConsumerState<_FavoritesTab> {
+  List<Map<String, dynamic>> _favoriteItems = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFavorites();
+  }
+
+  Future<void> _fetchFavorites() async {
+    final user = ref.read(authProvider).currentUser;
+    if (user == null) return;
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final types = [
+        'Movie',
+        'Series',
+        'Season',
+        'Episode',
+        'Video',
+        'MusicVideo',
+        'BoxSet',
+        'Playlist',
+        'MusicAlbum',
+        'Audio',
+        'LiveTVChannel',
+      ];
+      final futures = types.map((type) async {
+        try {
+          final result = await apiService.getFavoriteItems(user.userId, type);
+          final items = (result['Items'] as List).map((e) => e as Map<String, dynamic>).toList();
+          if (mounted && items.isNotEmpty) {
+            setState(() {
+              _favoriteItems = [..._favoriteItems, ...items];
+            });
+          }
+        } catch (e) {
+          debugPrint('Error fetching favorite $type: $e');
+        }
+      });
+      
+      await Future.wait(futures);
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+
+  bool _isItemPlayable(Map<String, dynamic> item) {
+    final sessionState = ref.watch(sessionProvider);
+    final selectedSession = sessionState.selectedSession;
+    final playableTypes =
+        selectedSession?.playableMediaTypes
+            .map((e) => e.toLowerCase())
+            .toList() ??
+        [];
+    if (selectedSession == null || playableTypes.isEmpty) return true;
+
+    var mediaType = item['MediaType'] as String?;
+    if (mediaType == null ||
+        mediaType.isEmpty ||
+        mediaType.toLowerCase() == 'unknown') {
+      mediaType = UiUtils.mapToMediaType(item['Type'] as String?);
+    }
+
+    if (mediaType == null) return false;
+    return playableTypes.contains(mediaType.toLowerCase());
+  }
+
+  Widget _buildSection(String title, List<Map<String, dynamic>> items) {
+    if (items.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
+              childAspectRatio: UiUtils.getItemAspectRatio(items.firstOrNull),
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final item = items[index];
+              final apiService = ref.read(apiServiceProvider);
+              final imageUrl = apiService.getItemImageUrl(item);
+              final isFolder = item['IsFolder'] ?? false;
+
+              return MediaItemCard(
+                item: item,
+                imageUrl: imageUrl,
+                onTap: () {
+                  if (isFolder) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ItemsScreen(
+                          title: item['Name'],
+                          parentId: item['Id'],
+                          collectionType: null,
+                          parentType: item['Type'],
+                        ),
+                      ),
+                    );
+                  } else {
+                    playItemOnRemote(context, ref, item);
+                  }
+                },
+              );
+            }, childCount: items.length),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading && _favoriteItems.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Text(AppLocalizations.of(context)!.errorMsg(_error!)),
+      );
+    }
+
+    final filteredFavoriteItems = _favoriteItems.where(_isItemPlayable).toList();
+
+    if (filteredFavoriteItems.isEmpty) {
+      if (_isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.favorite_border_rounded, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'No Favorites',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Mark items as favorite to see them here.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final movies = filteredFavoriteItems.where((i) => i['Type'] == 'Movie').toList();
+    final shows = filteredFavoriteItems.where((i) => i['Type'] == 'Series').toList();
+    final seasons = filteredFavoriteItems.where((i) => i['Type'] == 'Season').toList();
+    final episodes = filteredFavoriteItems.where((i) => i['Type'] == 'Episode').toList();
+    final albums = filteredFavoriteItems.where((i) => i['Type'] == 'MusicAlbum').toList();
+    final songs = filteredFavoriteItems.where((i) => i['Type'] == 'Audio').toList();
+    final musicVideos = filteredFavoriteItems.where((i) => i['Type'] == 'MusicVideo').toList();
+    final videos = filteredFavoriteItems.where((i) => i['Type'] == 'Video').toList();
+    
+    final handledTypes = ['Movie', 'Series', 'Season', 'Episode', 'MusicAlbum', 'Audio', 'MusicVideo', 'Video'];
+    final others = filteredFavoriteItems.where((i) => !handledTypes.contains(i['Type'])).toList();
+
+    return CustomScrollView(
+      slivers: [
+        _buildSection('Movies', movies),
+        _buildSection('Shows', shows),
+        _buildSection('Seasons', seasons),
+        _buildSection('Episodes', episodes),
+        _buildSection('Albums', albums),
+        _buildSection('Songs', songs),
+        _buildSection('Music Videos', musicVideos),
+        _buildSection('Videos', videos),
+        _buildSection('Other', others),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: UiUtils.getBottomPaddingForDrawer(context, ref),
+          ),
+        ),
+      ],
+    );
   }
 }

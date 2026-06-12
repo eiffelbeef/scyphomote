@@ -14,7 +14,6 @@ import 'providers/session_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
-import 'package:flutter/foundation.dart';
 import 'widgets/home_widget_manager.dart';
 import 'utils/logger.dart';
 import 'utils/ui_utils.dart';

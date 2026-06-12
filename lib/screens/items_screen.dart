@@ -522,160 +522,160 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               ? const Center(child: CircularProgressIndicator())
               : _error != null
           ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
-          : _isSearching
-          ? _buildSearchResults()
-          : widget.parentType == 'MusicAlbum'
-          ? Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FilledButton.icon(
-                        icon: const Icon(Icons.play_arrow),
-                        label: Text(AppLocalizations.of(context)!.play),
-                        onPressed: () => playItemOnRemote(context, ref, {
-                          'Id': widget.parentId,
-                        }),
+              : _isSearching
+              ? _buildSearchResults()
+              : widget.parentType == 'MusicAlbum'
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FilledButton.icon(
+                            icon: const Icon(Icons.play_arrow),
+                            label: Text(AppLocalizations.of(context)!.play),
+                            onPressed: () => playItemOnRemote(context, ref, {
+                              'Id': widget.parentId,
+                            }),
+                          ),
+                          const SizedBox(width: 16),
+                          FilledButton.tonalIcon(
+                            icon: const Icon(Icons.shuffle_rounded),
+                            label: Text(AppLocalizations.of(context)!.shuffle),
+                            onPressed: () => playItemOnRemote(context, ref, {
+                              'Id': widget.parentId,
+                            }, playCommand: 'PlayShuffle'),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      FilledButton.tonalIcon(
-                        icon: const Icon(Icons.shuffle_rounded),
-                        label: Text(AppLocalizations.of(context)!.shuffle),
-                        onPressed: () => playItemOnRemote(context, ref, {
-                          'Id': widget.parentId,
-                        }, playCommand: 'PlayShuffle'),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    controller: _scrollController,
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        controller: _scrollController,
                     padding: const EdgeInsets.fromLTRB(
                       0,
                       8,
                       0,
                       0,
                     ),
-                    itemCount: _items.length + 1,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      if (index == _items.length) {
-                        return _buildBottomPadding(8);
-                      }
-                      final item = _items[index];
-                      final duration = _getItemDuration(item);
+                        itemCount: _items.length + 1,
+                        separatorBuilder: (context, index) =>
+                            const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          if (index == _items.length) {
+                            return _buildBottomPadding(8);
+                          }
+                          final item = _items[index];
+                          final duration = _getItemDuration(item);
 
-                      return ListTile(
-                        leading: const Icon(Icons.music_note),
-                        title: Text(_getItemTitle(item)),
-                        trailing: duration != null
-                            ? Text(
-                                duration,
+                          return ListTile(
+                            leading: const Icon(Icons.music_note),
+                            title: Text(_getItemTitle(item)),
+                            trailing: duration != null
+                                ? Text(
+                                    duration,
                                 style: Theme.of(context).textTheme.bodySmall,
-                              )
-                            : null,
-                        onTap: () => playItemOnRemote(context, ref, item),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            )
-          : widget.parentType == 'Season'
-          ? ListView.separated(
+                                  )
+                                : null,
+                            onTap: () => playItemOnRemote(context, ref, item),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : widget.parentType == 'Season'
+              ? ListView.separated(
               padding: const EdgeInsets.fromLTRB(
                 0,
                 8,
                 0,
                 0,
               ),
-              controller: _scrollController,
-              itemCount: _items.length + 1,
+                  controller: _scrollController,
+                  itemCount: _items.length + 1,
               separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                if (index == _items.length) {
-                  return _buildBottomPadding(8);
-                }
-                final item = _items[index];
-                final apiService = ref.read(apiServiceProvider);
-                final imageUrl = apiService.getItemImageUrl(item);
-                final duration = _getItemDuration(item);
+                  itemBuilder: (context, index) {
+                    if (index == _items.length) {
+                      return _buildBottomPadding(8);
+                    }
+                    final item = _items[index];
+                    final apiService = ref.read(apiServiceProvider);
+                    final imageUrl = apiService.getItemImageUrl(item);
+                    final duration = _getItemDuration(item);
 
-                return InkWell(
-                  onTap: () => playItemOnRemote(context, ref, item),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          height: 68,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: ItemPoster(
-                              imageUrl: imageUrl,
-                              userData: item['UserData'],
-                              placeholderIcon: Icons.movie_rounded,
+                    return InkWell(
+                      onTap: () => playItemOnRemote(context, ref, item),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 120,
+                              height: 68,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: ItemPoster(
+                                  imageUrl: imageUrl,
+                                  userData: item['UserData'],
+                                  placeholderIcon: Icons.movie_rounded,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                _getItemTitle(item),
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                            if (duration != null) ...[
+                              const SizedBox(width: 8),
+                              Text(
+                                duration,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            _getItemTitle(item),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                        if (duration != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            duration,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
-          : CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                SliverPadding(
+                      ),
+                    );
+                  },
+                )
+              : CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    SliverPadding(
                   padding: const EdgeInsets.fromLTRB(
                     16,
                     16,
                     16,
                     16,
                   ),
-                  sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
-                      childAspectRatio: isMusic ? 1 : 2 / 3,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
+                          childAspectRatio: UiUtils.getItemAspectRatio(_items.firstOrNull),
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        return _buildItemCard(_items[index], isMusic);
+                          return _buildItemCard(_items[index], isMusic);
                       },
                       childCount: _items.length,
                     ),
-          ),
-        ),
+                      ),
+                    ),
         SliverToBoxAdapter(
           child: _buildBottomPadding(16),
         ),
-      ],
-    ),
+                  ],
+                ),
           const RemoteControlDrawer(),
         ],
       ),

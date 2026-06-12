@@ -270,5 +270,7 @@
     }
   },
   "rateAndReview": "評価してレビュー",
-  "premiered": "初演"
+  "premiered": "初演",
+  "home": "ホーム",
+  "favorites": "お気に入り"
 }

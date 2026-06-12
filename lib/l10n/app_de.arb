@@ -270,5 +270,7 @@
     }
   },
   "rateAndReview": "Bewerten und Rezensieren",
-  "premiered": "Premiere"
+  "premiered": "Premiere",
+  "home": "Startseite",
+  "favorites": "Favoriten"
 }

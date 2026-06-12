@@ -118,9 +118,8 @@ class JellyfinApiService {
     final data = await _getRequest(
       'Sessions',
       queryParameters: {
-        if (deviceId != null) 'DeviceId': deviceId,
-        if (activeWithinSeconds != null)
-          'ActiveWithinSeconds': activeWithinSeconds,
+        'DeviceId': ?deviceId,
+        'ActiveWithinSeconds': ?activeWithinSeconds,
       },
       errorMessage: 'Failed to fetch sessions',
     );
@@ -324,12 +323,12 @@ class JellyfinApiService {
       'Playing/Seek',
       queryParameters: {
         'SeekPositionTicks': positionTicks,
-        if (controllingUserId != null) 'ControllingUserId': controllingUserId,
+        'ControllingUserId': ?controllingUserId,
       },
       data: {
         'Command': 'Seek',
         'SeekPositionTicks': positionTicks,
-        if (controllingUserId != null) 'ControllingUserId': controllingUserId,
+        'ControllingUserId': ?controllingUserId,
       },
       errorMessage: 'Failed to seek',
     );
@@ -384,17 +383,19 @@ class JellyfinApiService {
     String? sortOrder,
     String? searchTerm,
     String? includeItemTypes,
+    String? filters,
     bool recursive = false,
     int? startIndex,
     int? limit,
   }) async {
     final queryParams = <String, dynamic>{
-      if (parentId != null) 'ParentId': parentId,
-      if (sortBy != null) 'SortBy': sortBy,
-      if (sortOrder != null) 'SortOrder': sortOrder,
-      if (includeItemTypes != null) 'IncludeItemTypes': includeItemTypes,
-      if (startIndex != null) 'StartIndex': startIndex,
-      if (limit != null) 'Limit': limit,
+      'ParentId': ?parentId,
+      'SortBy': ?sortBy,
+      'SortOrder': ?sortOrder,
+      'IncludeItemTypes': ?includeItemTypes,
+      'Filters': ?filters,
+      'StartIndex': ?startIndex,
+      'Limit': ?limit,
       if (searchTerm != null && searchTerm.isNotEmpty) ...{
         'SearchTerm': searchTerm,
         'Recursive': true,
@@ -405,13 +406,38 @@ class JellyfinApiService {
         'SortBy': 'SortName',
         'SortOrder': 'Ascending',
       },
-      'Fields': 'IndexNumber,ParentIndexNumber',
+      'Fields': 'IndexNumber,ParentIndexNumber,PrimaryImageAspectRatio',
     };
 
     final data = await _getRequest(
       'Users/$userId/Items',
       queryParameters: queryParams,
       errorMessage: 'Failed to fetch items',
+    );
+
+    return data;
+  }
+
+  Future<Map<String, dynamic>> getFavoriteItems(
+    String userId,
+    String includeItemTypes,
+  ) async {
+    final queryParams = <String, dynamic>{
+      'SortBy': 'SeriesSortName,SortName',
+      'SortOrder': 'Ascending',
+      'Filters': 'IsFavorite',
+      'Recursive': true,
+      'Fields': 'PrimaryImageAspectRatio',
+      'CollapseBoxSetItems': false,
+      'ExcludeLocationTypes': 'Virtual',
+      'EnableTotalRecordCount': false,
+      'IncludeItemTypes': includeItemTypes,
+    };
+
+    final data = await _getRequest(
+      'Users/$userId/Items',
+      queryParameters: queryParams,
+      errorMessage: 'Failed to fetch favorites',
     );
 
     return data;
