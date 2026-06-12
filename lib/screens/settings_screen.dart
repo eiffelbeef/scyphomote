@@ -264,6 +264,18 @@ class SettingsScreen extends ConsumerWidget {
                     .setHideOtherUsersSessions(value);
               },
             ),
+            SwitchListTile(
+              secondary: const Icon(Icons.devices_other_rounded),
+              title: Text(
+                AppLocalizations.of(context)!.showNonMediaCapableSessionsTitle,
+              ),
+              value: settings.showNonMediaCapableSessions,
+              onChanged: (value) {
+                ref
+                    .read(settingsProvider.notifier)
+                    .setShowNonMediaCapableSessions(value);
+              },
+            ),
           ],
           if (kDebugMode) ...[
             const Divider(),

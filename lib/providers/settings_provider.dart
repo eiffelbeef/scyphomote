@@ -8,6 +8,7 @@ class SettingsState {
   final int deviceListRefreshRate;
   final int libraryItemsPerRow;
   final bool hideOtherUsersSessions;
+  final bool showNonMediaCapableSessions;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -15,6 +16,7 @@ class SettingsState {
     this.deviceListRefreshRate = 10,
     this.libraryItemsPerRow = 2,
     this.hideOtherUsersSessions = false,
+    this.showNonMediaCapableSessions = false,
   });
 
   SettingsState copyWith({
@@ -23,6 +25,7 @@ class SettingsState {
     int? deviceListRefreshRate,
     int? libraryItemsPerRow,
     bool? hideOtherUsersSessions,
+    bool? showNonMediaCapableSessions,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -33,6 +36,8 @@ class SettingsState {
       libraryItemsPerRow: libraryItemsPerRow ?? this.libraryItemsPerRow,
       hideOtherUsersSessions:
           hideOtherUsersSessions ?? this.hideOtherUsersSessions,
+      showNonMediaCapableSessions:
+          showNonMediaCapableSessions ?? this.showNonMediaCapableSessions,
     );
   }
 }
@@ -54,6 +59,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final listRate = await _storageService.getDeviceListRefreshRate();
     final itemsPerRow = await _storageService.getLibraryItemsPerRow();
     final hideSessions = await _storageService.getHideOtherUsersSessions();
+    final showNonMediaCapable =
+        await _storageService.getShowNonMediaCapableSessions();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -61,6 +68,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       deviceListRefreshRate: listRate ?? 10,
       libraryItemsPerRow: itemsPerRow ?? 2,
       hideOtherUsersSessions: hideSessions ?? false,
+      showNonMediaCapableSessions: showNonMediaCapable ?? false,
     );
   }
 
@@ -87,6 +95,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setHideOtherUsersSessions(bool hide) async {
     state = state.copyWith(hideOtherUsersSessions: hide);
     await _storageService.saveHideOtherUsersSessions(hide);
+  }
+
+  Future<void> setShowNonMediaCapableSessions(bool show) async {
+    state = state.copyWith(showNonMediaCapableSessions: show);
+    await _storageService.saveShowNonMediaCapableSessions(show);
   }
 }
 

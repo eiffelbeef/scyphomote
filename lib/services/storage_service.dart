@@ -13,6 +13,7 @@ class StorageService {
   static const String _browseSortOrderKey = 'browse_sort_order';
   static const String _libraryItemsPerRowKey = 'library_items_per_row';
   static const String _hideOtherUsersSessionsKey = 'hide_other_users_sessions';
+  static const String _showNonMediaCapableSessionsKey = 'show_non_media_capable_sessions';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -155,13 +156,25 @@ class StorageService {
 
   Future<bool?> getHideOtherUsersSessions() async {
     final val = await _storage.read(key: _hideOtherUsersSessionsKey);
-    return val != null ? val == 'true' : null;
+    return val == null ? null : val == 'true';
   }
 
   Future<void> saveHideOtherUsersSessions(bool hide) async {
     await _storage.write(
       key: _hideOtherUsersSessionsKey,
       value: hide.toString(),
+    );
+  }
+
+  Future<bool?> getShowNonMediaCapableSessions() async {
+    final val = await _storage.read(key: _showNonMediaCapableSessionsKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveShowNonMediaCapableSessions(bool show) async {
+    await _storage.write(
+      key: _showNonMediaCapableSessionsKey,
+      value: show.toString(),
     );
   }
 

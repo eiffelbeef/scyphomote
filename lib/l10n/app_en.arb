@@ -20,6 +20,7 @@
   "itemsPerRowTitle": "Items per Row",
   "adminSection": "Admin",
   "hideOtherUsersSessionsTitle": "Hide other users' sessions",
+  "showNonMediaCapableSessionsTitle": "Show non-media capable sessions",
   "debugSection": "Debug",
   "spoofPremiumStatusTitle": "Spoof Premium Status",
   "aboutSection": "About",

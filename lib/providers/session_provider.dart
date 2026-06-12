@@ -120,8 +120,12 @@ class SessionNotifier extends Notifier<SessionState> {
         deviceId: state.selectedSession?.deviceId,
       );
 
+      final isAdmin = ref.read(authProvider).currentUser?.isAdmin ?? false;
+      final showNonMediaCapable = isAdmin && ref.read(settingsProvider).showNonMediaCapableSessions;
+
       final sessions = allSessions.where((s) {
         if (s.clientName == AppConstants.appName) return false;
+        if (showNonMediaCapable) return true;
         return s.playableMediaTypes.isNotEmpty || s.nowPlaying != null;
       }).toList();
 

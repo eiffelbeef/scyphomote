@@ -20,6 +20,7 @@
   "itemsPerRowTitle": "1行あたりのアイテム数",
   "adminSection": "管理者",
   "hideOtherUsersSessionsTitle": "他のユーザーのセッションを非表示にする",
+  "showNonMediaCapableSessionsTitle": "メディア機能のないセッションを表示する",
   "debugSection": "デバッグ",
   "spoofPremiumStatusTitle": "プレミアムステータスを偽装する",
   "aboutSection": "このアプリについて",

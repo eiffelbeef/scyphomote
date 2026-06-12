@@ -20,6 +20,7 @@
   "itemsPerRowTitle": "Éléments par ligne",
   "adminSection": "Administration",
   "hideOtherUsersSessionsTitle": "Masquer les sessions des autres utilisateurs",
+  "showNonMediaCapableSessionsTitle": "Afficher les sessions sans capacité multimédia",
   "debugSection": "Débogage",
   "spoofPremiumStatusTitle": "Simuler le statut Premium",
   "aboutSection": "À propos",
