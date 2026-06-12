@@ -72,6 +72,22 @@ class NowPlayingSection extends ConsumerStatefulWidget {
 
 class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
   bool _isLoadingMediaInfo = false;
+  String? _lastItemId;
+  bool _isFavorite = false;
+
+  void _checkFavoriteStatus(String itemId) async {
+    final user = ref.read(authProvider).currentUser;
+    if (user == null) return;
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final itemData = await apiService.getItem(user.userId, itemId);
+      if (mounted && _lastItemId == itemId) {
+        setState(() {
+          _isFavorite = itemData['UserData']?['IsFavorite'] ?? false;
+        });
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +96,14 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final artworkSize = widget.artworkSize;
     final nowPlaying = session.nowPlaying;
     final l10n = AppLocalizations.of(context)!;
+    
+    if (nowPlaying != null && nowPlaying.id != _lastItemId) {
+      _lastItemId = nowPlaying.id;
+      _isFavorite = nowPlaying.isFavorite;
+      _checkFavoriteStatus(nowPlaying.id);
+    }
+    
+    final isFavorite = _isFavorite;
 
     final double fallbackRatio = UiUtils.getFallbackAspectRatio(nowPlaying?.type);
     final double aspectRatio =
@@ -122,6 +146,46 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
               )
             else
               _buildPlaceholder(context, size: finalHeight, width: finalWidth),
+
+            if (nowPlaying != null)
+              Positioned(
+                bottom: 8,
+                left: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                      color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurface,
+                    ),
+                    onPressed: () async {
+                      HapticFeedback.lightImpact();
+                      final user = ref.read(authProvider).currentUser;
+                      if (user == null) return;
+                      try {
+                        final apiService = ref.read(apiServiceProvider);
+                        await apiService.toggleFavorite(user.userId, nowPlaying.id, isFavorite);
+                        _checkFavoriteStatus(nowPlaying.id); // Re-fetch actual state from API
+                      } catch (e) {
+                        if (context.mounted) {
+                          UiUtils.showSnackBar(context, 'Failed to update favorite status');
+                        }
+                      }
+                    },
+                  ),
+                ),
+              ),
+
 
             if (nowPlaying != null && nowPlaying.isVideo)
               Consumer(

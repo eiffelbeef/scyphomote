@@ -45,6 +45,7 @@ class MediaInfo {
   final TrickplayManifest? trickplay;
   final List<Person>? people;
   final double? primaryImageAspectRatio;
+  final bool isFavorite;
 
   MediaInfo({
     required this.id,
@@ -67,6 +68,7 @@ class MediaInfo {
     this.trickplay,
     this.people,
     this.primaryImageAspectRatio,
+    this.isFavorite = false,
   });
 
   int? get durationSeconds =>
@@ -125,6 +127,7 @@ class MediaInfo {
         .toList(),
     primaryImageAspectRatio: (json['PrimaryImageAspectRatio'] as num?)
         ?.toDouble(),
+    isFavorite: json['UserData']?['IsFavorite'] ?? false,
   );
 }
 

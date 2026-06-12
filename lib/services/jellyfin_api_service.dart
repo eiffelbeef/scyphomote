@@ -163,6 +163,31 @@ class JellyfinApiService {
     }
   }
 
+  Future<dynamic> _deleteRequest(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    String? errorMessage,
+  }) async {
+    try {
+      final response = await _dio.delete(
+        path,
+        queryParameters: queryParameters,
+      );
+      return response.data;
+    } catch (e) {
+      _handleRequestException(e, path, errorMessage);
+    }
+  }
+
+  Future<void> toggleFavorite(String userId, String itemId, bool isFavorite) async {
+    final endpoint = 'Users/$userId/FavoriteItems/$itemId';
+    if (isFavorite) {
+      await _deleteRequest(endpoint, errorMessage: 'Failed to un-favorite item');
+    } else {
+      await _postRequest(endpoint, errorMessage: 'Failed to favorite item');
+    }
+  }
+
   Future<dynamic> _getRequest(
     String path, {
     Map<String, dynamic>? queryParameters,
@@ -374,6 +399,13 @@ class JellyfinApiService {
     return (data['Items'] as List)
         .map((e) => e as Map<String, dynamic>)
         .toList();
+  }
+
+  Future<Map<String, dynamic>> getItem(String userId, String itemId) async {
+    return await _getRequest(
+      'Users/$userId/Items/$itemId',
+      errorMessage: 'Failed to fetch item',
+    );
   }
 
   Future<Map<String, dynamic>> getItems(
