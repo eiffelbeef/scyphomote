@@ -6,6 +6,7 @@ import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
+import '../../../widgets/themed_svg_icon.dart';
 import '../../../constants/jellyfin_commands.dart';
 import '../../library_screen.dart';
 import '../../../providers/session_provider.dart';
@@ -236,11 +237,9 @@ class PlaybackControlsSection extends ConsumerWidget {
                               final isShuffle =
                                   session.playState?.playbackOrder == 'Shuffle';
                               return IconButton.filledTonal(
-                                icon: Icon(
-                                  isShuffle
-                                      ? Icons.shuffle_rounded
-                                      : Icons.format_list_numbered_rounded,
-                                ),
+                                icon: isShuffle
+                                    ? const Icon(Icons.shuffle_rounded)
+                                    : const ThemedSvgIcon('assets/sorted.svg'),
                                 iconSize: 24,
                                 onPressed: session.canShuffle
                                     ? () {

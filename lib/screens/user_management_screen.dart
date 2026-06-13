@@ -4,7 +4,7 @@ import '../providers/auth_provider.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../widgets/user_avatar.dart';
 import 'login_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/themed_svg_icon.dart';
 
 class UserManagementScreen extends ConsumerWidget {
   const UserManagementScreen({super.key});
@@ -30,15 +30,12 @@ class UserManagementScreen extends ConsumerWidget {
                   subtitle: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SvgPicture.asset(
+                      ThemedSvgIcon(
                         user.isEmby
                             ? 'assets/emby.svg'
                             : 'assets/jellyfin.svg',
-                        height: 14.0,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).colorScheme.onSurfaceVariant,
-                          BlendMode.srcIn,
-                        ),
+                        size: 14.0,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 6.0),
                       Flexible(

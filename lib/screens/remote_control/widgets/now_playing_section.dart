@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../widgets/marquee_text.dart';
+import '../../../widgets/themed_svg_icon.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
@@ -1233,14 +1233,10 @@ class _ExternalLinksSection extends StatelessWidget {
                 )
               : null,
           icon: svgAsset != null
-              ? SvgPicture.asset(
+              ? ThemedSvgIcon(
                   svgAsset,
-                  width: 18,
-                  height: 18,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.primary,
-                    BlendMode.srcIn,
-                  ),
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
                 )
               : const Icon(Icons.open_in_new, size: 18),
           label: Text(linkName),
