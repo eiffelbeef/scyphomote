@@ -248,28 +248,11 @@ class PlaybackNotifier extends Notifier<void> {
   );
 
   Future<void> addToQueue(Map<String, dynamic> item) => _withSession(
-    (user, session) {
-      if (session.nowPlayingQueue == null || session.nowPlayingQueue!.isEmpty) {
-        return _apiService.playTo(
-          session.sessionId,
-          item['Id'] as String,
-        );
-      }
-      
-      final queue = List.of(session.nowPlayingQueue!);
-      
-      final itemData = Map<String, dynamic>.from(item);
-      itemData['Id'] = itemData['Id']?.toString() ?? 'fallback-id';
-      itemData['Type'] ??= 'Audio';
-      itemData['PlaylistItemId'] = '${itemData['Id']}-queue-${DateTime.now().millisecondsSinceEpoch}';
-      
-      queue.add(MediaInfo.fromJson(itemData));
-      
-      int startIndex = _findIndex(queue, session.nowPlaying?.playlistItemId ?? session.nowPlaying?.id ?? '');
-      if (startIndex == -1) startIndex = 0;
-      
-      return _playNewQueue(session, queue, startIndex, session.estimatedPositionTicks);
-    },
+    (user, session) => _apiService.playTo(
+      session.sessionId,
+      item['Id'] as String,
+      playCommand: 'PlayLast',
+    ),
     refreshAfter: true,
     errorMessage: 'Failed to add to queue',
   );
