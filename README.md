@@ -8,6 +8,7 @@ Scyphomote is a dedicated remote control for Jellyfin, built with Flutter.
 * **Playback controls**: Play, pause, stop, seek, volume.
 * **Advanced controls**: Fast forward, rewind, and track skipping.
 * **Media Library**: Browse and play movies, shows, and music directly from the app.
+* **Queue management**: Add songs/albums to the queue, reorder it, jump to a specific song etc. 
 * **Resume Watching**: Resume playback on supported devices.
 * **Segment Skipping**: Skip intros, outros, and other segments.
 * **Communication**: Send messages to active sessions.
