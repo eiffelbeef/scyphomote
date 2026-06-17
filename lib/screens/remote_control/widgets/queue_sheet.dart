@@ -39,7 +39,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4.0),
         child: ListTile(
-          tileColor: isPlaying ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3) : null,
+          tileColor: isPlaying ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3) : null,
           title: Text(
             itemName,
             maxLines: 1,
@@ -194,7 +194,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
                       final isPlaying = itemIndex == currentIndex;
                       return _buildItem(item, index, isPlaying, true, bulkDetails);
                     },
-                    onReorderItem: (oldIndex, newIndex) {
+                    onReorder: (oldIndex, newIndex) {
                       if (oldIndex == newIndex) return;
                       
                       final actualOldIndex = _showPreviousItems ? oldIndex : oldIndex + currentIndex;
