@@ -535,9 +535,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
               ? Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 16.0,
+                        runSpacing: 16.0,
                         children: [
                           FilledButton.icon(
                             icon: const Icon(Icons.play_arrow_rounded),
@@ -546,7 +548,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                               'Id': widget.parentId,
                             }),
                           ),
-                          const SizedBox(width: 16),
                           FilledButton.tonalIcon(
                             icon: const Icon(Icons.shuffle_rounded),
                             label: Text(AppLocalizations.of(context)!.shuffle),
@@ -554,7 +555,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                               'Id': widget.parentId,
                             }, playCommand: 'PlayShuffle'),
                           ),
-                          const SizedBox(width: 16),
                           FilledButton.tonalIcon(
                             icon: const Icon(Icons.queue_music_rounded),
                             label: Text(AppLocalizations.of(context)!.addToQueue),
