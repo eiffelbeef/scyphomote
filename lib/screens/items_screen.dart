@@ -6,6 +6,7 @@ import '../providers/settings_provider.dart';
 import '../widgets/marquee_text.dart';
 import '../widgets/item_poster.dart';
 import '../widgets/remote_control_drawer.dart';
+import '../widgets/queue_button.dart';
 import '../utils/playback_utils.dart';
 import '../utils/ui_utils.dart';
 import '../constants.dart';
@@ -310,11 +311,17 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: ItemPoster(
-                imageUrl: imageUrl,
-                userData: item['UserData'],
-                placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
-                showPlayedIndicator: !isMusic,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ItemPoster(
+                    imageUrl: imageUrl,
+                    userData: item['UserData'],
+                    placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
+                    showPlayedIndicator: !isMusic,
+                  ),
+                  QueueOverlayButton(item: item),
+                ],
               ),
             ),
             Padding(
@@ -533,7 +540,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           FilledButton.icon(
-                            icon: const Icon(Icons.play_arrow),
+                            icon: const Icon(Icons.play_arrow_rounded),
                             label: Text(AppLocalizations.of(context)!.play),
                             onPressed: () => playItemOnRemote(context, ref, {
                               'Id': widget.parentId,
@@ -546,6 +553,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                             onPressed: () => playItemOnRemote(context, ref, {
                               'Id': widget.parentId,
                             }, playCommand: 'PlayShuffle'),
+                          ),
+                          const SizedBox(width: 16),
+                          FilledButton.tonalIcon(
+                            icon: const Icon(Icons.queue_music_rounded),
+                            label: Text(AppLocalizations.of(context)!.addToQueue),
+                            onPressed: () => queueItemOnRemote(context, ref, {
+                              'Id': widget.parentId,
+                            }),
                           ),
                         ],
                       ),
@@ -572,12 +587,19 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                           return ListTile(
                             leading: const Icon(Icons.music_note),
                             title: Text(_getItemTitle(item)),
-                            trailing: duration != null
-                                ? Text(
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (duration != null) ...[
+                                  Text(
                                     duration,
-                                style: Theme.of(context).textTheme.bodySmall,
-                                  )
-                                : null,
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                                QueueIconButton(item: item),
+                              ],
+                            ),
                             onTap: () => playItemOnRemote(context, ref, item),
                           );
                         },

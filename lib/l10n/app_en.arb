@@ -272,5 +272,8 @@
   "rateAndReview": "Rate and Review",
   "premiered": "Premiered",
   "home": "Home",
-  "favorites": "Favorites"
+  "favorites": "Favorites",
+  "loading": "Loading…",
+  "addToQueue": "Add to queue",
+  "addAlbumToQueue": "Add album to queue"
 }

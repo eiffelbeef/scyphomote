@@ -272,5 +272,8 @@
   "rateAndReview": "Noter et Évaluer",
   "premiered": "Première",
   "home": "Accueil",
-  "favorites": "Favoris"
+  "favorites": "Favoris",
+  "addToQueue": "Ajouter à la file d'attente",
+  "addAlbumToQueue": "Ajouter l'album à la file d'attente",
+  "loading": "Chargement…"
 }

@@ -26,7 +26,7 @@ class Person {
 
 class MediaInfo {
   final String id;
-  final String name;
+  final String? name;
   final String type;
   final String? seriesName;
   final String? seriesId;
@@ -38,6 +38,7 @@ class MediaInfo {
   final String? artist;
   final int? track;
   final String? albumId;
+  final String? albumPrimaryImageTag;
   final int? runTimeTicks;
   final bool hasLyrics;
   final bool hasSubtitles;
@@ -46,10 +47,12 @@ class MediaInfo {
   final List<Person>? people;
   final double? primaryImageAspectRatio;
   final bool isFavorite;
+  final String? playlistItemId;
+  final String? primaryImageTag;
 
   MediaInfo({
     required this.id,
-    required this.name,
+    this.name,
     required this.type,
     this.seriesName,
     this.seriesId,
@@ -61,6 +64,7 @@ class MediaInfo {
     this.artist,
     this.track,
     this.albumId,
+    this.albumPrimaryImageTag,
     this.runTimeTicks,
     this.hasLyrics = false,
     this.hasSubtitles = false,
@@ -69,6 +73,8 @@ class MediaInfo {
     this.people,
     this.primaryImageAspectRatio,
     this.isFavorite = false,
+    this.playlistItemId,
+    this.primaryImageTag,
   });
 
   int? get durationSeconds =>
@@ -83,7 +89,7 @@ class MediaInfo {
       final e = episode?.toString().padLeft(2, '0') ?? '0';
       return '$seriesName - S${s}E$e';
     }
-    return (type == 'Audio' && artist != null) ? '$artist - $name' : name;
+    return (type == 'Audio' && artist != null) ? '$artist - ${name ?? ''}' : name ?? '';
   }
 
   String? get displaySubtitle {
@@ -99,7 +105,17 @@ class MediaInfo {
     return null;
   }
 
-  String get artworkId => (type == 'Audio' && albumId != null) ? albumId! : id;
+  String get artworkId {
+    if (type == 'Audio' && albumId != null && albumPrimaryImageTag != null) return albumId!;
+    if (primaryImageTag != null) return id;
+    if (type == 'Audio' && albumId != null) return albumId!; // Fallback
+    return id;
+  }
+
+  String? get resolvedPrimaryImageTag {
+    if (type == 'Audio' && albumId != null && albumPrimaryImageTag != null) return albumPrimaryImageTag;
+    return primaryImageTag;
+  }
 
   factory MediaInfo.fromJson(Map<String, dynamic> json) => MediaInfo(
     id: json['Id'],
@@ -115,6 +131,7 @@ class MediaInfo {
     artist: (json['Artists'] as List?)?.firstOrNull,
     track: json['IndexNumber'],
     albumId: json['AlbumId'],
+    albumPrimaryImageTag: json['AlbumPrimaryImageTag'],
     runTimeTicks: json['RunTimeTicks'],
     hasLyrics: json['HasLyrics'] ?? false,
     hasSubtitles: _determineHasSubtitles(json),
@@ -128,6 +145,8 @@ class MediaInfo {
     primaryImageAspectRatio: (json['PrimaryImageAspectRatio'] as num?)
         ?.toDouble(),
     isFavorite: json['UserData']?['IsFavorite'] ?? false,
+    playlistItemId: json['PlaylistItemId'],
+    primaryImageTag: json['ImageTags']?['Primary'] as String?,
   );
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
+import '../providers/playback_provider.dart';
 import '../models/session.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import 'ui_utils.dart';
@@ -48,6 +49,27 @@ Future<void> playItemOnRemote(
   }
 }
 
+Future<void> queueItemOnRemote(
+  BuildContext context,
+  WidgetRef ref,
+  Map<String, dynamic> item,
+) async {
+  final session = ref.read(sessionProvider).selectedSession;
+
+  if (session == null) {
+    // Call playItemOnRemote just to show the "no active session" snackbar
+    return playItemOnRemote(context, ref, item);
+  }
+
+  try {
+    UiUtils.showSnackBar(context, 'Adding to queue...');
+    await ref.read(playbackProvider.notifier).addToQueue(item);
+  } catch (e) {
+    if (!context.mounted) return;
+    UiUtils.showSnackBar(context, 'Failed to add to queue: $e');
+  }
+}
+
 bool isEpisodeNearEnd(Session session) {
   final nowPlaying = session.nowPlaying;
 
@@ -59,7 +81,7 @@ bool isEpisodeNearEnd(Session session) {
   // Must be at least 10 minutes long
   if (runtimeSeconds < 600) return false;
 
-  final positionTicks = session.playState?.positionTicks ?? 0;
+  final positionTicks = session.estimatedPositionTicks;
   final positionSeconds = positionTicks ~/ 10000000;
   final secondsFromEnd = runtimeSeconds - positionSeconds;
 

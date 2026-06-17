@@ -82,6 +82,7 @@ flutter:
     - assets/emby.svg
     - assets/jellyfin.svg
     - assets/sorted.svg
+    - assets/repeat_off.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'item_poster.dart';
 import 'marquee_text.dart';
+import 'queue_button.dart';
 
 class MediaItemCard extends ConsumerWidget {
   final Map<String, dynamic> item;
@@ -65,13 +66,19 @@ class MediaItemCard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: ItemPoster(
-                  imageUrl: imageUrl,
-                  userData: item['UserData'],
-                  placeholderIcon: collectionType == 'music'
-                      ? Icons.music_note
-                      : Icons.movie_rounded,
-                  showPlayedIndicator: collectionType != 'music' && item['Type'] != 'Audio',
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ItemPoster(
+                      imageUrl: imageUrl,
+                      userData: item['UserData'],
+                      placeholderIcon: collectionType == 'music'
+                          ? Icons.music_note
+                          : Icons.movie_rounded,
+                      showPlayedIndicator: collectionType != 'music' && item['Type'] != 'Audio',
+                    ),
+                    QueueOverlayButton(item: item),
+                  ],
                 ),
               ),
               Padding(

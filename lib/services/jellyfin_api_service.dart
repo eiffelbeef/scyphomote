@@ -150,12 +150,14 @@ class JellyfinApiService {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     String? errorMessage,
+    Options? options,
   }) async {
     try {
       final response = await _dio.post(
         path,
         data: data,
         queryParameters: queryParameters,
+        options: options,
       );
       return response.data;
     } catch (e) {
@@ -375,6 +377,7 @@ class JellyfinApiService {
     String sessionId,
     String itemId, {
     int? startPositionTicks,
+    int? startIndex,
     String playCommand = 'PlayNow',
   }) async {
     await _postSessionRequest(
@@ -383,8 +386,14 @@ class JellyfinApiService {
       queryParameters: {
         'ItemIds': itemId,
         'PlayCommand': playCommand,
-        if (startPositionTicks != null)
-          'StartPositionTicks': startPositionTicks.toString(),
+        'StartPositionTicks': ?startPositionTicks?.toString(),
+        'StartIndex': ?startIndex?.toString(),
+      },
+      data: {
+        'ItemIds': itemId.split(','),
+        'PlayCommand': playCommand,
+        'StartPositionTicks': ?startPositionTicks,
+        'StartIndex': ?startIndex,
       },
       errorMessage: 'Failed to play item',
     );
@@ -416,6 +425,7 @@ class JellyfinApiService {
     String? searchTerm,
     String? includeItemTypes,
     String? filters,
+    String? ids,
     bool recursive = false,
     int? startIndex,
     int? limit,
@@ -426,6 +436,7 @@ class JellyfinApiService {
       'SortOrder': ?sortOrder,
       'IncludeItemTypes': ?includeItemTypes,
       'Filters': ?filters,
+      'Ids': ?ids,
       'StartIndex': ?startIndex,
       'Limit': ?limit,
       if (searchTerm != null && searchTerm.isNotEmpty) ...{
@@ -438,7 +449,7 @@ class JellyfinApiService {
         'SortBy': 'SortName',
         'SortOrder': 'Ascending',
       },
-      'Fields': 'IndexNumber,ParentIndexNumber,PrimaryImageAspectRatio',
+      'Fields': 'IndexNumber,ParentIndexNumber,PrimaryImageAspectRatio,ImageTags,AlbumId',
     };
 
     final data = await _getRequest(
@@ -582,12 +593,15 @@ class JellyfinApiService {
     String imageType = 'Primary',
     int maxWidth = 500,
   }) {
-    final imageId = (item['Type'] == 'Audio' && item['AlbumId'] != null)
+    final bool useAlbumImage = item['Type'] == 'Audio' && item['AlbumId'] != null;
+    final imageId = useAlbumImage
         ? item['AlbumId'] as String
         : item['Id'] as String;
 
     final imageTags = item['ImageTags'] as Map<String, dynamic>?;
-    final tag = imageTags?[imageType] as String?;
+    final tag = useAlbumImage && imageType == 'Primary' && item['AlbumPrimaryImageTag'] != null
+        ? item['AlbumPrimaryImageTag'] as String
+        : imageTags?[imageType] as String?;
 
     return getArtworkUrl(imageId, imageType, maxWidth: maxWidth, tag: tag);
   }

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/session.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
-import '../../../widgets/themed_svg_icon.dart';
 import '../../../constants/jellyfin_commands.dart';
 import '../../library_screen.dart';
 import '../../../providers/session_provider.dart';
@@ -18,6 +18,8 @@ import 'trickplay_overlay.dart';
 import '../../../utils/playback_utils.dart';
 import 'remote_button.dart';
 import 'basic_controls_row.dart';
+import 'queue_sheet.dart';
+import 'playback_mode_buttons.dart';
 
 class PlaybackControlsSection extends ConsumerWidget {
   final Session session;
@@ -105,40 +107,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if (nowPlaying.type == 'Audio')
-                          Builder(
-                            builder: (context) {
-                              final repeatMode =
-                                  session.playState?.repeatMode ?? 'RepeatNone';
-                              final nextMode = switch (repeatMode) {
-                                'RepeatNone' => 'RepeatAll',
-                                'RepeatAll' => 'RepeatOne',
-                                _ => 'RepeatNone',
-                              };
-                              final icon = switch (repeatMode) {
-                                'RepeatOne' => Icons.repeat_one_rounded,
-                                'RepeatAll' => Icons.repeat_rounded,
-                                _ => Icons.repeat_rounded,
-                              };
-                              return RemoteIconButton(
-                                icon: icon,
-                                style: repeatMode != 'RepeatNone'
-                                    ? IconButton.styleFrom(
-                                        foregroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                      )
-                                    : null,
-                                onPressed: session.canRepeat
-                                    ? () {
-                                        HapticFeedback.lightImpact();
-                                        ref
-                                            .read(playbackProvider.notifier)
-                                            .setRepeatMode(nextMode);
-                                      }
-                                    : null,
-                              );
-                            },
-                          )
+                          RepeatButton(session: session)
                         else
                           RemoteIconButton(
                             icon: Icons.fullscreen_rounded,
@@ -152,7 +121,14 @@ class PlaybackControlsSection extends ConsumerWidget {
                             ),
                           ),
                         const SizedBox(width: 12),
-                        MessageButton(session: session),
+                        if (nowPlaying.type == 'Audio')
+                          IconButton.filledTonal(
+                            icon: const Icon(Icons.queue_music_rounded),
+                            iconSize: 24,
+                            onPressed: () => _showQueueSheet(context),
+                          )
+                        else
+                          MessageButton(session: session),
                       ],
                     ),
                   ),
@@ -195,63 +171,17 @@ class PlaybackControlsSection extends ConsumerWidget {
                         if (nowPlaying.type == 'Audio') ...[
                           Consumer(
                             builder: (context, ref, child) {
-                              final lyricsAsync = ref.watch(
-                                lyricsProvider((
-                                  itemId: nowPlaying.id,
-                                  hasLyrics: nowPlaying.hasLyrics,
-                                )),
-                              );
-                              return lyricsAsync.when(
-                                data: (lyrics) {
-                                  return IconButton.filledTonal(
-                                    icon: const Icon(Icons.lyrics_rounded),
-                                    iconSize: 24,
-                                    onPressed:
-                                        nowPlaying.hasLyrics && lyrics != null
-                                        ? () =>
-                                              _showLyricsSheet(context, lyrics)
-                                        : null,
-                                  );
-                                },
-                                loading: () => const SizedBox(
-                                  width: 40,
-                                  height: 40,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                ),
-                                error: (_, _) => const IconButton.filledTonal(
-                                  icon: Icon(Icons.lyrics_rounded),
-                                  iconSize: 24,
-                                  onPressed: null,
-                                ),
+                              return IconButton.filledTonal(
+                                icon: const Icon(Icons.lyrics_rounded),
+                                iconSize: 24,
+                                onPressed: nowPlaying.hasLyrics
+                                  ? () => _fetchAndShowLyrics(context, ref, nowPlaying.id)
+                                  : null,
                               );
                             },
                           ),
                           const SizedBox(width: 12),
-                          Builder(
-                            builder: (context) {
-                              final isShuffle =
-                                  session.playState?.playbackOrder == 'Shuffle';
-                              return IconButton.filledTonal(
-                                icon: isShuffle
-                                    ? const Icon(Icons.shuffle_rounded)
-                                    : const ThemedSvgIcon('assets/sorted.svg'),
-                                iconSize: 24,
-                                onPressed: session.canShuffle
-                                    ? () {
-                                        HapticFeedback.lightImpact();
-                                        ref
-                                            .read(playbackProvider.notifier)
-                                            .toggleShuffle(isShuffle);
-                                      }
-                                    : null,
-                              );
-                            },
-                          ),
+                          ShuffleButton(session: session),
                         ] else
                           IconButton.filledTonal(
                             icon: const Icon(Icons.subtitles_rounded),
@@ -424,6 +354,33 @@ class PlaybackControlsSection extends ConsumerWidget {
     );
   }
 
+  void _fetchAndShowLyrics(BuildContext context, WidgetRef ref, String itemId) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+    
+    try {
+      final apiService = ref.read(apiServiceProvider);
+      final lyrics = await apiService.getLyrics(itemId);
+      
+      if (context.mounted) {
+        Navigator.pop(context); // close loading
+        if (lyrics != null) {
+          _showLyricsSheet(context, lyrics);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No lyrics found')));
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load lyrics: $e')));
+      }
+    }
+  }
+
   void _showLyricsSheet(BuildContext context, Map<String, dynamic> lyricsData) {
     final metadata = lyricsData['Metadata'] ?? {};
     final lyrics = lyricsData['Lyrics'] as List? ?? [];
@@ -541,4 +498,15 @@ class PlaybackControlsSection extends ConsumerWidget {
       ),
     );
   }
+
+  void _showQueueSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const QueueSheet(),
+    );
+  }
 }
+

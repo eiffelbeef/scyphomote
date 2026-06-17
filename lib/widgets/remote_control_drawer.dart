@@ -105,14 +105,13 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                             child: Builder(
                               builder: (context) {
                                 String? imageUrl;
-                                if (session.nowPlaying != null) {
-                                  final apiService = ref.read(
-                                    apiServiceProvider,
-                                  );
+                                if (session.nowPlaying != null && session.nowPlaying!.resolvedPrimaryImageTag != null) {
+                                  final apiService = ref.read(apiServiceProvider);
                                   imageUrl = apiService.getArtworkUrl(
                                     session.nowPlaying!.artworkId,
                                     'Primary',
                                     maxWidth: 100,
+                                    tag: session.nowPlaying!.resolvedPrimaryImageTag,
                                   );
                                 }
 

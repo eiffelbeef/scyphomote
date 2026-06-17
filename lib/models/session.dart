@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'media_info.dart';
 import 'play_state.dart';
 import '../constants/jellyfin_commands.dart';
@@ -13,6 +14,7 @@ class Session {
   final List<String> supportedCommands;
   final List<String> playableMediaTypes;
   final int nowPlayingQueueSize;
+  final List<MediaInfo>? nowPlayingQueue;
   final MediaInfo? nowPlaying;
   final PlayState? playState;
   final String? playMethod;
@@ -23,6 +25,7 @@ class Session {
   final String? applicationVersion;
   final DateTime? lastActivityDate;
   final String? remoteEndPoint;
+  final DateTime localFetchTime;
 
   Session({
     required this.sessionId,
@@ -35,6 +38,7 @@ class Session {
     required this.supportedCommands,
     required this.playableMediaTypes,
     required this.nowPlayingQueueSize,
+    this.nowPlayingQueue,
     this.nowPlaying,
     this.playState,
     this.playMethod,
@@ -45,10 +49,29 @@ class Session {
     this.applicationVersion,
     this.lastActivityDate,
     this.remoteEndPoint,
+    required this.localFetchTime,
   });
 
   bool get isPlaying => nowPlaying != null && !(playState?.isPaused ?? true);
   bool get isPaused => nowPlaying != null && (playState?.isPaused ?? false);
+
+  /// Returns the estimated accurate position in ticks, factoring in time elapsed since last fetch
+  int get estimatedPositionTicks {
+    if (playState?.positionTicks == null) return 0;
+    if (isPaused || nowPlaying == null) return playState!.positionTicks!;
+    
+    final elapsedMs = DateTime.now().difference(localFetchTime).inMilliseconds;
+    return playState!.positionTicks! + (elapsedMs * 10000);
+  }
+
+  /// Returns the index of the currently playing item in the nowPlayingQueue.
+  int get currentQueueIndex {
+    final index = nowPlayingQueue?.indexWhere((item) => 
+        item.playlistItemId == nowPlaying?.playlistItemId || 
+        (nowPlaying?.playlistItemId == null && item.id == nowPlaying?.id)
+    ) ?? -1;
+    return index == -1 ? 0 : index;
+  }
 
   /// Check if this session supports remote navigation commands
   bool get canUseRemote => JellyfinCommands.remoteNavigation.any(hasCapability);
@@ -83,26 +106,49 @@ class Session {
             .toList() ??
         <String>[];
 
-    String? playMethod;
-    if (json['PlayState'] != null && json['PlayState']['PlayMethod'] != null) {
-      playMethod = json['PlayState']['PlayMethod'] as String;
-    }
+    final playMethod = json['PlayState']?['PlayMethod'] as String?;
 
-    List<String>? transcodeReasons;
-    if (json['TranscodingInfo'] != null &&
-        json['TranscodingInfo']['TranscodeReasons'] != null) {
-      transcodeReasons = (json['TranscodingInfo']['TranscodeReasons'] as List)
-          .map((e) => e.toString())
-          .toList();
-    }
+    final transcodeReasons = (json['TranscodingInfo']?['TranscodeReasons'] as List?)
+        ?.map((e) => e.toString())
+        .toList();
 
     int? bitrate;
     if (json['NowPlayingItem'] != null) {
       bitrate = _calculateBitrate(json);
     }
 
-    final int nowPlayingQueueSize =
-        (json['NowPlayingQueue'] as List<dynamic>?)?.length ?? 0;
+    final List<MediaInfo> nowPlayingQueue = [];
+    final queueItems = json['NowPlayingQueue'] as List<dynamic>?;
+    final Set<String> usedPlaylistItemIds = {};
+
+    if (queueItems != null) {
+      for (int i = 0; i < queueItems.length; i++) {
+        var qItem = queueItems[i];
+        try {
+          if (qItem is Map<String, dynamic>) {
+             final itemData = Map<String, dynamic>.from(qItem);
+             
+             // Guarantee required fields so MediaInfo.fromJson never throws
+             itemData['Id'] = itemData['Id']?.toString() ?? itemData['PlaylistItemId']?.toString() ?? 'fallback-id-$i';
+             itemData['Type'] ??= 'Audio';
+             
+             // Guarantee completely unique PlaylistItemId for ReorderableListView
+             var playlistItemId = itemData['PlaylistItemId']?.toString() ?? '${itemData['Id']}-$i';
+             if (usedPlaylistItemIds.contains(playlistItemId)) {
+                playlistItemId = '$playlistItemId-$i'; // Force uniqueness if server sends duplicates
+             }
+             usedPlaylistItemIds.add(playlistItemId);
+             itemData['PlaylistItemId'] = playlistItemId;
+
+             nowPlayingQueue.add(MediaInfo.fromJson(itemData));
+          }
+        } catch (e) {
+          debugPrint('Failed to parse queue item: $e');
+        }
+      }
+    }
+
+    final int nowPlayingQueueSize = queueItems?.length ?? 0;
 
     return Session(
       sessionId: json['Id'] as String,
@@ -117,6 +163,7 @@ class Session {
       supportedCommands: supportedCommands,
       playableMediaTypes: playableMediaTypes,
       nowPlayingQueueSize: nowPlayingQueueSize,
+      nowPlayingQueue: nowPlayingQueue,
       nowPlaying: json['NowPlayingItem'] != null
           ? MediaInfo.fromJson(json['NowPlayingItem'] as Map<String, dynamic>)
           : null,
@@ -131,6 +178,7 @@ class Session {
           ? DateTime.tryParse(json['LastActivityDate'] as String)
           : null,
       remoteEndPoint: json['RemoteEndPoint'] as String?,
+      localFetchTime: DateTime.now(),
     );
   }
 

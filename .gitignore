@@ -54,3 +54,4 @@ lib/l10n/app_localizations.dart
 lib/l10n/app_localizations_*.dart
 
 /android/build/
+jellyfin-openapi-stable.json

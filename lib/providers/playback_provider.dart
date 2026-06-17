@@ -3,6 +3,7 @@ import '../services/jellyfin_api_service.dart';
 import 'auth_provider.dart';
 import 'session_provider.dart';
 import '../models/media_segment.dart';
+import '../models/media_info.dart';
 import '../models/user_account.dart';
 import '../models/session.dart';
 import '../constants/jellyfin_commands.dart';
@@ -30,7 +31,7 @@ class PlaybackNotifier extends Notifier<void> {
     try {
       final result = await action(user, session);
       if (refreshAfter) {
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 1500));
         ref.read(sessionProvider.notifier).fetchSessions();
       }
       return result;
@@ -203,6 +204,74 @@ class PlaybackNotifier extends Notifier<void> {
         _apiService.setAudioStreamIndex(session.sessionId, index),
     refreshAfter: true,
     errorMessage: 'Failed to set audio stream index',
+  );
+
+  int _findIndex(List<MediaInfo>? queue, String id) {
+    if (queue == null) return -1;
+    return queue.indexWhere((item) => item.playlistItemId == id || item.id == id);
+  }
+
+  Future<void> _playNewQueue(Session session, List<MediaInfo> queue, int startIndex, int? startPositionTicks) {
+    return _apiService.playTo(
+      session.sessionId, 
+      queue.map((e) => e.id).join(','), 
+      startIndex: startIndex,
+      startPositionTicks: startPositionTicks,
+    );
+  }
+
+  Future<void> movePlaylistItem(String playlistItemId, int newIndex) => _withSession(
+    (user, session) {
+      final oldIndex = _findIndex(session.nowPlayingQueue, playlistItemId);
+      if (oldIndex == -1) return Future.value();
+      
+      final queue = List.of(session.nowPlayingQueue!);
+      queue.insert(newIndex, queue.removeAt(oldIndex));
+      
+      int startIndex = _findIndex(queue, session.nowPlaying?.playlistItemId ?? session.nowPlaying?.id ?? '');
+      
+      return _playNewQueue(session, queue, startIndex == -1 ? 0 : startIndex, session.estimatedPositionTicks);
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to move playlist item',
+  );
+
+  Future<void> jumpToPlaylistItem(String playlistItemId) => _withSession(
+    (user, session) {
+      final index = _findIndex(session.nowPlayingQueue, playlistItemId);
+      if (index == -1) return Future.value();
+      
+      return _playNewQueue(session, session.nowPlayingQueue!, index, null);
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to jump to playlist item',
+  );
+
+  Future<void> addToQueue(Map<String, dynamic> item) => _withSession(
+    (user, session) {
+      if (session.nowPlayingQueue == null || session.nowPlayingQueue!.isEmpty) {
+        return _apiService.playTo(
+          session.sessionId,
+          item['Id'] as String,
+        );
+      }
+      
+      final queue = List.of(session.nowPlayingQueue!);
+      
+      final itemData = Map<String, dynamic>.from(item);
+      itemData['Id'] = itemData['Id']?.toString() ?? 'fallback-id';
+      itemData['Type'] ??= 'Audio';
+      itemData['PlaylistItemId'] = '${itemData['Id']}-queue-${DateTime.now().millisecondsSinceEpoch}';
+      
+      queue.add(MediaInfo.fromJson(itemData));
+      
+      int startIndex = _findIndex(queue, session.nowPlaying?.playlistItemId ?? session.nowPlaying?.id ?? '');
+      if (startIndex == -1) startIndex = 0;
+      
+      return _playNewQueue(session, queue, startIndex, session.estimatedPositionTicks);
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to add to queue',
   );
 }
 
