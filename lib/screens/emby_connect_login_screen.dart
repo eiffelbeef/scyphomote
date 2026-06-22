@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../utils/logger.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EmbyConnectLoginScreen extends ConsumerStatefulWidget {
   const EmbyConnectLoginScreen({super.key});
@@ -97,7 +98,7 @@ class _EmbyConnectLoginScreenState extends ConsumerState<EmbyConnectLoginScreen>
     final authState = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.embyConnect)),
+      appBar: AppBar(title: Text("Emby Connect")),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -109,8 +110,21 @@ class _EmbyConnectLoginScreenState extends ConsumerState<EmbyConnectLoginScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(Icons.cloud_circle_rounded, size: 80, color: Colors.green),
-                    const SizedBox(height: 32),
+                    SvgPicture.asset(
+                      'assets/emby.svg',
+                      height: 80,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.primary,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Emby Connect",
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 48),
                     TextFormField(
                       controller: _usernameController,
                       autofillHints: const [AutofillHints.username, AutofillHints.email],
