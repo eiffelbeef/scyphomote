@@ -66,7 +66,7 @@ class JellyfinApiService {
   String? _embyConnectAccessToken;
   String? _embyConnectUserId;
   String? _embySystemId;
-  void Function(String)? onUrlUpdated;
+  void Function(String, String)? onUrlUpdated;
 
   String _deviceId = '';
   String _deviceName = '';

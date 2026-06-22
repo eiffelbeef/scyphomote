@@ -64,13 +64,21 @@ class AuthNotifier extends Notifier<AuthState> {
     _storageService = ref.watch(storageServiceProvider);
     _apiService = ref.watch(apiServiceProvider);
     _embyApiService = ref.watch(embyApiServiceProvider);
-    _apiService.onUrlUpdated = (newUrl) async {
-      final currentUser = state.currentUser;
-      if (currentUser != null) {
-        final updatedUser = currentUser.copyWith(serverUrl: newUrl);
-        await _storageService.saveUser(updatedUser);
+    _apiService.onUrlUpdated = (newUrl, systemId) async {
+      try {
+        final targetEmbyUser = state.users.firstWhere((u) => u.embySystemId == systemId);
+        final updatedEmbyUser = targetEmbyUser.copyWith(serverUrl: newUrl);
+        
+        await _storageService.saveUser(updatedEmbyUser);
         final users = await _storageService.getUsers();
-        state = state.copyWith(currentUser: updatedUser, users: users);
+        
+        if (state.currentUser?.embySystemId == systemId) {
+          state = state.copyWith(currentUser: updatedEmbyUser, users: users);
+        } else {
+          state = state.copyWith(users: users);
+        }
+      } catch (e) {
+        logError('Failed to update Emby Connect url for system $systemId: $e');
       }
     };
     Future.microtask(() => _loadUsers());

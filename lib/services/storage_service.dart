@@ -42,8 +42,8 @@ class StorageService {
     final usersJson = users.map((u) => u.toJson()).toList();
     await _storage.write(key: _usersKey, value: jsonEncode(usersJson));
 
-    final activeUserId = await _storage.read(key: _activeUserKey);
-    if (activeUserId == userId) {
+    final activeUser = await getActiveUser();
+    if (activeUser?.userId == userId) {
       await _storage.delete(key: _activeUserKey);
     }
   }

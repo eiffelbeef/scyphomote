@@ -113,7 +113,7 @@ class EmbyApiService {
     String connectAccessToken,
     String systemId,
     Dio originalDio,
-    void Function(String)? onUrlUpdated,
+    void Function(String, String)? onUrlUpdated,
   ) async {
     final servers = await getEmbyConnectServers(connectUserId, connectAccessToken);
     final server = servers.firstWhere((s) => s['SystemId'] == systemId, orElse: () => {});
@@ -122,7 +122,7 @@ class EmbyApiService {
       final newBaseUrl = newUrl.endsWith('/') ? newUrl : '$newUrl/';
       if (newBaseUrl != originalDio.options.baseUrl) {
         originalDio.options.baseUrl = newBaseUrl;
-        onUrlUpdated?.call(newBaseUrl);
+        onUrlUpdated?.call(newBaseUrl, systemId);
         return await originalDio.request(
           err.requestOptions.path,
           cancelToken: err.requestOptions.cancelToken,
