@@ -104,53 +104,62 @@ class _EmbyConnectLoginScreenState extends ConsumerState<EmbyConnectLoginScreen>
             padding: const EdgeInsets.all(24.0),
             child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(Icons.cloud_circle_rounded, size: 80, color: Colors.green),
-                  const SizedBox(height: 32),
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.embyConnectUsernameEmail,
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.person_rounded),
-                    ),
-                    validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: l10n.password,
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock_rounded),
-                    ),
-                    obscureText: true,
-                    validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
-                  ),
-                  const SizedBox(height: 24),
-                  if (authState.error != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        authState.error!,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error),
-                        textAlign: TextAlign.center,
+              child: AutofillGroup(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Icon(Icons.cloud_circle_rounded, size: 80, color: Colors.green),
+                    const SizedBox(height: 32),
+                    TextFormField(
+                      controller: _usernameController,
+                      autofillHints: const [AutofillHints.username, AutofillHints.email],
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: l10n.embyConnectUsernameEmail,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.person_rounded),
                       ),
+                      validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
                     ),
-                  FilledButton(
-                    onPressed: authState.isLoading ? null : _login,
-                    child: authState.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.login),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _passwordController,
+                      autofillHints: const [AutofillHints.password],
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => authState.isLoading ? null : _login(),
+                      decoration: InputDecoration(
+                        labelText: l10n.password,
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.lock_rounded),
+                      ),
+                      obscureText: true,
+                      validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
+                    ),
+                    const SizedBox(height: 24),
+                    if (authState.error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          authState.error!,
+                          style: TextStyle(color: Theme.of(context).colorScheme.error),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    FilledButton(
+                      onPressed: authState.isLoading ? null : _login,
+                      child: authState.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(l10n.login),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
