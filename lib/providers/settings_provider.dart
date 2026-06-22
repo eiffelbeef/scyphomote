@@ -9,6 +9,7 @@ class SettingsState {
   final int libraryItemsPerRow;
   final bool hideOtherUsersSessions;
   final bool showNonMediaCapableSessions;
+  final int connectionTimeout;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -17,6 +18,7 @@ class SettingsState {
     this.libraryItemsPerRow = 2,
     this.hideOtherUsersSessions = false,
     this.showNonMediaCapableSessions = false,
+    this.connectionTimeout = 10,
   });
 
   SettingsState copyWith({
@@ -26,6 +28,7 @@ class SettingsState {
     int? libraryItemsPerRow,
     bool? hideOtherUsersSessions,
     bool? showNonMediaCapableSessions,
+    int? connectionTimeout,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -38,6 +41,7 @@ class SettingsState {
           hideOtherUsersSessions ?? this.hideOtherUsersSessions,
       showNonMediaCapableSessions:
           showNonMediaCapableSessions ?? this.showNonMediaCapableSessions,
+      connectionTimeout: connectionTimeout ?? this.connectionTimeout,
     );
   }
 }
@@ -61,6 +65,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final hideSessions = await _storageService.getHideOtherUsersSessions();
     final showNonMediaCapable =
         await _storageService.getShowNonMediaCapableSessions();
+    final connectionTimeout = await _storageService.getConnectionTimeout();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -69,6 +74,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       libraryItemsPerRow: itemsPerRow ?? 2,
       hideOtherUsersSessions: hideSessions ?? false,
       showNonMediaCapableSessions: showNonMediaCapable ?? false,
+      connectionTimeout: connectionTimeout ?? 10,
     );
   }
 
@@ -100,6 +106,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setShowNonMediaCapableSessions(bool show) async {
     state = state.copyWith(showNonMediaCapableSessions: show);
     await _storageService.saveShowNonMediaCapableSessions(show);
+  }
+
+  Future<void> setConnectionTimeout(int seconds) async {
+    state = state.copyWith(connectionTimeout: seconds);
+    await _storageService.saveConnectionTimeout(seconds);
   }
 }
 

@@ -11,7 +11,6 @@ import '../models/session.dart';
 import '../widgets/user_avatar.dart';
 import 'remote_control/remote_control_screen.dart';
 import 'user_management_screen.dart';
-import 'loading_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/text_input_dialog.dart';
 import '../utils/logger.dart';
@@ -52,10 +51,6 @@ class DeviceListScreen extends ConsumerWidget {
             return b.lastActivityDate!.compareTo(a.lastActivityDate!);
           });
 
-    if (sessionState.isLoading && sessionState.sessions.isEmpty) {
-      return const LoadingScreen();
-    }
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).bottomSystemUiOverlayStyleOverScrolled,
       child: Scaffold(
@@ -93,10 +88,21 @@ class DeviceListScreen extends ConsumerWidget {
             ),
           ],
         ),
-        body: RefreshIndicator(
-          onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
-          child: filteredSessions.isEmpty
-              ? CustomScrollView(
+        body: sessionState.isLoading && sessionState.sessions.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/scyphomote.png', width: 120, height: 120),
+                    const SizedBox(height: 24),
+                    const CircularProgressIndicator(),
+                  ],
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
+                child: filteredSessions.isEmpty
+                    ? CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
                     SliverFillRemaining(
@@ -106,17 +112,27 @@ class DeviceListScreen extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.devices_other,
+                              sessionState.error != null
+                                  ? Icons.error_outline_rounded
+                                  : Icons.devices_other,
                               size: 64,
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: sessionState.error != null
+                                  ? Theme.of(context).colorScheme.error
+                                  : Theme.of(context).colorScheme.secondary,
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              l10n.noActiveDevicesFound,
+                              sessionState.error != null ? 'Connection Error' : l10n.noActiveDevicesFound,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 8),
-                            Text(l10n.startPlayingMediaOnJellyfinClient),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                              child: Text(
+                                sessionState.error ?? l10n.startPlayingMediaOnJellyfinClient,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -130,7 +146,7 @@ class DeviceListScreen extends ConsumerWidget {
                     const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
                   ],
                 ),
-        ),
+              ),
       ),
     );
   }

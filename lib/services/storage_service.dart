@@ -14,6 +14,7 @@ class StorageService {
   static const String _libraryItemsPerRowKey = 'library_items_per_row';
   static const String _hideOtherUsersSessionsKey = 'hide_other_users_sessions';
   static const String _showNonMediaCapableSessionsKey = 'show_non_media_capable_sessions';
+  static const String _connectionTimeoutKey = 'connection_timeout';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -191,5 +192,14 @@ class StorageService {
     } else {
       await _storage.write(key: _localeKey, value: localeCode);
     }
+  }
+
+  Future<int?> getConnectionTimeout() async {
+    final val = await _storage.read(key: _connectionTimeoutKey);
+    return val != null ? int.tryParse(val) : null;
+  }
+
+  Future<void> saveConnectionTimeout(int seconds) async {
+    await _storage.write(key: _connectionTimeoutKey, value: seconds.toString());
   }
 }

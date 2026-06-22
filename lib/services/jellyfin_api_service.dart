@@ -9,7 +9,15 @@ import '../utils/ui_utils.dart';
 import '../utils/logger.dart';
 
 class JellyfinApiService {
-  final Dio _dio = Dio();
+  final Dio _dio = Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 30),
+  ));
+
+  void setConnectTimeout(int seconds) {
+    _dio.options.connectTimeout = Duration(seconds: seconds);
+  }
+
   JellyfinApiService() {
     _dio.interceptors.add(
       InterceptorsWrapper(

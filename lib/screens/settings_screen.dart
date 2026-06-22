@@ -166,6 +166,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+
           SwitchListTile(
             secondary: const Icon(Icons.sync_rounded),
             title: Text(
@@ -205,6 +206,33 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
             ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.timer_rounded),
+            title: const Text('Connection Timeout'),
+            subtitle: Text(
+              AppLocalizations.of(
+                context,
+              )!.secondsPlural(settings.connectionTimeout),
+            ),
+            trailing: SizedBox(
+              width: 200,
+              child: Slider(
+                value: settings.connectionTimeout.toDouble(),
+                min: 5,
+                max: 60,
+                divisions: 11,
+                label: AppLocalizations.of(
+                  context,
+                )!.secondsShort(settings.connectionTimeout),
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .setConnectionTimeout(value.round());
+                },
+              ),
+            ),
+          ),
           const Divider(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

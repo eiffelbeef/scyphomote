@@ -8,9 +8,20 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import '../utils/logger.dart';
+import 'settings_provider.dart';
 
 final storageServiceProvider = Provider((ref) => StorageService());
-final apiServiceProvider = Provider((ref) => JellyfinApiService());
+final apiServiceProvider = Provider((ref) {
+  final service = JellyfinApiService();
+  ref.listen(settingsProvider, (prev, next) {
+    if (prev?.connectionTimeout != next.connectionTimeout) {
+      service.setConnectTimeout(next.connectionTimeout);
+    }
+  });
+  final settings = ref.read(settingsProvider);
+  service.setConnectTimeout(settings.connectionTimeout);
+  return service;
+});
 
 class AuthState {
   final UserAccount? currentUser;
