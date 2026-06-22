@@ -95,7 +95,12 @@ class DeviceListScreen extends ConsumerWidget {
                   children: [
                     Image.asset('assets/scyphomote.png', width: 120, height: 120),
                     const SizedBox(height: 24),
-                    const CircularProgressIndicator(),
+                    const SizedBox(
+                      width: 120,
+                      child: LinearProgressIndicator(
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                      ),
+                    ),
                   ],
                 ),
               )
