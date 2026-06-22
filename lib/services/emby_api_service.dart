@@ -7,7 +7,8 @@ import '../utils/logger.dart';
 class EmbyApiService {
   final Dio _connectDio = Dio(BaseOptions(
     baseUrl: 'https://connect.emby.media/',
-    connectTimeout: const Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
   ));
 
   Future<Map<String, String>> authenticateEmbyConnect(String username, String password) async {
@@ -55,7 +56,8 @@ class EmbyApiService {
 
     final dio = Dio(BaseOptions(
       baseUrl: serverUrl,
-      connectTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
     ));
 
     dio.options.headers['Authorization'] = 'MediaBrowser Client="${AppConstants.appName}", Device="$deviceName", DeviceId="$deviceId", Version="${AppConstants.appVersion}", Token="$accessKey"';

@@ -18,7 +18,7 @@ class SettingsState {
     this.libraryItemsPerRow = 2,
     this.hideOtherUsersSessions = false,
     this.showNonMediaCapableSessions = false,
-    this.connectionTimeout = 10,
+    this.connectionTimeout = 30,
   });
 
   SettingsState copyWith({
@@ -74,7 +74,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       libraryItemsPerRow: itemsPerRow ?? 2,
       hideOtherUsersSessions: hideSessions ?? false,
       showNonMediaCapableSessions: showNonMediaCapable ?? false,
-      connectionTimeout: connectionTimeout ?? 10,
+      connectionTimeout: connectionTimeout ?? 30,
     );
   }
 
