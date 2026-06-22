@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_account.dart';
 import '../services/storage_service.dart';
 import '../services/jellyfin_api_service.dart';
+import '../services/emby_api_service.dart';
 import '../constants.dart';
 import 'package:uuid/uuid.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -22,6 +23,8 @@ final apiServiceProvider = Provider((ref) {
   service.setConnectTimeout(settings.connectionTimeout);
   return service;
 });
+
+final embyApiServiceProvider = Provider((ref) => EmbyApiService());
 
 class AuthState {
   final UserAccount? currentUser;
@@ -54,11 +57,22 @@ class AuthState {
 class AuthNotifier extends Notifier<AuthState> {
   late StorageService _storageService;
   late JellyfinApiService _apiService;
+  late EmbyApiService _embyApiService;
 
   @override
   AuthState build() {
     _storageService = ref.watch(storageServiceProvider);
     _apiService = ref.watch(apiServiceProvider);
+    _embyApiService = ref.watch(embyApiServiceProvider);
+    _apiService.onUrlUpdated = (newUrl) async {
+      final currentUser = state.currentUser;
+      if (currentUser != null) {
+        final updatedUser = currentUser.copyWith(serverUrl: newUrl);
+        await _storageService.saveUser(updatedUser);
+        final users = await _storageService.getUsers();
+        state = state.copyWith(currentUser: updatedUser, users: users);
+      }
+    };
     Future.microtask(() => _loadUsers());
     return AuthState(isLoading: true);
   }
@@ -109,6 +123,9 @@ class AuthNotifier extends Notifier<AuthState> {
         _apiService.setCredentials(
           activeUser.serverUrl,
           activeUser.accessToken,
+          embyConnectAccessToken: activeUser.embyConnectAccessToken,
+          embyConnectUserId: activeUser.embyConnectUserId,
+          embySystemId: activeUser.embySystemId,
         );
       }
       state = AuthState(
@@ -121,6 +138,52 @@ class AuthNotifier extends Notifier<AuthState> {
         isLoading: false,
         error: 'Failed to load users: $e',
       );
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> loginWithEmbyConnect(String username, String password) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final creds = await _embyApiService.authenticateEmbyConnect(username, password);
+      final servers = await _embyApiService.getEmbyConnectServers(creds['ConnectUserId']!, creds['ConnectAccessToken']!);
+      state = state.copyWith(isLoading: false);
+      return servers.map((s) => {...s, '_embyConnectUserId': creds['ConnectUserId'], '_embyConnectAccessToken': creds['ConnectAccessToken']}).toList();
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Emby Connect login failed: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> completeEmbyConnectLogin(Map<String, dynamic> server, {bool persist = true}) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final connectUserId = server['_embyConnectUserId'] as String;
+      final connectToken = server['_embyConnectAccessToken'] as String;
+      final user = await _embyApiService.exchangeEmbyConnectToken(
+        server, 
+        connectUserId, 
+        connectToken,
+        _apiService.deviceId,
+        _apiService.deviceName,
+      );
+      
+      _apiService.setCredentials(
+        user.serverUrl,
+        user.accessToken,
+        embyConnectAccessToken: user.embyConnectAccessToken,
+        embyConnectUserId: user.embyConnectUserId,
+        embySystemId: user.embySystemId,
+      );
+
+      if (persist) {
+        await _storageService.saveUser(user);
+        await _storageService.setActiveUser(user.userId);
+      }
+
+      final users = await _storageService.getUsers();
+      state = AuthState(currentUser: user, users: users, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Login failed: $e');
     }
   }
 
@@ -173,7 +236,13 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> switchUser(String userId) async {
     final user = state.users.firstWhere((u) => u.userId == userId);
     await _storageService.setActiveUser(userId);
-    _apiService.setCredentials(user.serverUrl, user.accessToken);
+    _apiService.setCredentials(
+      user.serverUrl, 
+      user.accessToken,
+      embyConnectAccessToken: user.embyConnectAccessToken,
+      embyConnectUserId: user.embyConnectUserId,
+      embySystemId: user.embySystemId,
+    );
     state = state.copyWith(currentUser: user);
   }
 
@@ -203,6 +272,9 @@ class AuthNotifier extends Notifier<AuthState> {
       _apiService.setCredentials(
         newActiveUser.serverUrl,
         newActiveUser.accessToken,
+        embyConnectAccessToken: newActiveUser.embyConnectAccessToken,
+        embyConnectUserId: newActiveUser.embyConnectUserId,
+        embySystemId: newActiveUser.embySystemId,
       );
     } else {
       _apiService.clearCredentials();

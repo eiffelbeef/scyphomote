@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'user_management_screen.dart';
+import 'emby_connect_login_screen.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../constants.dart';
 
@@ -146,6 +147,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Text(l10n.login),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: authState.isLoading
+                          ? null
+                          : () async {
+                              final result = await Navigator.of(context).push<bool>(
+                                MaterialPageRoute(
+                                  builder: (context) => const EmbyConnectLoginScreen(),
+                                ),
+                              );
+                              if (result == true && context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                      child: Text(l10n.loginWithEmbyConnect),
                     ),
                     if (kDebugMode) ...[
                       const SizedBox(height: 12),

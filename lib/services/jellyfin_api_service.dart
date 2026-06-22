@@ -7,6 +7,7 @@ import '../models/session.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
 import '../utils/logger.dart';
+import 'emby_api_service.dart';
 
 class JellyfinApiService {
   final Dio _dio = Dio(BaseOptions(
@@ -33,19 +34,40 @@ class JellyfinApiService {
           );
           handler.next(response);
         },
-        onError: (DioException err, ErrorInterceptorHandler handler) {
+        onError: (DioException err, ErrorInterceptorHandler handler) async {
           try {
             logError(
               'HTTP !!! ${err.requestOptions.method} ${err.requestOptions.uri}  error=${err.message} status=${err.response?.statusCode}',
             );
+            if (err.type == DioExceptionType.connectionTimeout || err.type == DioExceptionType.connectionError) {
+              if (_embyConnectAccessToken != null && _embyConnectUserId != null && _embySystemId != null) {
+                final retryResponse = await EmbyApiService().resolveDynamicUrlAndRetry(
+                  err,
+                  _embyConnectUserId!,
+                  _embyConnectAccessToken!,
+                  _embySystemId!,
+                  _dio,
+                  onUrlUpdated,
+                );
+                if (retryResponse != null) {
+                  return handler.resolve(retryResponse);
+                }
+              }
+            }
           } catch (_) {
-            logError('HTTP !!! error building log for DioException');
+            logError('HTTP !!! error during retry or logging');
           }
           handler.next(err);
         },
       ),
     );
   }
+
+  String? _embyConnectAccessToken;
+  String? _embyConnectUserId;
+  String? _embySystemId;
+  void Function(String)? onUrlUpdated;
+
   String _deviceId = '';
   String _deviceName = '';
   String? _accessToken;
@@ -62,14 +84,20 @@ class JellyfinApiService {
     _deviceName = deviceName;
   }
 
-  void setCredentials(String serverUrl, String accessToken) {
+  void setCredentials(String serverUrl, String accessToken, {String? embyConnectAccessToken, String? embyConnectUserId, String? embySystemId}) {
     _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
     _dio.options.headers['Authorization'] = _buildAuthHeader(accessToken);
+    _embyConnectAccessToken = embyConnectAccessToken;
+    _embyConnectUserId = embyConnectUserId;
+    _embySystemId = embySystemId;
   }
 
   void clearCredentials() {
     _dio.options.baseUrl = '';
     _dio.options.headers.remove('Authorization');
+    _embyConnectAccessToken = null;
+    _embyConnectUserId = null;
+    _embySystemId = null;
   }
 
   String get deviceId => _deviceId;
