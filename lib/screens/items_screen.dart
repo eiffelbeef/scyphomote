@@ -151,19 +151,30 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         sortOrder = 'Ascending';
       }
 
+      String? includeItemTypes;
+      if (widget.collectionType == 'music' && widget.isRoot && !_isSearching) {
+        includeItemTypes = _musicViewMode;
+      } else if (widget.isRoot && widget.collectionType != 'music') {
+        if (widget.collectionType == 'tvshows') {
+          includeItemTypes = 'Series';
+        } else if (widget.collectionType == 'movies') {
+          includeItemTypes = 'Movie';
+        } else if (widget.collectionType == 'boxsets') {
+          includeItemTypes = 'BoxSet';
+        } else {
+          includeItemTypes = 'Movie,Series,MusicArtist,MusicAlbum,BoxSet,Video,Audio';
+        }
+      }
+
       final data = await apiService.getItems(
         user.userId,
         parentId: widget.parentId,
         sortBy: sortBy,
         sortOrder: sortOrder,
         searchTerm: _searchController.text.trim(),
-        includeItemTypes:
-            (widget.collectionType == 'music' && widget.isRoot && !_isSearching)
-            ? _musicViewMode
-            : null,
-        recursive:
-            _isSearching ||
-            (widget.collectionType == 'music' && widget.isRoot),
+        includeItemTypes: includeItemTypes,
+        excludeItemTypes: (widget.isRoot && widget.collectionType != 'music') ? 'Folder' : null,
+        recursive: _isSearching || widget.isRoot,
         startIndex: _startIndex,
         limit: AppConstants.paginationLimit,
       );
@@ -205,7 +216,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
   }
 
   String _getItemTitle(Map<String, dynamic> item) {
-    final name = item['Name'] as String;
+    final name = item['Name'] as String? ?? 'Unnamed Folder';
     final index = item['IndexNumber'] as int?;
 
     if (index != null &&
@@ -269,17 +280,20 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
   }
 
   Widget _buildBottomPadding(double extraSpace) {
-    return SizedBox(
-      height: UiUtils.getBottomPaddingForDrawer(context, ref) + extraSpace,
-      child: _isLoadingMore
-          ? const Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            )
-          : const SizedBox.shrink(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (_isLoadingMore)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        SizedBox(height: UiUtils.getBottomPaddingForDrawer(context, ref) + extraSpace),
+      ],
     );
   }
 
@@ -296,7 +310,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ItemsScreen(
-                  title: item['Name'],
+                  title: _getItemTitle(item),
                   parentId: item['Id'],
                   collectionType: widget.collectionType,
                   parentType: item['Type'],
