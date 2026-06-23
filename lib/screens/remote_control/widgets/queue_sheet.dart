@@ -33,76 +33,98 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
     final subtitle = detailedItem.album ?? detailedItem.artist;
     final imageUrl = apiService.getArtworkUrl(detailedItem.artworkId, 'Primary', maxWidth: 100, tag: detailedItem.resolvedPrimaryImageTag);
 
-    return Material(
-      key: ValueKey(item.playlistItemId ?? item.id),
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: ListTile(
-          tileColor: isPlaying ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3) : null,
-          title: Text(
-            itemName,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: isPlaying ? FontWeight.bold : null,
-              color: isPlaying ? Theme.of(context).colorScheme.primary : null,
+    final key = ValueKey(item.playlistItemId ?? item.id);
+    
+    return Dismissible(
+      key: key,
+      direction: DismissDirection.horizontal,
+      onDismissed: (direction) {
+        if (item.playlistItemId != null) {
+          ref.read(playbackProvider.notifier).removePlaylistItem(item.playlistItemId!);
+        }
+      },
+      background: Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Icon(Icons.playlist_remove_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
+      secondaryBackground: Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Icon(Icons.playlist_remove_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: ListTile(
+            tileColor: isPlaying ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3) : null,
+            title: Text(
+              itemName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: isPlaying ? FontWeight.bold : null,
+                color: isPlaying ? Theme.of(context).colorScheme.primary : null,
+              ),
             ),
-          ),
-          subtitle: subtitle != null ? Text(
-            subtitle, 
-            maxLines: 1, 
-            overflow: TextOverflow.ellipsis,
-          ) : null,
-          leading: isPlaying
-              ? Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  alignment: Alignment.center,
-                  child: const PlayingIndicator(),
-                )
-              : (detailedItem.resolvedPrimaryImageTag != null)
-                  ? ClipRRect(
+            subtitle: subtitle != null ? Text(
+              subtitle, 
+              maxLines: 1, 
+              overflow: TextOverflow.ellipsis,
+            ) : null,
+            leading: isPlaying
+                ? Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(4),
-                      child: CachedNetworkImage(
-                        imageUrl: imageUrl,
+                    ),
+                    alignment: Alignment.center,
+                    child: const PlayingIndicator(),
+                  )
+                : (detailedItem.resolvedPrimaryImageTag != null)
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrl,
+                          width: 48,
+                          height: 48,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            width: 48,
+                            height: 48,
+                            child: const Icon(Icons.music_note_rounded),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            width: 48,
+                            height: 48,
+                            child: const Icon(Icons.music_note_rounded),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         width: 48,
                         height: 48,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          width: 48,
-                          height: 48,
-                          child: const Icon(Icons.music_note_rounded),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          width: 48,
-                          height: 48,
-                          child: const Icon(Icons.music_note_rounded),
-                        ),
+                        child: const Icon(Icons.music_note_rounded),
                       ),
-                    )
-                  : Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      width: 48,
-                      height: 48,
-                      child: const Icon(Icons.music_note_rounded),
-                    ),
-          trailing: isReorderable ? ReorderableDragStartListener(
-            index: index,
-            child: const Icon(Icons.drag_indicator_rounded),
-          ) : null,
-          onTap: () {
-            if (item.playlistItemId != null && !isPlaying) {
-              HapticFeedback.lightImpact();
-              ref.read(playbackProvider.notifier).jumpToPlaylistItem(item.playlistItemId!);
-            }
-          },
+            trailing: isReorderable ? ReorderableDragStartListener(
+              index: index,
+              child: const Icon(Icons.drag_indicator_rounded),
+            ) : null,
+            onTap: () {
+              if (item.playlistItemId != null && !isPlaying) {
+                HapticFeedback.lightImpact();
+                ref.read(playbackProvider.notifier).jumpToPlaylistItem(item.playlistItemId!);
+              }
+            },
+          ),
         ),
       ),
     );
@@ -134,6 +156,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
         return Material(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
             const SizedBox(height: 12),

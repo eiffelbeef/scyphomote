@@ -236,6 +236,32 @@ class PlaybackNotifier extends Notifier<void> {
     errorMessage: 'Failed to move playlist item',
   );
 
+  Future<void> removePlaylistItem(String playlistItemId) => _withSession(
+    (user, session) {
+      final oldIndex = _findIndex(session.nowPlayingQueue, playlistItemId);
+      if (oldIndex == -1) return Future.value();
+      
+      final queue = List.of(session.nowPlayingQueue!);
+      queue.removeAt(oldIndex);
+      
+      if (queue.isEmpty) {
+        return _apiService.stop(session.sessionId);
+      }
+
+      int startIndex = _findIndex(queue, session.nowPlaying?.playlistItemId ?? session.nowPlaying?.id ?? '');
+      
+      // If the currently playing item was removed, play the next one
+      if (startIndex == -1) {
+        startIndex = oldIndex < queue.length ? oldIndex : queue.length - 1;
+        return _playNewQueue(session, queue, startIndex, 0);
+      }
+      
+      return _playNewQueue(session, queue, startIndex, session.estimatedPositionTicks);
+    },
+    refreshAfter: true,
+    errorMessage: 'Failed to remove playlist item',
+  );
+
   Future<void> jumpToPlaylistItem(String playlistItemId) => _withSession(
     (user, session) {
       final index = _findIndex(session.nowPlayingQueue, playlistItemId);
