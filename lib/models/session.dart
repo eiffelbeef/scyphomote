@@ -155,7 +155,7 @@ class Session {
       deviceId: json['DeviceId'] as String,
       deviceName: json['DeviceName'] as String? ?? 'Unknown Device',
       clientName: json['Client'] as String? ?? 'Unknown Client',
-      userId: json['UserId'] as String,
+      userId: json['UserId'] as String? ?? '',
       userName: json['UserName'] as String? ?? 'Unknown User',
       isActive: json['IsActive'] as bool? ?? false,
       supportsRemoteControl: json['SupportsRemoteControl'] as bool? ?? false,
