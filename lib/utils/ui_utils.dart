@@ -160,4 +160,13 @@ class UiUtils {
         return null;
     }
   }
+
+  static String formatBitrate(num bps, {bool forceKbps = false}) {
+    if (bps <= 0) return '0 kbps';
+    if (forceKbps || bps < 1000000) {
+      return '${(bps / 1000).round()} kbps';
+    }
+    double mbps = bps / 1000000;
+    return '${mbps.toStringAsFixed(mbps.truncateToDouble() == mbps ? 0 : 1)} Mbps';
+  }
 }

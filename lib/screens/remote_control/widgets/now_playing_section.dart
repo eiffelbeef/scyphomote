@@ -390,7 +390,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '${(session.bitrate! / 1000000).toStringAsFixed(1)} Mbps',
+                          UiUtils.formatBitrate(session.bitrate!),
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(
@@ -496,7 +496,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                   _infoRow(
                     l10n.bitrate,
                     videoStream['BitRate'] != null
-                        ? '${(videoStream['BitRate'] / 1000).toStringAsFixed(1)} kbps'
+                        ? UiUtils.formatBitrate(videoStream['BitRate'], forceKbps: true)
                         : null,
                   ),
                   _infoRow(
@@ -516,7 +516,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                   _infoRow(
                     l10n.bitrate,
                     audioStream['BitRate'] != null
-                        ? '${(audioStream['BitRate'] / 1000).toStringAsFixed(1)} kbps'
+                        ? UiUtils.formatBitrate(audioStream['BitRate'], forceKbps: true)
                         : null,
                   ),
                 ],
