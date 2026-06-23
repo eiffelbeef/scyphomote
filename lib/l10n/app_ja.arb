@@ -281,5 +281,7 @@
   "favorites": "お気に入り",
   "addToQueue": "キューに追加",
   "addAlbumToQueue": "アルバムをキューに追加",
-  "loading": "読み込み中…"
+  "loading": "読み込み中…",
+  "album": "アルバム",
+  "artist": "アーティスト"
 }

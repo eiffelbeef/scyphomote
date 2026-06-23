@@ -281,5 +281,7 @@
   "favorites": "Favorites",
   "loading": "Loading…",
   "addToQueue": "Add to queue",
-  "addAlbumToQueue": "Add album to queue"
+  "addAlbumToQueue": "Add album to queue",
+  "album": "Album",
+  "artist": "Artist"
 }

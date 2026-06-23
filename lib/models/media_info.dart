@@ -38,6 +38,7 @@ class MediaInfo {
   final String? artist;
   final int? track;
   final String? albumId;
+  final String? artistId;
   final String? albumPrimaryImageTag;
   final int? runTimeTicks;
   final bool hasLyrics;
@@ -64,6 +65,7 @@ class MediaInfo {
     this.artist,
     this.track,
     this.albumId,
+    this.artistId,
     this.albumPrimaryImageTag,
     this.runTimeTicks,
     this.hasLyrics = false,
@@ -131,6 +133,7 @@ class MediaInfo {
     artist: (json['Artists'] as List?)?.firstOrNull,
     track: json['IndexNumber'],
     albumId: json['AlbumId'],
+    artistId: (json['ArtistItems'] as List?)?.firstOrNull?['Id'],
     albumPrimaryImageTag: json['AlbumPrimaryImageTag'],
     runTimeTicks: json['RunTimeTicks'],
     hasLyrics: json['HasLyrics'] ?? false,

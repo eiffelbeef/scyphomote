@@ -281,5 +281,7 @@
   "favorites": "Favoritos",
   "addToQueue": "Añadir a la cola",
   "addAlbumToQueue": "Añadir álbum a la cola",
-  "loading": "Cargando…"
+  "loading": "Cargando…",
+  "album": "Álbum",
+  "artist": "Artista"
 }

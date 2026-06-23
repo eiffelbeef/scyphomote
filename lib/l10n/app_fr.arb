@@ -281,5 +281,7 @@
   "favorites": "Favoris",
   "addToQueue": "Ajouter à la file d'attente",
   "addAlbumToQueue": "Ajouter l'album à la file d'attente",
-  "loading": "Chargement…"
+  "loading": "Chargement…",
+  "album": "Album",
+  "artist": "Artiste"
 }

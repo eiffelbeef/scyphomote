@@ -281,5 +281,7 @@
   "favorites": "Favoriten",
   "addToQueue": "Zur Warteschlange hinzufügen",
   "addAlbumToQueue": "Album zur Warteschlange hinzufügen",
-  "loading": "Wird geladen…"
+  "loading": "Wird geladen…",
+  "album": "Album",
+  "artist": "Interpret"
 }

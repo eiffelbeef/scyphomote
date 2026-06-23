@@ -20,7 +20,12 @@ import '../../../../l10n/app_localizations.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
 String? _svgAssetForLinkName(String name) {
-  switch (name.toLowerCase()) {
+  final lowerName = name.toLowerCase();
+  if (lowerName.contains('musicbrainz')) {
+    return 'assets/musicbrainz.svg';
+  }
+  
+  switch (lowerName) {
     case 'imdb':
       return 'assets/imdb.svg';
     case 'tmdb':
@@ -248,9 +253,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
         if (nowPlaying != null) ...[
           InkWell(
-            onTap: nowPlaying.isVideo
-                ? () => _showMediaDetails(nowPlaying)
-                : null,
+            onTap: () => _showMediaDetails(nowPlaying),
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -267,15 +270,14 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  if (nowPlaying.isVideo)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Icon(
-                        Icons.info_outline,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
+                  ),
                 ],
               ),
             ),
@@ -572,7 +574,12 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         return Consumer(
           builder: (context, ref, child) {
             final apiService = ref.read(apiServiceProvider);
-            final detailsAsync = ref.watch(itemDetailsProvider(mainItemId));
+            final bool isAudio = nowPlaying.type == 'Audio';
+            
+            // We don't need to fetch item details for the currently playing song
+            final detailsAsync = isAudio 
+                ? const AsyncValue<Map<String, dynamic>?>.data(null)
+                : ref.watch(itemDetailsProvider(mainItemId));
 
             return DraggableScrollableSheet(
               initialChildSize: 0.6,
@@ -612,12 +619,17 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         ),
                         const Divider(height: 1),
                         Expanded(
-                          child: isEpisode
+                          child: (isEpisode || isAudio)
                               ? _MediaDetailsTabs(
                                   scrollController: scrollController,
-                                  episodeId: nowPlaying.id,
-                                  seasonId: nowPlaying.seasonId,
-                                  seriesId: nowPlaying.seriesId,
+                                  tabs: isEpisode ? [
+                                    (title: l10n.episodeCast, itemId: nowPlaying.id, showCastAndCrew: true),
+                                    (title: l10n.seasonCast, itemId: nowPlaying.seasonId, showCastAndCrew: true),
+                                    (title: l10n.showCast, itemId: nowPlaying.seriesId, showCastAndCrew: true),
+                                  ] : [
+                                    (title: l10n.album, itemId: nowPlaying.albumId, showCastAndCrew: false),
+                                    (title: l10n.artist, itemId: nowPlaying.artistId, showCastAndCrew: false),
+                                  ],
                                   apiService: apiService,
                                   onPersonTap: _showPersonDetail,
                                 )
@@ -832,9 +844,7 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
           const SizedBox(height: 24),
           Text(
             l10n.castAndCrew,
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           ...widget.people.map(
@@ -859,17 +869,13 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
 
 class _MediaDetailsTabs extends StatefulWidget {
   final ScrollController scrollController;
-  final String episodeId;
-  final String? seasonId;
-  final String? seriesId;
+  final List<({String title, String? itemId, bool showCastAndCrew})> tabs;
   final JellyfinApiService apiService;
   final void Function(String, String) onPersonTap;
 
   const _MediaDetailsTabs({
     required this.scrollController,
-    required this.episodeId,
-    this.seasonId,
-    this.seriesId,
+    required this.tabs,
     required this.apiService,
     required this.onPersonTap,
   });
@@ -886,7 +892,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: widget.tabs.length, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         _expanded = false;
@@ -907,22 +913,14 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
     return Consumer(
       builder: (context, ref, child) {
         final selectedIndex = _tabController.index;
-        final String? selectedItemId;
-        switch (selectedIndex) {
-          case 0:
-            selectedItemId = widget.episodeId;
-          case 1:
-            selectedItemId = widget.seasonId;
-          case 2:
-            selectedItemId = widget.seriesId;
-          default:
-            selectedItemId = null;
-        }
+        final selectedTab = widget.tabs[selectedIndex];
+        final selectedItemId = selectedTab.itemId;
+        final showCastAndCrew = selectedTab.showCastAndCrew;
 
         final List<Person> people;
         final String? overview;
         final String? premiereDate;
-        final List<Map<String, dynamic>> externalUrls;
+        List<Map<String, dynamic>> externalUrls;
         final bool isLoading;
         final String? errorMessage;
 
@@ -951,6 +949,14 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                 [],
             orElse: () => [],
           );
+          
+          if (selectedTab.title == l10n.album) {
+            externalUrls = externalUrls.where((link) {
+              final name = (link['Name'] as String?)?.toLowerCase() ?? '';
+              return !name.contains('artist');
+            }).toList();
+          }
+
           isLoading = detailsAsync.isLoading;
           errorMessage = detailsAsync.maybeWhen(
             error: (err, _) => err.toString(),
@@ -971,11 +977,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
             SliverToBoxAdapter(
               child: TabBar(
                 controller: _tabController,
-                tabs: [
-                  Tab(text: l10n.episodeCast),
-                  Tab(text: l10n.seasonCast),
-                  Tab(text: l10n.showCast),
-                ],
+                tabs: widget.tabs.map((t) => Tab(text: t.title)).toList(),
               ),
             ),
             if (isLoading)
@@ -1012,7 +1014,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                     child: _ExternalLinksSection(externalUrls: externalUrls),
                   ),
                 ),
-              if (people.isNotEmpty) ...[
+              if (showCastAndCrew && people.isNotEmpty) ...[
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -1035,7 +1037,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                   ),
                 ),
               ],
-              if (people.isEmpty)
+              if (showCastAndCrew && people.isEmpty)
                 SliverFillRemaining(
                   child: Center(child: Text(l10n.noCastInfo)),
                 ),
