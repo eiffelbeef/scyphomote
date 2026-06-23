@@ -90,6 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         prefixIcon: const Icon(Icons.dns_rounded),
                       ),
                       keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.url],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -106,6 +107,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         border: const OutlineInputBorder(),
                         prefixIcon: const Icon(Icons.person_rounded),
                       ),
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.username],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -123,6 +126,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         prefixIcon: const Icon(Icons.lock_rounded),
                       ),
                       obscureText: true,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => authState.isLoading ? null : _login(),
                       autofillHints: const [AutofillHints.password],
                       validator: (value) => null,
                     ),
