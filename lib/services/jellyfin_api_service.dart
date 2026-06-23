@@ -530,7 +530,8 @@ class JellyfinApiService {
       queryParameters: {
         'Limit': 12,
         'Recursive': true,
-        'Fields': 'PrimaryImageAspectRatio',
+        'MediaTypes': 'Video',
+        'Fields': 'BasicSyncInfo,PrimaryImageAspectRatio,ProductionYear',
         'ImageTypeLimit': 1,
         'EnableImageTypes': 'Primary,Thumb',
         'EnableTotalRecordCount': false,
