@@ -303,43 +303,45 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
             children: [
               Center(
                 child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(l10n.playbackDetails),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.playMethod(session.playMethod ?? l10n.none),
-                            ),
-                            if (session.transcodeReasons != null &&
-                                session.transcodeReasons!.isNotEmpty) ...[
-                              const SizedBox(height: 16),
-                              Text(
-                                l10n.transcodeReasons,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                  onTap: session.playMethod != 'DirectPlay'
+                      ? () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(l10n.playbackDetails),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.playMethod(session.playMethod ?? l10n.none),
+                                  ),
+                                  if (session.transcodeReasons != null &&
+                                      session.transcodeReasons!.isNotEmpty) ...[
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      l10n.transcodeReasons,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    ...session.transcodeReasons!.map(
+                                      (r) => Text('• $r'),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: Text(l10n.close),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              ...session.transcodeReasons!.map(
-                                (r) => Text('• $r'),
-                              ),
-                            ],
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(l10n.close),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                              ],
+                            ),
+                          );
+                        }
+                      : null,
                   borderRadius: BorderRadius.circular(16),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -366,12 +368,14 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                               : l10n.directPlay,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.info_outline,
-                          size: 14,
-                          color: Colors.grey,
-                        ),
+                        if (session.playMethod != 'DirectPlay') ...[
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.info_outline,
+                            size: 14,
+                            color: Colors.grey,
+                          ),
+                        ],
                       ],
                     ),
                   ),
