@@ -26,7 +26,21 @@ class UserManagementScreen extends ConsumerWidget {
 
                 return ListTile(
                   leading: UserAvatar(user: user),
-                  title: Text(user.username),
+                  title: RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.titleMedium,
+                      children: [
+                        TextSpan(text: user.username),
+                        if (user.serverName != null && user.serverName!.isNotEmpty)
+                          TextSpan(
+                            text: '@${user.serverName}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                   subtitle: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

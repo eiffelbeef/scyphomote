@@ -96,6 +96,7 @@ class EmbyApiService {
       userId: localUserId,
       username: username,
       serverUrl: url,
+      serverName: server['Name'] as String?,
       accessToken: accessToken,
       serverId: serverId,
       profileImageBase64: profileImageBase64,

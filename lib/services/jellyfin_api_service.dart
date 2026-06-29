@@ -123,8 +123,10 @@ class JellyfinApiService {
       );
 
       bool isEmby = false;
+      String? serverName;
       try {
         final infoResponse = await _dio.get('/System/Info/Public');
+        serverName = infoResponse.data['ServerName'] as String?;
         final productName = infoResponse.data['ProductName'] as String?;
         if (productName == null || !productName.toLowerCase().contains('jellyfin')) {
           isEmby = true;
@@ -135,6 +137,7 @@ class JellyfinApiService {
         userId: response.data['User']['Id'] as String,
         username: response.data['User']['Name'] as String,
         serverUrl: serverUrl,
+        serverName: serverName,
         accessToken: response.data['AccessToken'] as String,
         serverId: response.data['ServerId'] as String,
         isAdmin:

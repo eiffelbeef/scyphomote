@@ -10,11 +10,13 @@ class UserAccount {
   final String? embyConnectAccessToken;
   final String? embyConnectUserId;
   final String? embySystemId;
+  final String? serverName;
 
   UserAccount({
     required this.userId,
     required this.username,
     required this.serverUrl,
+    required this.serverName,
     required this.accessToken,
     required this.serverId,
     this.profileImageBase64,
@@ -29,6 +31,7 @@ class UserAccount {
     'userId': userId,
     'username': username,
     'serverUrl': serverUrl,
+    'serverName': serverName,
     'accessToken': accessToken,
     'serverId': serverId,
     'profileImageBase64': profileImageBase64,
@@ -43,6 +46,7 @@ class UserAccount {
     String? userId,
     String? username,
     String? serverUrl,
+    String? serverName,
     String? accessToken,
     String? serverId,
     String? profileImageBase64,
@@ -56,6 +60,7 @@ class UserAccount {
       userId: userId ?? this.userId,
       username: username ?? this.username,
       serverUrl: serverUrl ?? this.serverUrl,
+      serverName: serverName ?? this.serverName,
       accessToken: accessToken ?? this.accessToken,
       serverId: serverId ?? this.serverId,
       profileImageBase64: profileImageBase64 ?? this.profileImageBase64,
@@ -71,6 +76,7 @@ class UserAccount {
     userId: json['userId'] as String,
     username: json['username'] as String,
     serverUrl: json['serverUrl'] as String,
+    serverName: json['serverName'] as String?,
     accessToken: json['accessToken'] as String,
     serverId: json['serverId'] as String,
     profileImageBase64: json['profileImageBase64'] as String?,

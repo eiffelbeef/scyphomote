@@ -149,6 +149,7 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+
   Future<List<Map<String, dynamic>>> loginWithEmbyConnect(String username, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -222,6 +223,7 @@ class AuthNotifier extends Notifier<AuthState> {
         userId: authenticatedUser.userId,
         username: authenticatedUser.username,
         serverUrl: authenticatedUser.serverUrl,
+        serverName: authenticatedUser.serverName,
         accessToken: authenticatedUser.accessToken,
         serverId: authenticatedUser.serverId,
         profileImageBase64: profileImageBase64,
