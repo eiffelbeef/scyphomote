@@ -176,6 +176,12 @@ class DeviceListScreen extends ConsumerWidget {
       progress = (position / duration).clamp(0.0, 1.0);
     }
 
+    final (bgColor, icon, iconColor) = switch ((isPlaying, isPaused)) {
+      (true, _) => (Colors.green, Icons.play_arrow_rounded, Colors.white),
+      (_, true) => (Colors.orange, Icons.pause_rounded, Colors.white),
+      _ => (Theme.of(context).colorScheme.surfaceContainerHighest, Icons.devices_rounded, null),
+    };
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       clipBehavior: Clip.antiAlias,
@@ -189,19 +195,8 @@ class DeviceListScreen extends ConsumerWidget {
           children: [
             ListTile(
               leading: CircleAvatar(
-                backgroundColor: isPlaying
-                    ? Colors.green
-                    : isPaused
-                    ? Colors.orange
-                    : Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: Icon(
-                  isPlaying
-                      ? Icons.play_arrow_rounded
-                      : isPaused
-                      ? Icons.pause_rounded
-                      : Icons.devices_rounded,
-                  color: isPlaying || isPaused ? Colors.white : null,
-                ),
+                backgroundColor: bgColor,
+                child: Icon(icon, color: iconColor),
               ),
               title: Row(
                 children: [

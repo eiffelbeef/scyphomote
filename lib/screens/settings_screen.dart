@@ -26,38 +26,20 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              AppLocalizations.of(context)!.premiumSection,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          _buildSectionHeader(context, l10n.premiumSection),
           ListTile(
             leading: const Icon(Icons.star_outline),
-            title: Text(AppLocalizations.of(context)!.premiumSubtitle),
+            title: Text(l10n.premiumSubtitle),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.of(context).pushNamed(PremiumScreen.routeName);
             },
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              AppLocalizations.of(context)!.appearanceSection,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          _buildSectionHeader(context, l10n.appearanceSection),
           ListTile(
             leading: const Icon(Icons.palette_outlined),
-            title: Text(AppLocalizations.of(context)!.themeModeTitle),
+            title: Text(l10n.themeModeTitle),
             subtitle: Text(_getThemeModeName(context, themeMode)),
             trailing: LayoutBuilder(
               builder: (context, constraints) {
@@ -68,21 +50,21 @@ class SettingsScreen extends ConsumerWidget {
                       value: ThemeMode.system,
                       icon: const Icon(Icons.settings_brightness_rounded),
                       label: showLabels
-                          ? Text(AppLocalizations.of(context)!.themeAuto)
+                          ? Text(l10n.themeAuto)
                           : null,
                     ),
                     ButtonSegment(
                       value: ThemeMode.light,
                       icon: const Icon(Icons.light_mode_rounded),
                       label: showLabels
-                          ? Text(AppLocalizations.of(context)!.themeLight)
+                          ? Text(l10n.themeLight)
                           : null,
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
                       icon: const Icon(Icons.dark_mode_rounded),
                       label: showLabels
-                          ? Text(AppLocalizations.of(context)!.themeDark)
+                          ? Text(l10n.themeDark)
                           : null,
                     ),
                   ],
@@ -99,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.language_rounded),
-            title: Text(AppLocalizations.of(context)!.languageTitle),
+            title: Text(l10n.languageTitle),
             trailing: DropdownMenu<String?>(
               key: ValueKey(currentLocale?.languageCode),
               initialSelection: currentLocale?.languageCode,
@@ -107,20 +89,21 @@ class SettingsScreen extends ConsumerWidget {
               dropdownMenuEntries: [
                 DropdownMenuEntry<String?>(
                   value: null,
-                  label: AppLocalizations.of(context)!.languageSystem,
+                  label: l10n.languageSystem,
                 ),
-                const DropdownMenuEntry<String?>(value: 'en', label: 'English'),
-                const DropdownMenuEntry<String?>(
-                  value: 'fr',
-                  label: 'Français',
-                ),
-                const DropdownMenuEntry<String?>(value: 'es', label: 'Español'),
-                const DropdownMenuEntry<String?>(value: 'de', label: 'Deutsch'),
-                const DropdownMenuEntry<String?>(
-                  value: 'pt',
-                  label: 'Português',
-                ),
-                const DropdownMenuEntry<String?>(value: 'ja', label: '日本語'),
+                ...{
+                  'en': 'English',
+                  'fr': 'Français',
+                  'es': 'Español',
+                  'de': 'Deutsch',
+                  'pt': 'Português',
+                  'ja': '日本語',
+                }.entries.map(
+                      (e) => DropdownMenuEntry<String?>(
+                        value: e.key,
+                        label: e.value,
+                      ),
+                    ),
               ],
               onSelected: (value) {
                 ref
@@ -130,47 +113,22 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              AppLocalizations.of(context)!.performanceSection,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          _buildSectionHeader(context, l10n.performanceSection),
+          _buildSliderTile(
+            icon: Icons.speed_rounded,
+            title: l10n.playerRefreshRateTitle,
+            subtitle: l10n.secondsPlural(settings.playerRefreshRate),
+            label: l10n.secondsShort(settings.playerRefreshRate),
+            value: settings.playerRefreshRate,
+            min: 3,
+            max: 30,
+            divisions: 27,
+            onChanged: (val) => ref.read(settingsProvider.notifier).setPlayerRefreshRate(val),
           ),
-          ListTile(
-            leading: const Icon(Icons.speed_rounded),
-            title: Text(AppLocalizations.of(context)!.playerRefreshRateTitle),
-            subtitle: Text(
-              AppLocalizations.of(
-                context,
-              )!.secondsPlural(settings.playerRefreshRate),
-            ),
-            trailing: SizedBox(
-              width: 200,
-              child: Slider(
-                value: settings.playerRefreshRate.toDouble(),
-                min: 3,
-                max: 30,
-                divisions: 27,
-                label: AppLocalizations.of(
-                  context,
-                )!.secondsShort(settings.playerRefreshRate),
-                onChanged: (value) {
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setPlayerRefreshRate(value.round());
-                },
-              ),
-            ),
-          ),
-
           SwitchListTile(
             secondary: const Icon(Icons.sync_rounded),
             title: Text(
-              AppLocalizations.of(context)!.deviceListAutoRefreshTitle,
+              l10n.deviceListAutoRefreshTitle,
             ),
             value: settings.deviceListAutoRefresh,
             onChanged: (value) {
@@ -180,110 +138,49 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           if (settings.deviceListAutoRefresh)
-            ListTile(
-              leading: const Icon(Icons.timer_outlined),
-              title: Text(AppLocalizations.of(context)!.listRefreshRateTitle),
-              subtitle: Text(
-                AppLocalizations.of(
-                  context,
-                )!.secondsPlural(settings.deviceListRefreshRate),
-              ),
-              trailing: SizedBox(
-                width: 200,
-                child: Slider(
-                  value: settings.deviceListRefreshRate.toDouble(),
-                  min: 5,
-                  max: 60,
-                  divisions: 11,
-                  label: AppLocalizations.of(
-                    context,
-                  )!.secondsShort(settings.deviceListRefreshRate),
-                  onChanged: (value) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .setDeviceListRefreshRate(value.round());
-                  },
-                ),
-              ),
+            _buildSliderTile(
+              icon: Icons.timer_outlined,
+              title: l10n.listRefreshRateTitle,
+              subtitle: l10n.secondsPlural(settings.deviceListRefreshRate),
+              label: l10n.secondsShort(settings.deviceListRefreshRate),
+              value: settings.deviceListRefreshRate,
+              min: 5,
+              max: 60,
+              divisions: 11,
+              onChanged: (val) => ref.read(settingsProvider.notifier).setDeviceListRefreshRate(val),
             ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.timer_rounded),
-            title: const Text('Connection Timeout'),
-            subtitle: Text(
-              AppLocalizations.of(
-                context,
-              )!.secondsPlural(settings.connectionTimeout),
-            ),
-            trailing: SizedBox(
-              width: 200,
-              child: Slider(
-                value: settings.connectionTimeout.toDouble(),
-                min: 5,
-                max: 60,
-                divisions: 11,
-                label: AppLocalizations.of(
-                  context,
-                )!.secondsShort(settings.connectionTimeout),
-                onChanged: (value) {
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setConnectionTimeout(value.round());
-                },
-              ),
-            ),
+          _buildSliderTile(
+            icon: Icons.timer_rounded,
+            title: 'Connection Timeout',
+            subtitle: l10n.secondsPlural(settings.connectionTimeout),
+            label: l10n.secondsShort(settings.connectionTimeout),
+            value: settings.connectionTimeout,
+            min: 5,
+            max: 60,
+            divisions: 11,
+            onChanged: (val) => ref.read(settingsProvider.notifier).setConnectionTimeout(val),
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              AppLocalizations.of(context)!.librarySection,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.grid_view_rounded),
-            title: Text(AppLocalizations.of(context)!.itemsPerRowTitle),
-            subtitle: Text(
-              AppLocalizations.of(
-                context,
-              )!.itemsPlural(settings.libraryItemsPerRow),
-            ),
-            trailing: SizedBox(
-              width: 200,
-              child: Slider(
-                value: settings.libraryItemsPerRow.toDouble(),
-                min: 1,
-                max: 6,
-                divisions: 5,
-                label: '${settings.libraryItemsPerRow}',
-                onChanged: (value) {
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setLibraryItemsPerRow(value.round());
-                },
-              ),
-            ),
+          _buildSectionHeader(context, l10n.librarySection),
+          _buildSliderTile(
+            icon: Icons.grid_view_rounded,
+            title: l10n.itemsPerRowTitle,
+            subtitle: l10n.itemsPlural(settings.libraryItemsPerRow),
+            label: '${settings.libraryItemsPerRow}',
+            value: settings.libraryItemsPerRow,
+            min: 1,
+            max: 6,
+            divisions: 5,
+            onChanged: (val) => ref.read(settingsProvider.notifier).setLibraryItemsPerRow(val),
           ),
           if (ref.watch(authProvider).currentUser?.isAdmin ?? false) ...[
             const Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                AppLocalizations.of(context)!.adminSection,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            _buildSectionHeader(context, l10n.adminSection),
             SwitchListTile(
               secondary: const Icon(Icons.visibility_off_outlined),
               title: Text(
-                AppLocalizations.of(context)!.hideOtherUsersSessionsTitle,
+                l10n.hideOtherUsersSessionsTitle,
               ),
               value: settings.hideOtherUsersSessions,
               onChanged: (value) {
@@ -295,7 +192,7 @@ class SettingsScreen extends ConsumerWidget {
             SwitchListTile(
               secondary: const Icon(Icons.devices_other_rounded),
               title: Text(
-                AppLocalizations.of(context)!.showNonMediaCapableSessionsTitle,
+                l10n.showNonMediaCapableSessionsTitle,
               ),
               value: settings.showNonMediaCapableSessions,
               onChanged: (value) {
@@ -307,20 +204,11 @@ class SettingsScreen extends ConsumerWidget {
           ],
           if (kDebugMode) ...[
             const Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                AppLocalizations.of(context)!.debugSection,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            _buildSectionHeader(context, l10n.debugSection),
             SwitchListTile(
               secondary: const Icon(Icons.bug_report),
               title: Text(
-                AppLocalizations.of(context)!.spoofPremiumStatusTitle,
+                l10n.spoofPremiumStatusTitle,
               ),
               value: ref.watch(isPremiumProvider),
               onChanged: (value) {
@@ -329,20 +217,11 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ],
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              AppLocalizations.of(context)!.aboutSection,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          _buildSectionHeader(context, l10n.aboutSection),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(
-              AppLocalizations.of(context)!.aboutAppTitle(AppConstants.appName),
+              l10n.aboutAppTitle(AppConstants.appName),
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
@@ -351,6 +230,48 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSliderTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String label,
+    required int value,
+    required double min,
+    required double max,
+    required int divisions,
+    required ValueChanged<int> onChanged,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: SizedBox(
+        width: 200,
+        child: Slider(
+          value: value.toDouble(),
+          min: min,
+          max: max,
+          divisions: divisions,
+          label: label,
+          onChanged: (val) => onChanged(val.round()),
+        ),
       ),
     );
   }

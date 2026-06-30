@@ -8,8 +8,8 @@ import '../../../providers/playback_provider.dart';
 import '../../../providers/queue_provider.dart';
 import '../../../providers/session_provider.dart';
 import 'playback_mode_buttons.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../widgets/safe_network_image.dart';
 
 class QueueSheet extends ConsumerStatefulWidget {
   const QueueSheet({super.key});
@@ -35,6 +35,52 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
 
     final key = ValueKey(item.playlistItemId ?? item.id);
     
+    Widget buildDismissBackground(Alignment alignment, EdgeInsets padding) {
+      return Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        alignment: alignment,
+        padding: padding,
+        child: Icon(
+          Icons.playlist_remove_rounded,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+
+    Widget buildLeadingArtwork() {
+      if (isPlaying) {
+        return Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          alignment: Alignment.center,
+          child: const PlayingIndicator(),
+        );
+      }
+
+      final fallbackIcon = Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        width: 48,
+        height: 48,
+        child: const Icon(Icons.music_note_rounded),
+      );
+
+      if (detailedItem.resolvedPrimaryImageTag != null) {
+        return SafeNetworkImage(
+          imageUrl: imageUrl,
+          fallbackWidget: fallbackIcon,
+          width: 48,
+          height: 48,
+          borderRadius: BorderRadius.circular(4),
+        );
+      }
+
+      return fallbackIcon;
+    }
+
     return Dismissible(
       key: key,
       direction: DismissDirection.horizontal,
@@ -43,17 +89,13 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
           ref.read(playbackProvider.notifier).removePlaylistItem(item.playlistItemId!);
         }
       },
-      background: Container(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 16.0),
-        child: Icon(Icons.playlist_remove_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      background: buildDismissBackground(
+        Alignment.centerLeft,
+        const EdgeInsets.only(left: 16.0),
       ),
-      secondaryBackground: Container(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16.0),
-        child: Icon(Icons.playlist_remove_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      secondaryBackground: buildDismissBackground(
+        Alignment.centerRight,
+        const EdgeInsets.only(right: 16.0),
       ),
       child: Material(
         color: Colors.transparent,
@@ -75,45 +117,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
               maxLines: 1, 
               overflow: TextOverflow.ellipsis,
             ) : null,
-            leading: isPlaying
-                ? Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    alignment: Alignment.center,
-                    child: const PlayingIndicator(),
-                  )
-                : (detailedItem.resolvedPrimaryImageTag != null)
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          width: 48,
-                          height: 48,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            width: 48,
-                            height: 48,
-                            child: const Icon(Icons.music_note_rounded),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            width: 48,
-                            height: 48,
-                            child: const Icon(Icons.music_note_rounded),
-                          ),
-                        ),
-                      )
-                    : Container(
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                        width: 48,
-                        height: 48,
-                        child: const Icon(Icons.music_note_rounded),
-                      ),
+            leading: buildLeadingArtwork(),
             trailing: isReorderable ? ReorderableDragStartListener(
               index: index,
               child: const Icon(Icons.drag_indicator_rounded),

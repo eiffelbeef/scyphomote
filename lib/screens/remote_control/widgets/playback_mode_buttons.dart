@@ -32,6 +32,13 @@ class RepeatButton extends ConsumerWidget {
       _ => const ThemedSvgIcon('assets/repeat_off.svg'),
     };
 
+    final onPressed = session.canRepeat
+        ? () {
+            HapticFeedback.lightImpact();
+            ref.read(playbackProvider.notifier).setRepeatMode(nextMode);
+          }
+        : null;
+
     if (useTonal) {
       return IconButton.filledTonal(
         icon: iconWidget,
@@ -42,26 +49,18 @@ class RepeatButton extends ConsumerWidget {
                 foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
               )
             : null,
-        onPressed: session.canRepeat
-            ? () {
-                HapticFeedback.lightImpact();
-                ref.read(playbackProvider.notifier).setRepeatMode(nextMode);
-              }
-            : null,
+        onPressed: onPressed,
       );
     }
 
     return IconButton.filledTonal(
       icon: iconWidget,
-      style: isSelected ? IconButton.styleFrom(
-        foregroundColor: Theme.of(context).colorScheme.primary,
-      ) : null,
-      onPressed: session.canRepeat
-          ? () {
-              HapticFeedback.lightImpact();
-              ref.read(playbackProvider.notifier).setRepeatMode(nextMode);
-            }
+      style: isSelected
+          ? IconButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+            )
           : null,
+      onPressed: onPressed,
     );
   }
 }
@@ -92,28 +91,25 @@ class ShuffleButton extends ConsumerWidget {
         ? Icon(Icons.shuffle_rounded, size: iconSize)
         : ThemedSvgIcon('assets/sorted.svg', size: iconSize);
 
+    final onPressed = session.canShuffle
+        ? () {
+            HapticFeedback.lightImpact();
+            ref.read(playbackProvider.notifier).toggleShuffle(isShuffle);
+          }
+        : null;
+
     return useTonal
         ? IconButton.filledTonal(
             icon: iconWidget,
             iconSize: iconSize,
             style: style,
-            onPressed: session.canShuffle
-                ? () {
-                    HapticFeedback.lightImpact();
-                    ref.read(playbackProvider.notifier).toggleShuffle(isShuffle);
-                  }
-                : null,
+            onPressed: onPressed,
           )
         : IconButton(
             icon: iconWidget,
             iconSize: iconSize,
             style: style,
-            onPressed: session.canShuffle
-                ? () {
-                    HapticFeedback.lightImpact();
-                    ref.read(playbackProvider.notifier).toggleShuffle(isShuffle);
-                  }
-                : null,
+            onPressed: onPressed,
           );
   }
 }

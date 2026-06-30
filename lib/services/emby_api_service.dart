@@ -11,6 +11,8 @@ class EmbyApiService {
     receiveTimeout: const Duration(seconds: 30),
   ));
 
+  dynamic _decode(dynamic data) => data is String ? jsonDecode(data) : data;
+
   Future<Map<String, String>> authenticateEmbyConnect(String username, String password) async {
     final response = await _connectDio.post(
       'service/user/authenticate',
@@ -22,7 +24,7 @@ class EmbyApiService {
         },
       ),
     );
-    final data = response.data is String ? jsonDecode(response.data as String) : response.data;
+    final data = _decode(response.data);
     return {
       'ConnectAccessToken': data['AccessToken'] as String,
       'ConnectUserId': data['User']['Id'] as String,
@@ -39,7 +41,7 @@ class EmbyApiService {
         },
       ),
     );
-    final data = response.data is String ? jsonDecode(response.data as String) : response.data;
+    final data = _decode(response.data);
     return (data as List).cast<Map<String, dynamic>>();
   }
 
@@ -60,17 +62,19 @@ class EmbyApiService {
       receiveTimeout: const Duration(seconds: 30),
     ));
 
-    dio.options.headers['Authorization'] = 'MediaBrowser Client="${AppConstants.appName}", Device="$deviceName", DeviceId="$deviceId", Version="${AppConstants.appVersion}", Token="$accessKey"';
+    String authHeader(String token) => 'MediaBrowser Client="${AppConstants.appName}", Device="$deviceName", DeviceId="$deviceId", Version="${AppConstants.appVersion}", Token="$token"';
+
+    dio.options.headers['Authorization'] = authHeader(accessKey);
 
     final response = await dio.get(
       'Connect/Exchange',
       queryParameters: {'format': 'json', 'ConnectUserId': connectUserId},
     );
-    final data = response.data is String ? jsonDecode(response.data as String) : response.data;
+    final data = _decode(response.data);
     final accessToken = data['AccessToken'] as String;
     final localUserId = data['LocalUserId'] as String;
 
-    dio.options.headers['Authorization'] = 'MediaBrowser Client="${AppConstants.appName}", Device="$deviceName", DeviceId="$deviceId", Version="${AppConstants.appVersion}", Token="$accessToken"';
+    dio.options.headers['Authorization'] = authHeader(accessToken);
 
     final userResponse = await dio.get('Users/$localUserId');
     final username = userResponse.data['Name'] as String;

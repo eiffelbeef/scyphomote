@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'safe_network_image.dart';
 
 class ItemPoster extends StatelessWidget {
   final String imageUrl;
@@ -22,16 +22,12 @@ class ItemPoster extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        CachedNetworkImage(
+        SafeNetworkImage(
           imageUrl: imageUrl,
           fit: fit,
-          placeholder: (context, url) => Container(
+          fallbackWidget: Container(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Center(child: Icon(placeholderIcon)),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: const Center(child: Icon(Icons.broken_image)),
           ),
         ),
         // Playback status overlays

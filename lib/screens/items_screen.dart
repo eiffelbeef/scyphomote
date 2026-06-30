@@ -374,51 +374,219 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
       return Center(child: Text(AppLocalizations.of(context)!.noResultsFound));
     }
 
-    final artists = _items.where((i) => i['Type'] == 'MusicArtist').toList();
-    final albums = _items.where((i) => i['Type'] == 'MusicAlbum').toList();
-    final songs = _items.where((i) => i['Type'] == 'Audio').toList();
-    final shows = _items.where((i) => i['Type'] == 'Series').toList();
-    final seasons = _items.where((i) => i['Type'] == 'Season').toList();
-    final episodes = _items.where((i) => i['Type'] == 'Episode').toList();
-    final movies = _items.where((i) => i['Type'] == 'Movie').toList();
+    final groupedItems = <String, List<Map<String, dynamic>>>{};
+    for (final item in _items) {
+      final type = item['Type'] as String? ?? 'Unknown';
+      (groupedItems[type] ??= []).add(item);
+    }
 
-    // Fallback for others - only if NOT music mode
-    final others = widget.collectionType == 'music'
-        ? <Map<String, dynamic>>[]
-        : _items
-              .where(
-                (i) => ![
-                  'MusicArtist',
-                  'MusicAlbum',
-                  'Audio',
-                  'Series',
-                  'Season',
-                  'Episode',
-                  'Movie',
-                ].contains(i['Type']),
-              )
-              .toList();
+    final sections = [
+      ('Artists', 'MusicArtist'),
+      ('Albums', 'MusicAlbum'),
+      ('Songs', 'Audio'),
+      ('Shows', 'Series'),
+      ('Seasons', 'Season'),
+      ('Episodes', 'Episode'),
+      ('Movies', 'Movie'),
+    ];
+
+    final children = <Widget>[];
+    final processedTypes = <String>{};
+
+    for (final (title, type) in sections) {
+      processedTypes.add(type);
+      final items = groupedItems[type] ?? [];
+      if (items.isNotEmpty) children.add(_buildSection(title, items));
+    }
+
+    if (widget.collectionType != 'music') {
+      final others = groupedItems.entries
+          .where((e) => !processedTypes.contains(e.key))
+          .expand((e) => e.value)
+          .toList();
+      if (others.isNotEmpty) children.add(_buildSection('Other Results', others));
+    }
+
+    children.add(_buildBottomPadding(24));
 
     return ListView(
       controller: _scrollController,
       padding: EdgeInsets.zero,
-      children: [
-        _buildSection('Artists', artists),
-        _buildSection('Albums', albums),
-        _buildSection('Songs', songs),
-        _buildSection('Shows', shows),
-        _buildSection('Seasons', seasons),
-        _buildSection('Episodes', episodes),
-        _buildSection('Movies', movies),
-        if (others.isNotEmpty) _buildSection('Other Results', others),
-        _buildBottomPadding(24),
-      ],
+      children: children,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isMusic = widget.collectionType == 'music';
+
+    Widget buildBodyContent() {
+      if (_isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (_error != null) {
+        return Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)));
+      }
+      if (_isSearching) {
+        return _buildSearchResults();
+      }
+
+      switch (widget.parentType) {
+        case 'MusicAlbum':
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 16.0,
+                  runSpacing: 16.0,
+                  children: [
+                    FilledButton.icon(
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: Text(AppLocalizations.of(context)!.play),
+                      onPressed: () => playItemOnRemote(context, ref, {
+                        'Id': widget.parentId,
+                      }),
+                    ),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.shuffle_rounded),
+                      label: Text(AppLocalizations.of(context)!.shuffle),
+                      onPressed: () => playItemOnRemote(context, ref, {
+                        'Id': widget.parentId,
+                      }, playCommand: 'PlayShuffle'),
+                    ),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.queue_music_rounded),
+                      label: Text(AppLocalizations.of(context)!.addToQueue),
+                      onPressed: () => queueItemOnRemote(context, ref, {
+                        'Id': widget.parentId,
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                  itemCount: _items.length + 1,
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    if (index == _items.length) {
+                      return _buildBottomPadding(8);
+                    }
+                    final item = _items[index];
+                    final duration = _getItemDuration(item);
+
+                    return ListTile(
+                      leading: const Icon(Icons.music_note),
+                      title: Text(_getItemTitle(item)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (duration != null) ...[
+                            Text(
+                              duration,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          QueueIconButton(item: item),
+                        ],
+                      ),
+                      onTap: () => playItemOnRemote(context, ref, item),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        case 'Season':
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+            controller: _scrollController,
+            itemCount: _items.length + 1,
+            separatorBuilder: (context, index) => const Divider(height: 1),
+            itemBuilder: (context, index) {
+              if (index == _items.length) {
+                return _buildBottomPadding(8);
+              }
+              final item = _items[index];
+              final apiService = ref.read(apiServiceProvider);
+              final imageUrl = apiService.getItemImageUrl(item);
+              final duration = _getItemDuration(item);
+
+              return InkWell(
+                onTap: () => playItemOnRemote(context, ref, item),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: 68,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: ItemPoster(
+                            imageUrl: imageUrl,
+                            userData: item['UserData'],
+                            placeholderIcon: Icons.movie_rounded,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          _getItemTitle(item),
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ),
+                      if (duration != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          duration,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        default:
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
+                    childAspectRatio: UiUtils.getItemAspectRatio(_items.firstOrNull),
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return _buildItemCard(_items[index], isMusic);
+                    },
+                    childCount: _items.length,
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _buildBottomPadding(16),
+              ),
+            ],
+          );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -515,179 +683,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
       ),
       body: Stack(
         children: [
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _error != null
-          ? Center(child: Text(AppLocalizations.of(context)!.errorMsg(_error!)))
-              : _isSearching
-              ? _buildSearchResults()
-              : widget.parentType == 'MusicAlbum'
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 16.0,
-                        runSpacing: 16.0,
-                        children: [
-                          FilledButton.icon(
-                            icon: const Icon(Icons.play_arrow_rounded),
-                            label: Text(AppLocalizations.of(context)!.play),
-                            onPressed: () => playItemOnRemote(context, ref, {
-                              'Id': widget.parentId,
-                            }),
-                          ),
-                          FilledButton.tonalIcon(
-                            icon: const Icon(Icons.shuffle_rounded),
-                            label: Text(AppLocalizations.of(context)!.shuffle),
-                            onPressed: () => playItemOnRemote(context, ref, {
-                              'Id': widget.parentId,
-                            }, playCommand: 'PlayShuffle'),
-                          ),
-                          FilledButton.tonalIcon(
-                            icon: const Icon(Icons.queue_music_rounded),
-                            label: Text(AppLocalizations.of(context)!.addToQueue),
-                            onPressed: () => queueItemOnRemote(context, ref, {
-                              'Id': widget.parentId,
-                            }),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        controller: _scrollController,
-                    padding: const EdgeInsets.fromLTRB(
-                      0,
-                      8,
-                      0,
-                      0,
-                    ),
-                        itemCount: _items.length + 1,
-                        separatorBuilder: (context, index) =>
-                            const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          if (index == _items.length) {
-                            return _buildBottomPadding(8);
-                          }
-                          final item = _items[index];
-                          final duration = _getItemDuration(item);
-
-                          return ListTile(
-                            leading: const Icon(Icons.music_note),
-                            title: Text(_getItemTitle(item)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (duration != null) ...[
-                                  Text(
-                                    duration,
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
-                                QueueIconButton(item: item),
-                              ],
-                            ),
-                            onTap: () => playItemOnRemote(context, ref, item),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                )
-              : widget.parentType == 'Season'
-              ? ListView.separated(
-              padding: const EdgeInsets.fromLTRB(
-                0,
-                8,
-                0,
-                0,
-              ),
-                  controller: _scrollController,
-                  itemCount: _items.length + 1,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    if (index == _items.length) {
-                      return _buildBottomPadding(8);
-                    }
-                    final item = _items[index];
-                    final apiService = ref.read(apiServiceProvider);
-                    final imageUrl = apiService.getItemImageUrl(item);
-                    final duration = _getItemDuration(item);
-
-                    return InkWell(
-                      onTap: () => playItemOnRemote(context, ref, item),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0,
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 120,
-                              height: 68,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: ItemPoster(
-                                  imageUrl: imageUrl,
-                                  userData: item['UserData'],
-                                  placeholderIcon: Icons.movie_rounded,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                _getItemTitle(item),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            if (duration != null) ...[
-                              const SizedBox(width: 8),
-                              Text(
-                                duration,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                )
-              : CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    16,
-                    16,
-                    16,
-                    16,
-                  ),
-                      sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
-                          childAspectRatio: UiUtils.getItemAspectRatio(_items.firstOrNull),
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                          return _buildItemCard(_items[index], isMusic);
-                      },
-                      childCount: _items.length,
-                    ),
-                      ),
-                    ),
-        SliverToBoxAdapter(
-          child: _buildBottomPadding(16),
-        ),
-                  ],
-                ),
+          buildBodyContent(),
           const RemoteControlDrawer(),
         ],
       ),

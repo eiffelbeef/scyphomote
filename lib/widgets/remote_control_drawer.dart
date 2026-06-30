@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'safe_network_image.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../screens/remote_control/widgets/remote_control_panel.dart';
@@ -118,35 +118,20 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                                 return Row(
                                   children: [
                                     if (imageUrl != null) ...[
-                                      ClipRRect(
+                                      SafeNetworkImage(
+                                        imageUrl: imageUrl,
+                                        width: 48,
+                                        height: 48,
                                         borderRadius: BorderRadius.circular(8),
-                                        child: CachedNetworkImage(
-                                          imageUrl: imageUrl,
+                                        fallbackWidget: Container(
                                           width: 48,
                                           height: 48,
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              Container(
-                                                width: 48,
-                                                height: 48,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surfaceContainerHighest,
-                                                child: const Icon(
-                                                  Icons.music_note,
-                                                ),
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                                width: 48,
-                                                height: 48,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surfaceContainerHighest,
-                                                child: const Icon(
-                                                  Icons.music_note,
-                                                ),
-                                              ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerHighest,
+                                          child: const Icon(
+                                            Icons.music_note,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 12),

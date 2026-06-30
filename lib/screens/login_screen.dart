@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import 'user_management_screen.dart';
 import 'emby_connect_login_screen.dart';
+import '../widgets/auth_text_field.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../constants.dart';
 
@@ -83,55 +84,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-                    TextFormField(
+                    AuthTextField(
                       controller: _serverUrlController,
-                      decoration: InputDecoration(
-                        labelText: l10n.serverUrl,
-                        hintText: l10n.serverUrlHint,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.dns_rounded),
-                      ),
+                      labelText: l10n.serverUrl,
+                      hintText: l10n.serverUrlHint,
+                      icon: Icons.dns_rounded,
                       keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.url],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.pleaseEnterServerUrl;
-                        }
-                        return null;
-                      },
+                      emptyErrorMsg: l10n.pleaseEnterServerUrl,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
+                    AuthTextField(
                       controller: _usernameController,
-                      decoration: InputDecoration(
-                        labelText: l10n.username,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.person_rounded),
-                      ),
+                      labelText: l10n.username,
+                      icon: Icons.person_rounded,
                       keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.username],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.pleaseEnterUsername;
-                        }
-                        return null;
-                      },
+                      emptyErrorMsg: l10n.pleaseEnterUsername,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
+                    AuthTextField(
                       controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: l10n.password,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.lock_rounded),
-                      ),
+                      labelText: l10n.password,
+                      icon: Icons.lock_rounded,
+                      keyboardType: TextInputType.text,
+                      autofillHints: const [AutofillHints.password],
                       obscureText: true,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => authState.isLoading ? null : _login(),
-                      autofillHints: const [AutofillHints.password],
-                      validator: (value) => null,
+                      emptyErrorMsg: '', // Unused for password
                     ),
                     const SizedBox(height: 24),
                     if (authState.error != null)
@@ -201,4 +182,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
+
+
 }

@@ -126,18 +126,16 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
     final language = stream['Language'] ?? 'Unknown';
     final displayTitle = stream['DisplayTitle'] ?? stream['Title'];
 
-    String titleText;
-    String subtitleText;
-
-    if (widget.streamType == 'Audio') {
-      final codec = stream['Codec'] ?? '';
-      final channels = stream['Channels'] ?? 0;
-      titleText = displayTitle ?? 'Audio Track';
-      subtitleText = '${language.toUpperCase()} • $codec • ${channels}ch';
-    } else {
-      titleText = displayTitle ?? 'Subtitle';
-      subtitleText = language.toUpperCase();
-    }
+    final (titleText, subtitleText) = switch (widget.streamType) {
+      'Audio' => (
+          displayTitle ?? 'Audio Track',
+          '${language.toUpperCase()} • ${stream['Codec'] ?? ''} • ${stream['Channels'] ?? 0}ch'
+        ),
+      _ => (
+          displayTitle ?? 'Subtitle',
+          language.toUpperCase()
+        ),
+    };
 
     return ListTile(
       title: Text(titleText),

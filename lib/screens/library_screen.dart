@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/safe_network_image.dart';
 import '../providers/auth_provider.dart';
 import '../providers/session_provider.dart';
 import '../providers/settings_provider.dart';
@@ -308,26 +308,17 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                               child: Stack(
                                 fit: StackFit.expand,
                                 children: [
-                                  CachedNetworkImage(
+                                  SafeNetworkImage(
                                     imageUrl: imageUrl,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => Container(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceContainerHighest,
+                                    fallbackWidget: Container(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
                                       child: const Center(
                                         child: Icon(Icons.folder_rounded),
                                       ),
                                     ),
-                                    errorWidget: (context, url, error) =>
-                                        Container(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainerHighest,
-                                          child: const Center(
-                                            child: Icon(Icons.folder_off),
-                                          ),
-                                        ),
                                   ),
                                   Container(
                                     decoration: const BoxDecoration(

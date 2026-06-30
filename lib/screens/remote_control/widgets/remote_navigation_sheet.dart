@@ -95,70 +95,29 @@ class RemoteNavigationSheet extends ConsumerWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Up
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: _DPadButton(
-                          icon: Icons.keyboard_arrow_up_rounded,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.moveUp,
-                            () => ref
-                                .read(playbackProvider.notifier)
-                                .sendCommand(JellyfinCommands.moveUp),
+                    ...[
+                      (Alignment.topCenter, Icons.keyboard_arrow_up_rounded, JellyfinCommands.moveUp),
+                      (Alignment.bottomCenter, Icons.keyboard_arrow_down_rounded, JellyfinCommands.moveDown),
+                      (Alignment.centerLeft, Icons.keyboard_arrow_left_rounded, JellyfinCommands.moveLeft),
+                      (Alignment.centerRight, Icons.keyboard_arrow_right_rounded, JellyfinCommands.moveRight),
+                    ].map((dir) {
+                      final (align, icon, cmd) = dir;
+                      return Align(
+                        alignment: align,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: _DPadButton(
+                            icon: icon,
+                            onPressed: session.ifCapable(
+                              cmd,
+                              () => ref
+                                  .read(playbackProvider.notifier)
+                                  .sendCommand(cmd),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    // Down
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: _DPadButton(
-                          icon: Icons.keyboard_arrow_down_rounded,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.moveDown,
-                            () => ref
-                                .read(playbackProvider.notifier)
-                                .sendCommand(JellyfinCommands.moveDown),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Left
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: _DPadButton(
-                          icon: Icons.keyboard_arrow_left_rounded,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.moveLeft,
-                            () => ref
-                                .read(playbackProvider.notifier)
-                                .sendCommand(JellyfinCommands.moveLeft),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Right
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: _DPadButton(
-                          icon: Icons.keyboard_arrow_right_rounded,
-                          onPressed: session.ifCapable(
-                            JellyfinCommands.moveRight,
-                            () => ref
-                                .read(playbackProvider.notifier)
-                                .sendCommand(JellyfinCommands.moveRight),
-                          ),
-                        ),
-                      ),
-                    ),
+                      );
+                    }),
                     // Center (OK)
                     Align(
                       alignment: Alignment.center,

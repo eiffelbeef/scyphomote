@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../../widgets/safe_network_image.dart';
 import '../../../widgets/marquee_text.dart';
 import '../../../widgets/themed_svg_icon.dart';
 import '../../../models/session.dart';
@@ -111,6 +111,22 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       finalHeight = finalWidth / aspectRatio;
     }
 
+    Widget buildArtwork() {
+      final placeholder = _buildPlaceholder(
+        context,
+        size: finalHeight,
+        width: finalWidth,
+      );
+
+      return SafeNetworkImage(
+        imageUrl: imageUrl,
+        fallbackWidget: placeholder,
+        width: finalWidth,
+        height: finalHeight,
+        borderRadius: BorderRadius.circular(12),
+      );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -118,28 +134,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            if (imageUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  width: finalWidth,
-                  height: finalHeight,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => _buildPlaceholder(
-                    context,
-                    size: finalHeight,
-                    width: finalWidth,
-                  ),
-                  errorWidget: (context, url, error) => _buildPlaceholder(
-                    context,
-                    size: finalHeight,
-                    width: finalWidth,
-                  ),
-                ),
-              )
-            else
-              _buildPlaceholder(context, size: finalHeight, width: finalWidth),
+            buildArtwork(),
 
             if (nowPlaying != null)
               Positioned(
@@ -1075,20 +1070,12 @@ class _PersonRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
-            ClipRRect(
+            SafeNetworkImage(
+              imageUrl: imageUrl,
+              fallbackWidget: _personPlaceholder(context),
+              width: 80,
+              height: 120,
               borderRadius: BorderRadius.circular(8),
-              child: imageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: 80,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          _personPlaceholder(context),
-                      errorWidget: (context, url, error) =>
-                          _personPlaceholder(context),
-                    )
-                  : _personPlaceholder(context),
             ),
             const SizedBox(width: 16),
             Expanded(

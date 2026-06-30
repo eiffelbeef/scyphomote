@@ -102,64 +102,44 @@ class UiUtils {
     return getFallbackAspectRatio(item?['Type'] as String?);
   }
 
-  static double getFallbackAspectRatio(String? type) {
-    final t = type?.toLowerCase() ?? '';
-    if (t == 'movie' ||
-        t == 'movies' ||
-        t == 'tvshows' ||
-        t == 'series' ||
-        t == 'season' ||
-        t == 'seasons' ||
-        t == 'person' ||
-        t == 'people' ||
-        t == 'boxset') {
-      return 2 / 3;
-    } else if (t == 'music' ||
-        t == 'musicalbum' ||
-        t == 'audio' ||
-        t == 'artist' ||
-        t == 'musicvideo') {
-      return 1.0;
-    }
+  static double getFallbackAspectRatio(String? type) => switch (type?.toLowerCase()) {
+        'movie' ||
+        'movies' ||
+        'tvshows' ||
+        'series' ||
+        'season' ||
+        'seasons' ||
+        'person' ||
+        'people' ||
+        'boxset' =>
+          2 / 3,
+        'music' || 'musicalbum' || 'audio' || 'artist' || 'musicvideo' => 1.0,
+        _ => 16 / 9,
+      };
 
-    return 16 / 9;
-  }
-
-  static String? mapToMediaType(String? type) {
-    switch (type?.toLowerCase()) {
-      case 'movie':
-      case 'movies':
-      case 'tvshows':
-      case 'series':
-      case 'season':
-      case 'episode':
-      case 'musicvideo':
-      case 'musicvideos':
-      case 'homevideos':
-      case 'video':
-      case 'boxset':
-      case 'boxsets':
-      case 'trailer':
-      case 'trailers':
-      case 'livetvchannel':
-      case 'playlist':
-        return 'Video';
-      case 'audio':
-      case 'music':
-      case 'song':
-      case 'musicalbum':
-        return 'Audio';
-      case 'book':
-      case 'books':
-        return 'Book';
-      case 'photo':
-      case 'photos':
-      case 'photoalbum':
-        return 'Photo';
-      default:
-        return null;
-    }
-  }
+  static String? mapToMediaType(String? type) => switch (type?.toLowerCase()) {
+        'movie' ||
+        'movies' ||
+        'tvshows' ||
+        'series' ||
+        'season' ||
+        'episode' ||
+        'musicvideo' ||
+        'musicvideos' ||
+        'homevideos' ||
+        'video' ||
+        'boxset' ||
+        'boxsets' ||
+        'trailer' ||
+        'trailers' ||
+        'livetvchannel' ||
+        'playlist' =>
+          'Video',
+        'audio' || 'music' || 'song' || 'musicalbum' => 'Audio',
+        'book' || 'books' => 'Book',
+        'photo' || 'photos' || 'photoalbum' => 'Photo',
+        _ => null,
+      };
 
   static String formatBitrate(num bps, {bool forceKbps = false}) {
     if (bps <= 0) return '0 kbps';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../utils/logger.dart';
+import '../widgets/auth_text_field.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class EmbyConnectLoginScreen extends ConsumerStatefulWidget {
@@ -126,32 +127,25 @@ class _EmbyConnectLoginScreenState extends ConsumerState<EmbyConnectLoginScreen>
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-                    TextFormField(
+                    AuthTextField(
                       controller: _usernameController,
-                      autofillHints: const [AutofillHints.username, AutofillHints.email],
+                      labelText: l10n.embyConnectUsernameEmail,
+                      icon: Icons.person_rounded,
                       keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: l10n.embyConnectUsernameEmail,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.person_rounded),
-                      ),
-                      validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
+                      autofillHints: const [AutofillHints.username, AutofillHints.email],
+                      emptyErrorMsg: l10n.requiredField,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
+                    AuthTextField(
                       controller: _passwordController,
-                      autofillHints: const [AutofillHints.password],
+                      labelText: l10n.password,
+                      icon: Icons.lock_rounded,
                       keyboardType: TextInputType.visiblePassword,
+                      autofillHints: const [AutofillHints.password],
+                      obscureText: true,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => authState.isLoading ? null : _login(),
-                      decoration: InputDecoration(
-                        labelText: l10n.password,
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.lock_rounded),
-                      ),
-                      obscureText: true,
-                      validator: (value) => value == null || value.isEmpty ? l10n.requiredField : null,
+                      emptyErrorMsg: l10n.requiredField,
                     ),
                     const SizedBox(height: 24),
                     if (authState.error != null)
