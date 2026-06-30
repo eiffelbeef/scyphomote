@@ -66,22 +66,6 @@ class NowPlayingSection extends ConsumerStatefulWidget {
 
 class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
   bool _isLoadingMediaInfo = false;
-  String? _lastItemId;
-  bool _isFavorite = false;
-
-  void _checkFavoriteStatus(String itemId) async {
-    final user = ref.read(authProvider).currentUser;
-    if (user == null) return;
-    try {
-      final apiService = ref.read(apiServiceProvider);
-      final itemData = await apiService.getItem(user.userId, itemId);
-      if (mounted && _lastItemId == itemId) {
-        setState(() {
-          _isFavorite = itemData['UserData']?['IsFavorite'] ?? false;
-        });
-      }
-    } catch (_) {}
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,14 +74,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
     final artworkSize = widget.artworkSize;
     final nowPlaying = session.nowPlaying;
     final l10n = AppLocalizations.of(context)!;
-    
-    if (nowPlaying != null && nowPlaying.id != _lastItemId) {
-      _lastItemId = nowPlaying.id;
-      _isFavorite = nowPlaying.isFavorite;
-      _checkFavoriteStatus(nowPlaying.id);
-    }
-    
-    final isFavorite = _isFavorite;
+    final isFavorite = nowPlaying != null 
+        ? (ref.watch(itemFavoriteProvider(nowPlaying.id)).value ?? nowPlaying.isFavorite)
+        : false;
 
     final double fallbackRatio = UiUtils.getFallbackAspectRatio(nowPlaying?.type);
     final double aspectRatio =
@@ -164,7 +143,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       try {
                         final apiService = ref.read(apiServiceProvider);
                         await apiService.toggleFavorite(user.userId, nowPlaying.id, isFavorite);
-                        _checkFavoriteStatus(nowPlaying.id); // Re-fetch actual state from API
+                        ref.invalidate(itemFavoriteProvider(nowPlaying.id));
                       } catch (e) {
                         if (context.mounted) {
                           UiUtils.showSnackBar(context, 'Failed to update favorite status');

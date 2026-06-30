@@ -18,6 +18,22 @@ final itemDetailsProvider =
       }
     });
 
+final itemFavoriteProvider =
+    FutureProvider.family<bool, String>((ref, itemId) async {
+      final authState = ref.watch(authProvider);
+      final user = authState.currentUser;
+      final apiService = ref.read(apiServiceProvider);
+
+      if (user == null) return false;
+
+      try {
+        final itemData = await apiService.getItem(user.userId, itemId);
+        return itemData['UserData']?['IsFavorite'] ?? false;
+      } catch (e) {
+        return false;
+      }
+    });
+
 final playbackInfoProvider =
     FutureProvider.family<Map<String, dynamic>?, String>((ref, itemId) async {
       final authState = ref.watch(authProvider);
