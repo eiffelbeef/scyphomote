@@ -13,18 +13,20 @@ import '../constants.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   final String title;
-  final String parentId;
+  final String? parentId;
   final String? collectionType;
   final String? parentType;
   final bool isRoot;
+  final bool startInSearchMode;
 
   const ItemsScreen({
     super.key,
     required this.title,
-    required this.parentId,
+    this.parentId,
     this.collectionType,
     this.parentType,
     this.isRoot = false,
+    this.startInSearchMode = false,
   });
 
   @override
@@ -55,6 +57,9 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    if (widget.startInSearchMode) {
+      _isSearching = true;
+    }
     _loadPreferences().then((_) => _fetchItems());
   }
 
@@ -135,6 +140,17 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         _hasMore = true;
         _items.clear();
       });
+    }
+
+    if (widget.parentId == null && _searchController.text.trim().isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingMore = false;
+          _items = [];
+        });
+      }
+      return;
     }
 
     try {
@@ -594,8 +610,8 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Search...',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.typeToSearch,
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.search,
@@ -625,12 +641,16 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             IconButton(
               icon: const Icon(Icons.close_rounded),
               onPressed: () {
-                setState(() {
-                  _isSearching = false;
-                  _searchSubmitted = false;
-                  _searchController.clear();
-                });
-                _fetchItems(); // Reset list
+                if (widget.startInSearchMode) {
+                  Navigator.of(context).pop();
+                } else {
+                  setState(() {
+                    _isSearching = false;
+                    _searchSubmitted = false;
+                    _searchController.clear();
+                  });
+                  _fetchItems(); // Reset list
+                }
               },
             )
           else ...[

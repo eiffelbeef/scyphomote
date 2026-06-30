@@ -22,6 +22,23 @@ class LibraryScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.librarySection),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search_rounded),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ItemsScreen(
+                      title: AppLocalizations.of(context)!.typeToSearch,
+                      parentId: null,
+                      isRoot: true,
+                      startInSearchMode: true,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
           bottom: TabBar(
             tabs: [
               Tab(icon: const Icon(Icons.home_rounded), text: AppLocalizations.of(context)!.home),
