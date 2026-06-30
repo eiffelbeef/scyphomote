@@ -284,5 +284,6 @@
   "addAlbumToQueue": "Ajouter l'album à la file d'attente",
   "loading": "Chargement…",
   "album": "Album",
-  "artist": "Artiste"
+  "artist": "Artiste",
+  "connectionTimeout": "Délai de connexion dépassé"
 }

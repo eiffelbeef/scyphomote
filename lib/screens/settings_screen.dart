@@ -153,7 +153,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           _buildSliderTile(
             icon: Icons.timer_rounded,
-            title: 'Connection Timeout',
+            title: l10n.connectionTimeout,
             subtitle: l10n.secondsPlural(settings.connectionTimeout),
             label: l10n.secondsShort(settings.connectionTimeout),
             value: settings.connectionTimeout,

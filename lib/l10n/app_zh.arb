@@ -285,5 +285,6 @@
   "addToQueue": "添加到队列",
   "addAlbumToQueue": "将专辑添加到队列",
   "album": "专辑",
-  "artist": "艺术家"
+  "artist": "艺术家",
+  "connectionTimeout": "连接超时"
 }

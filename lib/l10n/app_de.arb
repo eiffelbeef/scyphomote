@@ -284,5 +284,6 @@
   "addAlbumToQueue": "Album zur Warteschlange hinzufügen",
   "loading": "Wird geladen…",
   "album": "Album",
-  "artist": "Interpret"
+  "artist": "Interpret",
+  "connectionTimeout": "Verbindungszeitüberschreitung"
 }

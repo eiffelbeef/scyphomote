@@ -284,5 +284,6 @@
   "addAlbumToQueue": "アルバムをキューに追加",
   "loading": "読み込み中…",
   "album": "アルバム",
-  "artist": "アーティスト"
+  "artist": "アーティスト",
+  "connectionTimeout": "接続タイムアウト"
 }

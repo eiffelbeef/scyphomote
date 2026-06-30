@@ -284,5 +284,6 @@
   "addToQueue": "Add to queue",
   "addAlbumToQueue": "Add album to queue",
   "album": "Album",
-  "artist": "Artist"
+  "artist": "Artist",
+  "connectionTimeout": "Connection timeout"
 }

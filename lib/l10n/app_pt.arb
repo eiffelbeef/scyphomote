@@ -284,5 +284,6 @@
   "addAlbumToQueue": "Adicionar álbum à fila",
   "loading": "Carregando…",
   "album": "Álbum",
-  "artist": "Artista"
+  "artist": "Artista",
+  "connectionTimeout": "Tempo limite de conexão esgotado"
 }
