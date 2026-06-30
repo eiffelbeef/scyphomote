@@ -355,17 +355,21 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: session.playMethod == 'Transcode'
-                                ? Colors.orange
-                                : Colors.green,
+                            color: switch (session.playMethod) {
+                              'Transcode' => Colors.orange,
+                              'DirectStream' => Colors.blue,
+                              _ => Colors.green,
+                            },
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          session.playMethod == 'Transcode'
-                              ? l10n.transcoding
-                              : l10n.directPlay,
+                          switch (session.playMethod) {
+                            'Transcode' => l10n.transcoding,
+                            'DirectStream' => l10n.directStream,
+                            _ => l10n.directPlay,
+                          },
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         if (session.playMethod != 'DirectPlay') ...[

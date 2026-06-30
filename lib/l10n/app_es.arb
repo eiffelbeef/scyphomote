@@ -207,6 +207,7 @@
   "noActiveSessionSelected": "Ninguna sesión activa seleccionada",
   "transcoding": "Transcodificación",
   "directPlay": "Reproducción directa",
+  "directStream": "Direct Stream",
   "noMediaPlaying": "Ningún medio reproduciéndose",
   "useRemoteOrBrowse": "Usa el control remoto o navega por la biblioteca para reproducir",
   "castAndCrew": "Reparto y equipo",

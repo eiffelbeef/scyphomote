@@ -207,6 +207,7 @@
   "noActiveSessionSelected": "アクティブなセッションが選択されていません",
   "transcoding": "トランスコーディング",
   "directPlay": "ダイレクトプレイ",
+  "directStream": "Direct Stream",
   "noMediaPlaying": "再生中のメディアはありません",
   "useRemoteOrBrowse": "リモコンを使用するか、ライブラリを参照してください",
   "castAndCrew": "キャスト＆スタッフ",

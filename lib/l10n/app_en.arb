@@ -207,6 +207,7 @@
   "noActiveSessionSelected": "No active session selected",
   "transcoding": "Transcoding",
   "directPlay": "Direct Play",
+  "directStream": "Direct Stream",
   "noMediaPlaying": "No media playing",
   "useRemoteOrBrowse": "Use the remote or browse library to play",
   "castAndCrew": "Cast & Crew",
