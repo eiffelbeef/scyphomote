@@ -155,15 +155,12 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
       if (widget.collectionType == 'music' && widget.isRoot && !_isSearching) {
         includeItemTypes = _musicViewMode;
       } else if (widget.isRoot && widget.collectionType != 'music') {
-        if (widget.collectionType == 'tvshows') {
-          includeItemTypes = 'Series';
-        } else if (widget.collectionType == 'movies') {
-          includeItemTypes = 'Movie';
-        } else if (widget.collectionType == 'boxsets') {
-          includeItemTypes = 'BoxSet';
-        } else {
-          includeItemTypes = 'Movie,Series,MusicArtist,MusicAlbum,BoxSet,Video,Audio';
-        }
+        includeItemTypes = switch (widget.collectionType) {
+          'tvshows' => 'Series',
+          'movies' => 'Movie',
+          'boxsets' => 'BoxSet',
+          _ => 'Movie,Series,MusicArtist,MusicAlbum,BoxSet,Video,Audio',
+        };
       }
 
       final data = await apiService.getItems(
@@ -479,60 +476,39 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 });
               },
             ),
-            PopupMenuButton<String>(
+            PopupMenuButton<(String, String)>(
               icon: const Icon(Icons.sort_rounded),
               tooltip: 'Sort By',
               onSelected: (value) async {
                 final storage = ref.read(storageServiceProvider);
                 setState(() {
-                  switch (value) {
-                    case 'DateCreated,Descending':
-                      _sortBy = 'DateCreated';
-                      _sortOrder = 'Descending';
-                      break;
-                    case 'DateCreated,Ascending':
-                      _sortBy = 'DateCreated';
-                      _sortOrder = 'Ascending';
-                      break;
-                    case 'SortName,Ascending':
-                      _sortBy = 'SortName';
-                      _sortOrder = 'Ascending';
-                      break;
-                    case 'SortName,Descending':
-                      _sortBy = 'SortName';
-                      _sortOrder = 'Descending';
-                      break;
-                  }
+                  final (newSortBy, newSortOrder) = value;
+                  _sortBy = newSortBy;
+                  _sortOrder = newSortOrder;
                 });
                 await storage.saveBrowseSortBy(_sortBy!);
                 await storage.saveBrowseSortOrder(_sortOrder!);
                 _fetchItems();
               },
-              itemBuilder: (context) => [
-                CheckedPopupMenuItem(
-                  value: 'DateCreated,Descending',
-                  checked:
-                      _sortBy == 'DateCreated' && _sortOrder == 'Descending',
-                  child: Text(AppLocalizations.of(context)!.lastAdded),
-                ),
-                CheckedPopupMenuItem(
-                  value: 'DateCreated,Ascending',
-                  checked:
-                      _sortBy == 'DateCreated' && _sortOrder == 'Ascending',
-                  child: Text(AppLocalizations.of(context)!.oldestAdded),
-                ),
-                const PopupMenuDivider(),
-                CheckedPopupMenuItem(
-                  value: 'SortName,Ascending',
-                  checked: _sortBy == 'SortName' && _sortOrder == 'Ascending',
-                  child: Text(AppLocalizations.of(context)!.nameAZ),
-                ),
-                CheckedPopupMenuItem(
-                  value: 'SortName,Descending',
-                  checked: _sortBy == 'SortName' && _sortOrder == 'Descending',
-                  child: Text(AppLocalizations.of(context)!.nameZA),
-                ),
-              ],
+              itemBuilder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                CheckedPopupMenuItem<(String, String)> buildSortItem(
+                    String by, String order, String text) {
+                  return CheckedPopupMenuItem(
+                    value: (by, order),
+                    checked: _sortBy == by && _sortOrder == order,
+                    child: Text(text),
+                  );
+                }
+
+                return [
+                  buildSortItem('DateCreated', 'Descending', l10n.lastAdded),
+                  buildSortItem('DateCreated', 'Ascending', l10n.oldestAdded),
+                  const PopupMenuDivider(),
+                  buildSortItem('SortName', 'Ascending', l10n.nameAZ),
+                  buildSortItem('SortName', 'Descending', l10n.nameZA),
+                ];
+              },
             ),
           ],
         ],

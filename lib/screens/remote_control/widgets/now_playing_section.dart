@@ -19,25 +19,14 @@ import '../../../../l10n/app_localizations.dart';
 
 import 'package:intl/intl.dart' hide TextDirection;
 
-String? _svgAssetForLinkName(String name) {
-  final lowerName = name.toLowerCase();
-  if (lowerName.contains('musicbrainz')) {
-    return 'assets/musicbrainz.svg';
-  }
-  
-  switch (lowerName) {
-    case 'imdb':
-      return 'assets/imdb.svg';
-    case 'tmdb':
-      return 'assets/tmdb.svg';
-    case 'thetvdb':
-      return 'assets/tvdb.svg';
-    case 'anilist':
-      return 'assets/anilist.svg';
-    default:
-      return null;
-  }
-}
+String? _svgAssetForLinkName(String name) => switch (name.toLowerCase()) {
+      final String lower when lower.contains('musicbrainz') => 'assets/musicbrainz.svg',
+      'imdb' => 'assets/imdb.svg',
+      'tmdb' => 'assets/tmdb.svg',
+      'thetvdb' => 'assets/tvdb.svg',
+      'anilist' => 'assets/anilist.svg',
+      _ => null,
+    };
 
 class _DragHandle extends StatelessWidget {
   const _DragHandle();

@@ -355,14 +355,9 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _getThemeModeName(BuildContext context, ThemeMode mode) {
-    switch (mode) {
-      case ThemeMode.system:
-        return AppLocalizations.of(context)!.themeFollowSystemName;
-      case ThemeMode.light:
-        return AppLocalizations.of(context)!.themeLightModeName;
-      case ThemeMode.dark:
-        return AppLocalizations.of(context)!.themeDarkModeName;
-    }
-  }
+  String _getThemeModeName(BuildContext context, ThemeMode mode) => switch (mode) {
+        ThemeMode.system => AppLocalizations.of(context)!.themeFollowSystemName,
+        ThemeMode.light => AppLocalizations.of(context)!.themeLightModeName,
+        ThemeMode.dark => AppLocalizations.of(context)!.themeDarkModeName,
+      };
 }

@@ -211,11 +211,11 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
         ),
       ),
       themeMode: themeMode,
-      home: isLoading
-          ? const Scaffold(body: Center(child: SizedBox.shrink()))
-          : authState.currentUser != null
-          ? const DeviceListScreen()
-          : const LoginScreen(),
+      home: switch ((isLoading, authState.currentUser != null)) {
+        (true, _) => const Scaffold(body: Center(child: SizedBox.shrink())),
+        (false, true) => const DeviceListScreen(),
+        (false, false) => const LoginScreen(),
+      },
       routes: {
         RemoteControlScreen.routeName: (context) => const RemoteControlScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
