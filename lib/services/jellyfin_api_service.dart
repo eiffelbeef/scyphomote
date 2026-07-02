@@ -449,12 +449,7 @@ class JellyfinApiService {
         .toList();
   }
 
-  Future<Map<String, dynamic>> getItem(String userId, String itemId) async {
-    return await _getRequest(
-      'Users/$userId/Items/$itemId',
-      errorMessage: 'Failed to fetch item',
-    );
-  }
+
 
   Future<Map<String, dynamic>> getItems(
     String userId, {

@@ -143,7 +143,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       try {
                         final apiService = ref.read(apiServiceProvider);
                         await apiService.toggleFavorite(user.userId, nowPlaying.id, isFavorite);
-                        ref.invalidate(itemFavoriteProvider(nowPlaying.id));
+                        ref.invalidate(itemDetailsProvider(nowPlaying.id));
                       } catch (e) {
                         if (context.mounted) {
                           UiUtils.showSnackBar(context, 'Failed to update favorite status');
