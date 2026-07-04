@@ -186,7 +186,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                           IconButton.filledTonal(
                             icon: const Icon(Icons.subtitles_rounded),
                             iconSize: 24,
-                            onPressed: nowPlaying.hasSubtitles
+                            onPressed: (nowPlaying.hasSubtitles && session.supportsRemoteControl)
                                 ? session.ifCapable(
                                     JellyfinCommands.setSubtitleStreamIndex,
                                     () => _showSubtitlePicker(context, ref),
@@ -219,7 +219,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                               return IconButton.filledTonal(
                                 icon: const Icon(Icons.audiotrack_rounded),
                                 iconSize: 24,
-                                onPressed: hasMultipleAudioTracks
+                                onPressed: (hasMultipleAudioTracks && session.supportsRemoteControl)
                                     ? session.ifCapable(
                                         JellyfinCommands.setAudioStreamIndex,
                                         () =>
