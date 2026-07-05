@@ -35,13 +35,27 @@ class QueueDetailsNotifier extends Notifier<Map<String, MediaInfo>> {
     if (user == null) return;
 
     try {
-      final idString = needsFetching.join(',');
-      final response = await apiService.getItems(user.userId, ids: idString);
-      final items = response['Items'] as List;
       final map = <String, MediaInfo>{};
-      for (var item in items) {
-        final info = MediaInfo.fromJson(item as Map<String, dynamic>);
-        map[info.id] = info;
+      const chunkSize = 100;
+      final futures = <Future<Map<String, dynamic>>>[];
+      
+      for (var i = 0; i < needsFetching.length; i += chunkSize) {
+        var end = i + chunkSize;
+        if (end > needsFetching.length) end = needsFetching.length;
+        final chunk = needsFetching.sublist(i, end);
+        
+        final idString = chunk.join(',');
+        futures.add(apiService.getItems(user.userId, ids: idString));
+      }
+      
+      final responses = await Future.wait(futures);
+      
+      for (var response in responses) {
+        final items = response['Items'] as List;
+        for (var item in items) {
+          final info = MediaInfo.fromJson(item as Map<String, dynamic>);
+          map[info.id] = info;
+        }
       }
       
       state = {...state, ...map};
