@@ -38,13 +38,8 @@ class QueueDetailsNotifier extends Notifier<Map<String, MediaInfo>> {
       final map = <String, MediaInfo>{};
       const chunkSize = 100;
       final futures = <Future<Map<String, dynamic>>>[];
-      
       for (var i = 0; i < needsFetching.length; i += chunkSize) {
-        var end = i + chunkSize;
-        if (end > needsFetching.length) end = needsFetching.length;
-        final chunk = needsFetching.sublist(i, end);
-        
-        final idString = chunk.join(',');
+        final idString = needsFetching.skip(i).take(chunkSize).join(',');
         futures.add(apiService.getItems(user.userId, ids: idString));
       }
       
