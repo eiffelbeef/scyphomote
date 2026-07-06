@@ -4,6 +4,11 @@ on:
   push:
     tags: ['v*.*.*']
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name to clobber exiting or failed artifacts (e.g. v1.10.1)'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -31,6 +36,7 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk scyphomote-android.apk
       - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: scyphomote-android.apk
 
   ios:
@@ -51,6 +57,7 @@ jobs:
           zip -r scyphomote-ios.ipa Payload/
       - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: scyphomote-ios.ipa
 
   linux:
@@ -65,6 +72,7 @@ jobs:
       - run: tar -czf scyphomote-linux.tar.gz -C build/linux/x64/release/bundle .
       - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: scyphomote-linux.tar.gz
 
   macos:
@@ -81,6 +89,7 @@ jobs:
           hdiutil create -format UDZO -srcfolder dist -volname scyphomote scyphomote-macos.dmg
       - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: scyphomote-macos.dmg
 
   windows:
@@ -95,4 +104,5 @@ jobs:
         shell: pwsh
       - uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
         with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
           files: scyphomote-windows.zip
