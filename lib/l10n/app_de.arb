@@ -285,5 +285,9 @@
   "loading": "Wird geladen…",
   "album": "Album",
   "artist": "Interpret",
-  "connectionTimeout": "Verbindungszeitüberschreitung"
+  "connectionTimeout": "Verbindungszeitüberschreitung",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
 }

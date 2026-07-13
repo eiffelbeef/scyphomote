@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/remote_providers.dart';
 import '../../../providers/session_provider.dart';
 import '../../../providers/playback_provider.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 
 class StreamSelectionSheet extends ConsumerStatefulWidget {
   final String itemId;
@@ -30,13 +31,14 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Watch item details to get the list of streams
     final itemDetailsAsync = ref.watch(itemDetailsProvider(widget.itemId));
 
     return itemDetailsAsync.when(
       data: (details) {
         if (details == null) {
-          return const Center(child: Text('Failed to load item details'));
+          return Center(child: Text(l10n.failedToLoadItemDetails));
         }
 
         final streams = (details['MediaStreams'] as List? ?? [])
@@ -45,7 +47,7 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
 
         if (streams.isEmpty) {
           return Center(
-            child: Text('No ${widget.streamType.toLowerCase()}s available'),
+            child: Text(l10n.noStreamAvailable(widget.streamType.toLowerCase())),
           );
         }
 
@@ -82,7 +84,7 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
                     final isNone = effectiveIndex == -1;
 
                     return ListTile(
-                      title: const Text('None'),
+                      title: Text(l10n.none),
                       trailing: isNone
                           ? const Icon(Icons.check_rounded, color: Colors.green)
                           : null,
@@ -114,7 +116,7 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (err, stack) =>
-          SizedBox(height: 200, child: Center(child: Text('Error: $err'))),
+          SizedBox(height: 200, child: Center(child: Text(l10n.errorMsg(err.toString())))),
     );
   }
 

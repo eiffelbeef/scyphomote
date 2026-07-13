@@ -286,5 +286,9 @@
   "addAlbumToQueue": "将专辑添加到队列",
   "album": "专辑",
   "artist": "艺术家",
-  "connectionTimeout": "连接超时"
+  "connectionTimeout": "连接超时",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
 }

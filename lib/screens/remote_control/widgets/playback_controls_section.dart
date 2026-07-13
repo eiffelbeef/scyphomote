@@ -13,7 +13,7 @@ import '../../../providers/session_provider.dart';
 import 'stream_selection_sheet.dart';
 import 'remote_navigation_sheet.dart';
 import '../../../widgets/text_input_dialog.dart';
-
+import 'package:scyphomote/l10n/app_localizations.dart';
 import 'trickplay_overlay.dart';
 import '../../../utils/playback_utils.dart';
 import 'remote_button.dart';
@@ -54,6 +54,7 @@ class PlaybackControlsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nowPlaying = session.nowPlaying;
     final playState = session.playState;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -299,7 +300,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   icon: const Icon(Icons.video_library, size: 20),
-                  label: const Text('Browse'),
+                  label: Text(l10n.browse),
                 ),
               ),
               const SizedBox(width: 8),
@@ -313,7 +314,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   icon: const Icon(Icons.gamepad_rounded, size: 20),
-                  label: const Text('Remote'),
+                  label: Text(l10n.remote),
                 ),
               ),
             ],

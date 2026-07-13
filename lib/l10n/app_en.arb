@@ -285,5 +285,9 @@
   "addAlbumToQueue": "Add album to queue",
   "album": "Album",
   "artist": "Artist",
-  "connectionTimeout": "Connection timeout"
+  "connectionTimeout": "Connection timeout",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
 }

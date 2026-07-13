@@ -75,16 +75,15 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     showModalBottomSheet(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.gamepad_rounded),
-                title: const Text('Full Remote Widget'),
-                subtitle: const Text(
-                  'Includes D-Pad and full playback controls',
-                ),
+                title: Text(l10n.fullRemoteWidget),
+                subtitle: Text(l10n.fullRemoteWidgetSubtitle),
                 onTap: () {
                   Navigator.pop(context);
                   _pinWidget(context, session, 'RemoteWidgetProvider');
@@ -92,10 +91,8 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.fast_forward),
-                title: const Text('Compact Remote Widget'),
-                subtitle: const Text(
-                  'Single line with basic playback controls',
-                ),
+                title: Text(l10n.compactRemoteWidget),
+                subtitle: Text(l10n.compactRemoteWidgetSubtitle),
                 onTap: () {
                   Navigator.pop(context);
                   _pinWidget(context, session, 'CompactRemoteWidgetProvider');

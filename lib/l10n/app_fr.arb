@@ -285,5 +285,9 @@
   "loading": "Chargement…",
   "album": "Album",
   "artist": "Artiste",
-  "connectionTimeout": "Délai de connexion dépassé"
+  "connectionTimeout": "Délai de connexion dépassé",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
 }
