@@ -177,6 +177,10 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
           'boxsets' => 'BoxSet',
           _ => 'Movie,Series,MusicArtist,MusicAlbum,BoxSet,Video,Audio',
         };
+
+        if (_isSearching && includeItemTypes.contains('Series')) {
+          includeItemTypes += ',Episode';
+        }
       }
 
       final data = await apiService.getItems(
