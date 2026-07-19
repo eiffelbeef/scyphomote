@@ -64,10 +64,18 @@ class PersonCard extends StatelessWidget {
     );
   }
 
-  Widget _personPlaceholder(BuildContext context) => Container(
-    width: 100,
-    height: 150,
-    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-    child: const Icon(Icons.person_rounded, size: 40),
-  );
+  Widget _personPlaceholder(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: 100,
+      height: 150,
+      alignment: Alignment.center,
+      color: colors.secondaryContainer,
+      child: Icon(
+        Icons.person_rounded, 
+        size: 40,
+        color: colors.onSecondaryContainer,
+      ),
+    );
+  }
 }

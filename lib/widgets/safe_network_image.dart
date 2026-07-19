@@ -21,26 +21,19 @@ class SafeNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl == null || imageUrl!.isEmpty) {
-      return fallbackWidget;
-    }
+    final content = (imageUrl?.isEmpty ?? true)
+        ? fallbackWidget
+        : CachedNetworkImage(
+            imageUrl: imageUrl!,
+            width: width,
+            height: height,
+            fit: fit,
+            placeholder: (_, _) => fallbackWidget,
+            errorWidget: (_, _, _) => fallbackWidget,
+          );
 
-    Widget image = CachedNetworkImage(
-      imageUrl: imageUrl!,
-      width: width,
-      height: height,
-      fit: fit,
-      placeholder: (context, url) => fallbackWidget,
-      errorWidget: (context, url, error) => fallbackWidget,
-    );
-
-    if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: image,
-      );
-    }
-
-    return image;
+    return borderRadius == null
+        ? content
+        : ClipRRect(borderRadius: borderRadius!, child: content);
   }
 }
