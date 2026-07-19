@@ -221,7 +221,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
                       final isPlaying = itemIndex == currentIndex;
                       return _buildItem(item, index, isPlaying, true, bulkDetails);
                     },
-                    onReorder: (oldIndex, newIndex) {
+                    onReorderItem: (oldIndex, newIndex) {
                       if (oldIndex == newIndex) return;
                       
                       final actualOldIndex = _showPreviousItems ? oldIndex : oldIndex + currentIndex;
