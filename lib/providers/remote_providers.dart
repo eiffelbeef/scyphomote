@@ -76,7 +76,7 @@ final lyricsProvider =
     });
 
 final itemChildrenProvider =
-    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, itemId) async {
+    FutureProvider.family<List<Map<String, dynamic>>, ({String itemId, String type})>((ref, params) async {
       final authState = ref.watch(authProvider);
       final user = authState.currentUser;
       final apiService = ref.read(apiServiceProvider);
@@ -84,10 +84,7 @@ final itemChildrenProvider =
       if (user == null) return [];
 
       try {
-        final itemData = await ref.watch(itemDetailsProvider(itemId).future);
-        if (itemData == null) return [];
-
-        final type = itemData['Type'] as String?;
+        final type = params.type;
         if (type != 'Series' && type != 'Season' && type != 'MusicArtist' && type != 'MusicAlbum') return [];
 
         String includeItemTypes;
@@ -108,7 +105,7 @@ final itemChildrenProvider =
 
         final data = await apiService.getItems(
           user.userId,
-          parentId: itemId,
+          parentId: params.itemId,
           includeItemTypes: includeItemTypes,
           sortBy: sortBy,
           sortOrder: 'Ascending',

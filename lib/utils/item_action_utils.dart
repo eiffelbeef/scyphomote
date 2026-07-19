@@ -34,24 +34,28 @@ class ItemActionUtils {
     WidgetRef ref,
     String itemId,
     bool currentlyFavorite,
-  ) => _performToggle(
-        context,
-        ref,
-        itemId,
-        'Failed to update favorite status',
-        (api, userId) => api.toggleFavorite(userId, itemId, currentlyFavorite),
-      );
+  ) async {
+    await _performToggle(
+      context,
+      ref,
+      itemId,
+      'Failed to update favorite status',
+      (api, userId) => api.toggleFavorite(userId, itemId, currentlyFavorite),
+    );
+  }
 
   static Future<void> togglePlayedStatus(
     BuildContext context,
     WidgetRef ref,
     String itemId,
     bool currentlyPlayed,
-  ) => _performToggle(
-        context,
-        ref,
-        itemId,
-        'Failed to update played status',
-        (api, userId) => api.togglePlayedStatus(userId, itemId, currentlyPlayed),
-      );
+  ) async {
+    await _performToggle(
+      context,
+      ref,
+      itemId,
+      'Failed to update played status',
+      (api, userId) => api.togglePlayedStatus(userId, itemId, currentlyPlayed),
+    );
+  }
 }

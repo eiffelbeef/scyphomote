@@ -59,14 +59,23 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final detailsAsync = ref.watch(itemDetailsProvider(widget.item['Id']));
+    
     final isPlayedAsync = ref.watch(itemPlayedProvider(widget.item['Id']));
     final isFavoriteAsync = ref.watch(itemFavoriteProvider(widget.item['Id']));
+
+    final isPlayed = isPlayedAsync.value ?? widget.item['UserData']?['Played'] ?? false;
+    final isFavorite = isFavoriteAsync.value ?? widget.item['UserData']?['IsFavorite'] ?? false;
+    final overview = detailsAsync.value?['Overview'] as String? ?? widget.item['Overview'] as String?;
+    
     final displayYear = UiUtils.getYearString(context, widget.item);
 
     final type = widget.item['Type'] as String?;
     final title = widget.item['Name'] as String? ?? 'Unknown';
     final apiService = ref.read(apiServiceProvider);
-    final childrenAsync = ref.watch(itemChildrenProvider(widget.item['Id']));
+    final childrenAsync = ref.watch(itemChildrenProvider((
+      itemId: widget.item['Id'],
+      type: widget.item['Type'],
+    )));
 
     final backdropUrl = widget.item['BackdropImageTags'] != null &&
             (widget.item['BackdropImageTags'] as List).isNotEmpty
@@ -85,23 +94,21 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              isFavoriteAsync.value == true ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-              color: isFavoriteAsync.value == true ? Colors.red : Theme.of(context).colorScheme.onSurface,
+              isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+              color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurface,
             ),
             onPressed: () {
-              final currentlyFavorite = isFavoriteAsync.value ?? false;
-              ItemActionUtils.toggleFavorite(context, ref, widget.item['Id'], currentlyFavorite);
+              ItemActionUtils.toggleFavorite(context, ref, widget.item['Id'], isFavorite);
             },
           ),
           if (type == 'Movie' || type == 'Episode' || type == 'Series' || type == 'Season')
             IconButton(
               icon: Icon(
-                isPlayedAsync.value == true ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
-                color: isPlayedAsync.value == true ? Colors.green : Theme.of(context).colorScheme.onSurface,
+                isPlayed ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
+                color: isPlayed ? Colors.green : Theme.of(context).colorScheme.onSurface,
               ),
               onPressed: () {
-                final currentlyPlayed = isPlayedAsync.value ?? false;
-                ItemActionUtils.togglePlayedStatus(context, ref, widget.item['Id'], currentlyPlayed);
+                ItemActionUtils.togglePlayedStatus(context, ref, widget.item['Id'], isPlayed);
               },
             ),
         ],
@@ -227,9 +234,17 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
               ),
             ),
           ),
+          if (overview != null && overview.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: OverviewSection(
+                  overview: overview,
+                ),
+              ),
+            ),
           detailsAsync.when(
             data: (details) {
-              final overview = details?['Overview'] as String?;
               final people = (details?['People'] as List?)
                       ?.map((p) => Person.fromJson(p as Map<String, dynamic>))
                       .toList() ??
@@ -238,15 +253,12 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
                       ?.cast<Map<String, dynamic>>() ??
                   [];
 
+              if (people.isEmpty && externalUrls.isEmpty) {
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }
+
               return SliverList(
                 delegate: SliverChildListDelegate([
-                  if (overview != null && overview.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: OverviewSection(
-                        overview: overview,
-                      ),
-                    ),
                   if (externalUrls.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.all(16.0),
