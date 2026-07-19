@@ -3,13 +3,13 @@ import 'package:scyphomote/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
-import '../widgets/marquee_text.dart';
-import '../widgets/item_poster.dart';
 import '../widgets/remote_control_drawer.dart';
-import '../widgets/queue_button.dart';
 import '../utils/playback_utils.dart';
 import '../utils/ui_utils.dart';
 import '../constants.dart';
+import '../widgets/music_track_tile.dart';
+import '../widgets/item_card.dart';
+import '../widgets/episode_row.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   final String title;
@@ -232,34 +232,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
     await _fetchItems(loadMore: true);
   }
 
-  String _getItemTitle(Map<String, dynamic> item) {
-    final name = item['Name'] as String? ?? 'Unnamed Folder';
-    final index = item['IndexNumber'] as int?;
 
-    if (index != null &&
-        (item['Type'] == 'Episode' || item['Type'] == 'Audio')) {
-      final prefix = index.toString().padLeft(2, '0');
-      return '$prefix. $name';
-    }
-    return name;
-  }
-
-  String? _getItemDuration(Map<String, dynamic> item) {
-    final runTimeTicks = item['RunTimeTicks'] as int?;
-    if (runTimeTicks == null) return null;
-    final totalSeconds = runTimeTicks ~/ 10000000;
-    final hours = totalSeconds ~/ 3600;
-    final minutes = (totalSeconds % 3600) ~/ 60;
-    final seconds = totalSeconds % 60;
-
-    final secondsStr = seconds.toString().padLeft(2, '0');
-    if (hours > 0) {
-      final minutesStr = minutes.toString().padLeft(2, '0');
-      return '$hours:$minutesStr:$secondsStr';
-    } else {
-      return '$minutes:$secondsStr';
-    }
-  }
 
   Widget _buildSection(String title, List<Map<String, dynamic>> items) {
     if (items.isEmpty) return const SizedBox.shrink();
@@ -287,7 +260,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             itemBuilder: (context, index) {
               return SizedBox(
                 width: 140,
-                child: _buildItemCard(items[index], widget.collectionType == 'music'),
+                child: ItemCard(
+                  item: items[index],
+                  apiService: ref.read(apiServiceProvider),
+                  isMusic: widget.collectionType == 'music',
+                ),
               );
             },
           ),
@@ -314,76 +291,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
     );
   }
 
-  Widget _buildItemCard(Map<String, dynamic> item, bool isMusic) {
-    final apiService = ref.read(apiServiceProvider);
-    final imageUrl = apiService.getItemImageUrl(item);
-    final isFolder = item['IsFolder'] ?? false;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          if (isFolder) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ItemsScreen(
-                  title: _getItemTitle(item),
-                  parentId: item['Id'],
-                  collectionType: widget.collectionType,
-                  parentType: item['Type'],
-                ),
-              ),
-            );
-          } else {
-            playItemOnRemote(context, ref, item);
-          }
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ItemPoster(
-                    imageUrl: imageUrl,
-                    userData: item['UserData'],
-                    placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
-                    showPlayedIndicator: !isMusic,
-                  ),
-                  QueueOverlayButton(item: item),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MarqueeText(
-                    text: _getItemTitle(item),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  if (item['ProductionYear'] != null &&
-                      (item['Type'] == 'Movie' || item['Type'] == 'Series'))
-                    Text(
-                      item['ProductionYear'].toString(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildSearchResults() {
     if (!_searchSubmitted) {
@@ -498,26 +406,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                       return _buildBottomPadding(8);
                     }
                     final item = _items[index];
-                    final duration = _getItemDuration(item);
-
-                    return ListTile(
-                      leading: const Icon(Icons.music_note),
-                      title: Text(_getItemTitle(item)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (duration != null) ...[
-                            Text(
-                              duration,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          QueueIconButton(item: item),
-                        ],
-                      ),
-                      onTap: () => playItemOnRemote(context, ref, item),
-                    );
+                    return MusicTrackTile(item: item);
                   },
                 ),
               ),
@@ -534,48 +423,9 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                 return _buildBottomPadding(8);
               }
               final item = _items[index];
-              final apiService = ref.read(apiServiceProvider);
-              final imageUrl = apiService.getItemImageUrl(item);
-              final duration = _getItemDuration(item);
-
-              return InkWell(
-                onTap: () => playItemOnRemote(context, ref, item),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        height: 68,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: ItemPoster(
-                            imageUrl: imageUrl,
-                            userData: item['UserData'],
-                            placeholderIcon: Icons.movie_rounded,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          _getItemTitle(item),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                      if (duration != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          duration,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+              return EpisodeRow(
+                item: item,
+                apiService: ref.read(apiServiceProvider),
               );
             },
           );
@@ -594,7 +444,12 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return _buildItemCard(_items[index], isMusic);
+                      return ItemCard(
+                        item: _items[index],
+                        apiService: ref.read(apiServiceProvider),
+                        collectionType: widget.collectionType,
+                        isMusic: isMusic,
+                      );
                     },
                     childCount: _items.length,
                   ),

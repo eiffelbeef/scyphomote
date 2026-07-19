@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import '../utils/lru_cache.dart';
 import '../models/user_account.dart';
+import '../models/media_info.dart';
 import '../models/session.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
@@ -226,6 +227,15 @@ class JellyfinApiService {
       await _deleteRequest(endpoint, errorMessage: 'Failed to un-favorite item');
     } else {
       await _postRequest(endpoint, errorMessage: 'Failed to favorite item');
+    }
+  }
+
+  Future<void> togglePlayedStatus(String userId, String itemId, bool isPlayed) async {
+    final endpoint = 'Users/$userId/PlayedItems/$itemId';
+    if (isPlayed) {
+      await _deleteRequest(endpoint, errorMessage: 'Failed to mark as unplayed');
+    } else {
+      await _postRequest(endpoint, errorMessage: 'Failed to mark as played');
     }
   }
 
@@ -461,6 +471,7 @@ class JellyfinApiService {
     String? excludeItemTypes,
     String? filters,
     String? ids,
+    String? fields,
     bool recursive = false,
     int? startIndex,
     int? limit,
@@ -485,7 +496,7 @@ class JellyfinApiService {
         'SortBy': 'SortName',
         'SortOrder': 'Ascending',
       },
-      'Fields': 'IndexNumber,ParentIndexNumber,PrimaryImageAspectRatio,ImageTags,AlbumId',
+      'Fields': 'IndexNumber,ParentIndexNumber,PrimaryImageAspectRatio,ImageTags,AlbumId${fields != null ? ',$fields' : ''}',
     };
 
     final data = await _getRequest(
@@ -641,6 +652,19 @@ class JellyfinApiService {
         : imageTags?[imageType] as String?;
 
     return getArtworkUrl(imageId, imageType, maxWidth: maxWidth, tag: tag);
+  }
+
+  String? getPersonImageUrl(
+    Person person, {
+    int maxWidth = 200,
+  }) {
+    if (person.primaryImageTag == null) return null;
+    return getArtworkUrl(
+      person.id,
+      'Primary',
+      maxWidth: maxWidth,
+      tag: person.primaryImageTag,
+    );
   }
 
   Future<String?> downloadUserImage(

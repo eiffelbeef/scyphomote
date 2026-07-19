@@ -12,6 +12,7 @@ Future<void> playItemOnRemote(
   WidgetRef ref,
   Map<String, dynamic> item, {
   String playCommand = 'PlayNow',
+  bool resume = true,
 }) async {
   final user = ref.read(authProvider).currentUser;
   final session = ref.read(sessionProvider).selectedSession;
@@ -28,7 +29,7 @@ Future<void> playItemOnRemote(
   try {
     final apiService = ref.read(apiServiceProvider);
     final userData = item['UserData'] as Map<String, dynamic>?;
-    final startPositionTicks = userData?['PlaybackPositionTicks'] as int?;
+    final startPositionTicks = resume ? (userData?['PlaybackPositionTicks'] as int?) : null;
 
     UiUtils.showSnackBar(context, 'Attempting to start playback...');
 

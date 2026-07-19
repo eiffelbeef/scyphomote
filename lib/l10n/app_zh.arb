@@ -291,4 +291,13 @@
   "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
   "compactRemoteWidget": "Compact Remote Widget",
   "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
+,
+  "present": "Present"
+,
+  "resumeFrom": "从 {time} 恢复",
+  "@resumeFrom": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../widgets/safe_network_image.dart';
+import '../../../widgets/person_row.dart';
+import '../../../widgets/external_links_section.dart';
+import '../../../widgets/drag_handle.dart';
+import '../../../widgets/overview_section.dart';
 import '../../../widgets/marquee_text.dart';
-import '../../../widgets/themed_svg_icon.dart';
 import '../../../models/session.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
@@ -12,39 +14,14 @@ import '../../../models/media_info.dart';
 import '../../../models/media_segment.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../services/jellyfin_api_service.dart';
+import '../../../utils/item_action_utils.dart';
 import '../../../utils/logger.dart';
 import '../../../utils/ui_utils.dart';
+import '../../../widgets/person_details_sheet.dart';
 import 'remote_button.dart';
 import '../../../../l10n/app_localizations.dart';
 
 import 'package:intl/intl.dart' hide TextDirection;
-
-String? _svgAssetForLinkName(String name) => switch (name.toLowerCase()) {
-      final String lower when lower.contains('musicbrainz') => 'assets/musicbrainz.svg',
-      'imdb' => 'assets/imdb.svg',
-      'tmdb' => 'assets/tmdb.svg',
-      'thetvdb' => 'assets/tvdb.svg',
-      'anilist' => 'assets/anilist.svg',
-      _ => null,
-    };
-
-class _DragHandle extends StatelessWidget {
-  const _DragHandle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 40,
-      height: 4,
-      decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
-}
 
 class NowPlayingSection extends ConsumerStatefulWidget {
   final Session session;
@@ -136,19 +113,8 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
                       color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurface,
                     ),
-                    onPressed: () async {
-                      HapticFeedback.lightImpact();
-                      final user = ref.read(authProvider).currentUser;
-                      if (user == null) return;
-                      try {
-                        final apiService = ref.read(apiServiceProvider);
-                        await apiService.toggleFavorite(user.userId, nowPlaying.id, isFavorite);
-                        ref.invalidate(itemDetailsProvider(nowPlaying.id));
-                      } catch (e) {
-                        if (context.mounted) {
-                          UiUtils.showSnackBar(context, 'Failed to update favorite status');
-                        }
-                      }
+                    onPressed: () {
+                      ItemActionUtils.toggleFavorite(context, ref, nowPlaying.id, isFavorite);
                     },
                   ),
                 ),
@@ -216,7 +182,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
 
         if (nowPlaying != null) ...[
           InkWell(
-            onTap: () => _showMediaDetails(nowPlaying),
+            onTap: () => showMediaDetailsSheet(context, nowPlaying),
             borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -530,8 +496,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       ),
     );
   }
+}
 
-  void _showMediaDetails(MediaInfo nowPlaying) {
+void showMediaDetailsSheet(BuildContext context, MediaInfo nowPlaying) {
     final isEpisode = nowPlaying.type == 'Episode';
     final mainItemId = nowPlaying.id;
 
@@ -577,7 +544,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                     return Column(
                       children: [
                         const SizedBox(height: 12),
-                        const _DragHandle(),
+                        const DragHandle(),
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -602,7 +569,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                     (title: l10n.artist, itemId: nowPlaying.artistId, showCastAndCrew: false),
                                   ],
                                   apiService: apiService,
-                                  onPersonTap: _showPersonDetail,
+                                  onPersonTap: (id, name) => showPersonDetailSheet(context, id, name),
                                 )
                               : _MediaDetailsContent(
                                   scrollController: scrollController,
@@ -611,7 +578,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                   externalUrls: externalUrls,
                                   people: people,
                                   apiService: apiService,
-                                  onPersonTap: _showPersonDetail,
+                                  onPersonTap: (id, name) => showPersonDetailSheet(context, id, name),
                                 ),
                         ),
                       ],
@@ -621,113 +588,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                       const Center(child: CircularProgressIndicator()),
                   error: (err, stack) => Center(
                     child: Text(l10n.errorLoadingCast(err.toString())),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _showPersonDetail(String personId, String personName) async {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      builder: (sheetContext) {
-        return Consumer(
-          builder: (context, ref, child) {
-            final detailsAsync = ref.watch(itemDetailsProvider(personId));
-
-            return DraggableScrollableSheet(
-              initialChildSize: 0.5,
-              minChildSize: 0.3,
-              maxChildSize: 0.85,
-              expand: false,
-              builder: (context, scrollController) {
-                final l10n = AppLocalizations.of(context)!;
-                return detailsAsync.when(
-                  data: (details) {
-                    final name = details?['Name'] as String? ?? personName;
-                    final overview = details?['Overview'] as String?;
-                    final externalUrls =
-                        (details?['ExternalUrls'] as List?)
-                            ?.cast<Map<String, dynamic>>() ??
-                        [];
-
-                    return Column(
-                      children: [
-                        const SizedBox(height: 12),
-                        const _DragHandle(),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            name,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const Divider(height: 1),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            controller: scrollController,
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (overview != null && overview.isNotEmpty)
-                                  Text(
-                                    overview,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium,
-                                  )
-                                else
-                                  Text(
-                                    l10n.noOverviewAvailable,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurfaceVariant,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                  ),
-                                if (externalUrls.isNotEmpty) ...[
-                                  const SizedBox(height: 24),
-                                  Text(
-                                    l10n.externalLinks,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _ExternalLinksSection(
-                                    externalUrls: externalUrls,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(err.toString()),
-                    ),
                   ),
                 );
               },
@@ -759,7 +619,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
       ),
     );
   }
-}
 
 class _MediaDetailsContent extends StatefulWidget {
   final ScrollController scrollController;
@@ -785,8 +644,6 @@ class _MediaDetailsContent extends StatefulWidget {
 }
 
 class _MediaDetailsContentState extends State<_MediaDetailsContent> {
-  bool _expanded = false;
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -802,14 +659,12 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
             child: _PremiereDateText(premiereDate: widget.premiereDate!),
           ),
         if (widget.overview != null && widget.overview!.isNotEmpty)
-          _OverviewSection(
+          OverviewSection(
             overview: widget.overview!,
-            expanded: _expanded,
-            onToggle: () => setState(() => _expanded = !_expanded),
           ),
         if (widget.externalUrls.isNotEmpty) ...[
           const SizedBox(height: 16),
-          _ExternalLinksSection(externalUrls: widget.externalUrls),
+          ExternalLinksSection(externalUrls: widget.externalUrls),
         ],
         if (widget.people.isNotEmpty) ...[
           const SizedBox(height: 24),
@@ -819,7 +674,7 @@ class _MediaDetailsContentState extends State<_MediaDetailsContent> {
           ),
           const SizedBox(height: 8),
           ...widget.people.map(
-            (person) => _PersonRow(
+            (person) => PersonRow(
               person: person,
               apiService: widget.apiService,
               onTap: widget.onPersonTap,
@@ -857,19 +712,13 @@ class _MediaDetailsTabs extends StatefulWidget {
 
 class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
     with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-  bool _expanded = false;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: widget.tabs.length, vsync: this);
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        _expanded = false;
-        setState(() {});
-      }
-    });
+
   }
 
   @override
@@ -971,10 +820,8 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(16, premiereDate != null ? 8 : 16, 16, 0),
-                    child: _OverviewSection(
+                    child: OverviewSection(
                       overview: overview,
-                      expanded: _expanded,
-                      onToggle: () => setState(() => _expanded = !_expanded),
                     ),
                   ),
                 ),
@@ -982,7 +829,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: _ExternalLinksSection(externalUrls: externalUrls),
+                    child: ExternalLinksSection(externalUrls: externalUrls),
                   ),
                 ),
               if (showCastAndCrew && people.isNotEmpty) ...[
@@ -999,7 +846,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
                 ),
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => _PersonRow(
+                    (context, index) => PersonRow(
                       person: people[index],
                       apiService: widget.apiService,
                       onTap: widget.onPersonTap,
@@ -1020,139 +867,7 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
   }
 }
 
-class _PersonRow extends StatelessWidget {
-  final Person person;
-  final JellyfinApiService apiService;
-  final void Function(String, String) onTap;
 
-  const _PersonRow({
-    required this.person,
-    required this.apiService,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final imageUrl = person.primaryImageTag != null
-        ? apiService.getArtworkUrl(
-            person.id,
-            'Primary',
-            maxWidth: 200,
-            tag: person.primaryImageTag,
-          )
-        : null;
-
-    return InkWell(
-      onTap: () => onTap(person.id, person.name),
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          children: [
-            SafeNetworkImage(
-              imageUrl: imageUrl,
-              fallbackWidget: _personPlaceholder(context),
-              width: 80,
-              height: 120,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    person.name,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (person.role != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      person.role!,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _personPlaceholder(BuildContext context) => Container(
-    width: 80,
-    height: 120,
-    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-    child: const Icon(Icons.person_rounded, size: 32),
-  );
-}
-
-class _OverviewSection extends StatelessWidget {
-  final String overview;
-  final bool expanded;
-  final VoidCallback onToggle;
-
-  const _OverviewSection({
-    required this.overview,
-    required this.expanded,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final textSpan = TextSpan(
-          text: overview,
-          style: Theme.of(context).textTheme.bodyMedium,
-        );
-        final tp = TextPainter(
-          text: textSpan,
-          maxLines: 3,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: constraints.maxWidth);
-        final isTruncated = tp.didExceedMaxLines;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              overview,
-              maxLines: expanded ? null : 3,
-              overflow: expanded ? null : TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            if (isTruncated) ...[
-              const SizedBox(height: 4),
-              GestureDetector(
-                onTap: onToggle,
-                child: Text(
-                  expanded ? l10n.showLess : l10n.showMore,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        );
-      },
-    );
-  }
-}
 
 class _PremiereDateText extends StatelessWidget {
   final String premiereDate;
@@ -1176,37 +891,4 @@ class _PremiereDateText extends StatelessWidget {
   }
 }
 
-class _ExternalLinksSection extends StatelessWidget {
-  final List<Map<String, dynamic>> externalUrls;
 
-  const _ExternalLinksSection({required this.externalUrls});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: externalUrls.map((link) {
-        final linkName = link['Name'] as String? ?? '';
-        final linkUrl = link['Url'] as String? ?? '';
-        final svgAsset = _svgAssetForLinkName(linkName);
-        return OutlinedButton.icon(
-          onPressed: linkUrl.isNotEmpty
-              ? () => launchUrl(
-                  Uri.parse(linkUrl),
-                  mode: LaunchMode.externalApplication,
-                )
-              : null,
-          icon: svgAsset != null
-              ? ThemedSvgIcon(
-                  svgAsset,
-                  size: 18,
-                  color: Theme.of(context).colorScheme.primary,
-                )
-              : const Icon(Icons.open_in_new, size: 18),
-          label: Text(linkName),
-        );
-      }).toList(),
-    );
-  }
-}

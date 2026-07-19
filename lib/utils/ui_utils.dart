@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/session_provider.dart';
 import '../constants.dart';
+import 'package:scyphomote/l10n/app_localizations.dart';
 
 extension ThemeSystemUiExtension on ThemeData {
   SystemUiOverlayStyle get bottomSystemUiOverlayStyleOnBackground {
@@ -140,6 +141,30 @@ class UiUtils {
         'photo' || 'photos' || 'photoalbum' => 'Photo',
         _ => null,
       };
+
+  static String getDisplayTitle(Map<String, dynamic> item) {
+    final title = item['Name'] as String? ?? 'Unknown';
+    final index = item['IndexNumber'];
+    final type = item['Type'];
+    
+    if (index != null && (type == 'Episode' || type == 'Audio' || item.containsKey('AlbumId'))) {
+      return '$index. $title';
+    }
+    return title;
+  }
+
+  static String? getYearString(BuildContext context, Map<String, dynamic> item) {
+    final year = item['ProductionYear'];
+    if (year == null) return null;
+
+    if (item['Type'] != 'Series') return year.toString();
+
+    final endYear = DateTime.tryParse(item['EndDate']?.toString() ?? '')?.year;
+    final ended = item['Status'] == 'Ended';
+    
+    if (ended && endYear != null && endYear != year) return '$year-$endYear';
+    return ended ? '$year' : '$year-${AppLocalizations.of(context)!.present}';
+  }
 
   static String formatBitrate(num bps, {bool forceKbps = false}) {
     if (bps <= 0) return '0 kbps';
