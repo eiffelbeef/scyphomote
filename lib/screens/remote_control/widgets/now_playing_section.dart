@@ -232,7 +232,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
             children: [
               Center(
                 child: InkWell(
-                  onTap: session.playMethod != 'DirectPlay'
+                  onTap: session.playMethod == 'Transcode'
                       ? () {
                           showDialog(
                             context: context,
@@ -243,7 +243,9 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    l10n.playMethod(session.playMethod ?? l10n.none),
+                                    l10n.playMethod(session.playMethod == null
+                                        ? l10n.none
+                                        : UiUtils.getPlayMethodString(context, session.playMethod)),
                                   ),
                                   if (session.transcodeReasons != null &&
                                       session.transcodeReasons!.isNotEmpty) ...[
@@ -284,24 +286,16 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: switch (session.playMethod) {
-                              'Transcode' => Colors.orange,
-                              'DirectStream' => Colors.blue,
-                              _ => Colors.green,
-                            },
+                            color: UiUtils.getPlayMethodColor(session.playMethod),
                             shape: BoxShape.circle,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          switch (session.playMethod) {
-                            'Transcode' => l10n.transcoding,
-                            'DirectStream' => l10n.directStream,
-                            _ => l10n.directPlay,
-                          },
+                          UiUtils.getPlayMethodString(context, session.playMethod),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
-                        if (session.playMethod != 'DirectPlay') ...[
+                        if (session.playMethod == 'Transcode') ...[
                           const SizedBox(width: 4),
                           const Icon(
                             Icons.info_outline,

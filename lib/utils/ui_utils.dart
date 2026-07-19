@@ -166,6 +166,23 @@ class UiUtils {
     return ended ? '$year' : '$year-${AppLocalizations.of(context)!.present}';
   }
 
+  static Color getPlayMethodColor(String? playMethod) {
+    return switch (playMethod) {
+      'Transcode' => Colors.orange,
+      'DirectStream' => Colors.blue,
+      _ => Colors.green,
+    };
+  }
+
+  static String getPlayMethodString(BuildContext context, String? playMethod) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (playMethod) {
+      'Transcode' => l10n.transcoding,
+      'DirectStream' => l10n.directStream,
+      _ => l10n.directPlay,
+    };
+  }
+
   static String formatBitrate(num bps, {bool forceKbps = false}) {
     if (bps <= 0) return '0 kbps';
     if (forceKbps || bps < 1000000) {

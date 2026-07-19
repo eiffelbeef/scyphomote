@@ -162,7 +162,6 @@ class DeviceListScreen extends ConsumerWidget {
     Session session,
   ) {
     final authState = ref.read(authProvider);
-    final l10n = AppLocalizations.of(context)!;
     final isPlaying = session.isPlaying;
     final isPaused = session.isPaused;
     final isActive = isPlaying || isPaused;
@@ -242,17 +241,13 @@ class DeviceListScreen extends ConsumerWidget {
                               width: 8,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: session.playMethod == 'Transcode'
-                                    ? Colors.orange
-                                    : Colors.green,
+                                color: UiUtils.getPlayMethodColor(session.playMethod),
                                 shape: BoxShape.circle,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              session.playMethod == 'Transcode'
-                                  ? l10n.transcoding
-                                  : l10n.directPlay,
+                              UiUtils.getPlayMethodString(context, session.playMethod),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             if (session.playState?.positionSeconds != null &&
