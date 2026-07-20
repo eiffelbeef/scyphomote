@@ -5,7 +5,7 @@ import 'themed_svg_icon.dart';
 String? _svgAssetForLinkName(String name) => switch (name.toLowerCase()) {
       'imdb' => 'assets/imdb.svg',
       'tmdb' => 'assets/tmdb.svg',
-      'tvdb' => 'assets/tvdb.svg',
+      'thetvdb' => 'assets/tvdb.svg',
       'trakt' => 'assets/trakt.svg',
       'musicbrainz' => 'assets/musicbrainz.svg',
       'lastfm' || 'last.fm' => 'assets/lastfm.svg',
