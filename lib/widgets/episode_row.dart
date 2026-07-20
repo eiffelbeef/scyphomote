@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/jellyfin_api_service.dart';
-import '../models/media_info.dart';
-import '../utils/playback_utils.dart';
 import '../utils/ui_utils.dart';
-import '../screens/remote_control/widgets/now_playing_section.dart';
+import '../screens/item_details_screen.dart';
 import 'item_poster.dart';
 
 class EpisodeRow extends ConsumerWidget {
@@ -24,10 +22,12 @@ class EpisodeRow extends ConsumerWidget {
     final overview = item['Overview'] as String?;
 
     return InkWell(
-      onTap: () => playItemOnRemote(context, ref, item),
-      onLongPress: () {
-        final media = MediaInfo.fromJson(item);
-        showMediaDetailsSheet(context, media);
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ItemDetailsScreen(item: item),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

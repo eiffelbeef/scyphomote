@@ -35,7 +35,7 @@ class ItemCard extends ConsumerWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          if (type == 'Movie' || type == 'Series' || type == 'Season' || type == 'MusicAlbum' || type == 'MusicArtist') {
+          if (type == 'Movie' || type == 'Series' || type == 'Season' || type == 'Episode' || type == 'MusicAlbum' || type == 'MusicArtist') {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => ItemDetailsScreen(item: item),
