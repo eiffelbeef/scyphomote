@@ -15,6 +15,8 @@ class StorageService {
   static const String _hideOtherUsersSessionsKey = 'hide_other_users_sessions';
   static const String _showNonMediaCapableSessionsKey = 'show_non_media_capable_sessions';
   static const String _connectionTimeoutKey = 'connection_timeout';
+  static const String _castAndCrewExpandedKey = 'cast_and_crew_expanded';
+  static const String _externalLinksExpandedKey = 'external_links_expanded';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -201,5 +203,29 @@ class StorageService {
 
   Future<void> saveConnectionTimeout(int seconds) async {
     await _storage.write(key: _connectionTimeoutKey, value: seconds.toString());
+  }
+
+  Future<bool?> getCastAndCrewExpanded() async {
+    final val = await _storage.read(key: _castAndCrewExpandedKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveCastAndCrewExpanded(bool expanded) async {
+    await _storage.write(
+      key: _castAndCrewExpandedKey,
+      value: expanded.toString(),
+    );
+  }
+
+  Future<bool?> getExternalLinksExpanded() async {
+    final val = await _storage.read(key: _externalLinksExpandedKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveExternalLinksExpanded(bool expanded) async {
+    await _storage.write(
+      key: _externalLinksExpandedKey,
+      value: expanded.toString(),
+    );
   }
 }

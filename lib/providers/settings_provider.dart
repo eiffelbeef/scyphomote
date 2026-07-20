@@ -10,6 +10,8 @@ class SettingsState {
   final bool hideOtherUsersSessions;
   final bool showNonMediaCapableSessions;
   final int connectionTimeout;
+  final bool castAndCrewExpanded;
+  final bool externalLinksExpanded;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -19,6 +21,8 @@ class SettingsState {
     this.hideOtherUsersSessions = false,
     this.showNonMediaCapableSessions = false,
     this.connectionTimeout = 30,
+    this.castAndCrewExpanded = true,
+    this.externalLinksExpanded = true,
   });
 
   SettingsState copyWith({
@@ -29,6 +33,8 @@ class SettingsState {
     bool? hideOtherUsersSessions,
     bool? showNonMediaCapableSessions,
     int? connectionTimeout,
+    bool? castAndCrewExpanded,
+    bool? externalLinksExpanded,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -42,6 +48,8 @@ class SettingsState {
       showNonMediaCapableSessions:
           showNonMediaCapableSessions ?? this.showNonMediaCapableSessions,
       connectionTimeout: connectionTimeout ?? this.connectionTimeout,
+      castAndCrewExpanded: castAndCrewExpanded ?? this.castAndCrewExpanded,
+      externalLinksExpanded: externalLinksExpanded ?? this.externalLinksExpanded,
     );
   }
 }
@@ -66,6 +74,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final showNonMediaCapable =
         await _storageService.getShowNonMediaCapableSessions();
     final connectionTimeout = await _storageService.getConnectionTimeout();
+    final castAndCrewExp = await _storageService.getCastAndCrewExpanded();
+    final externalLinksExp = await _storageService.getExternalLinksExpanded();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -75,6 +85,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       hideOtherUsersSessions: hideSessions ?? false,
       showNonMediaCapableSessions: showNonMediaCapable ?? false,
       connectionTimeout: connectionTimeout ?? 30,
+      castAndCrewExpanded: castAndCrewExp ?? true,
+      externalLinksExpanded: externalLinksExp ?? true,
     );
   }
 
@@ -111,6 +123,16 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setConnectionTimeout(int seconds) async {
     state = state.copyWith(connectionTimeout: seconds);
     await _storageService.saveConnectionTimeout(seconds);
+  }
+
+  Future<void> setCastAndCrewExpanded(bool expanded) async {
+    state = state.copyWith(castAndCrewExpanded: expanded);
+    await _storageService.saveCastAndCrewExpanded(expanded);
+  }
+
+  Future<void> setExternalLinksExpanded(bool expanded) async {
+    state = state.copyWith(externalLinksExpanded: expanded);
+    await _storageService.saveExternalLinksExpanded(expanded);
   }
 }
 

@@ -18,6 +18,7 @@ import '../widgets/external_links_section.dart';
 import '../utils/playback_utils.dart';
 import '../utils/item_action_utils.dart';
 import '../utils/ui_utils.dart';
+import '../widgets/collapsible_section.dart';
 
 class ItemDetailsScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> item;
@@ -253,51 +254,54 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
                       ?.cast<Map<String, dynamic>>() ??
                   [];
 
+              final isCastAndCrewExpanded = ref.watch(settingsProvider).castAndCrewExpanded;
+              final isExternalLinksExpanded = ref.watch(settingsProvider).externalLinksExpanded;
+
               if (people.isEmpty && externalUrls.isEmpty) {
                 return const SliverToBoxAdapter(child: SizedBox.shrink());
               }
 
               return SliverList(
                 delegate: SliverChildListDelegate([
-                  if (externalUrls.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        l10n.externalLinks,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  if (externalUrls.isNotEmpty)
+                    CollapsibleSection(
+                      title: l10n.externalLinks,
+                      isCollapsible: true,
+                      isExpanded: isExternalLinksExpanded,
+                      onToggle: () {
+                        ref.read(settingsProvider.notifier).setExternalLinksExpanded(!isExternalLinksExpanded);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: ExternalLinksSection(externalUrls: externalUrls),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ExternalLinksSection(externalUrls: externalUrls),
-                    ),
-                  ],
-                  if (people.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        l10n.castAndCrew,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  if (people.isNotEmpty)
+                    CollapsibleSection(
+                      title: l10n.castAndCrew,
+                      isCollapsible: true,
+                      isExpanded: isCastAndCrewExpanded,
+                      onToggle: () {
+                        ref.read(settingsProvider.notifier).setCastAndCrewExpanded(!isCastAndCrewExpanded);
+                      },
+                      child: SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          itemCount: people.length,
+                          itemBuilder: (context, index) {
+                            return PersonCard(
+                              person: people[index],
+                              apiService: apiService,
+                              onTap: (id, name) {
+                                showPersonDetailSheet(context, id, name);
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        itemCount: people.length,
-                        itemBuilder: (context, index) {
-                          return PersonCard(
-                            person: people[index],
-                            apiService: apiService,
-                            onTap: (id, name) {
-                              showPersonDetailSheet(context, id, name);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
                   const SizedBox(height: 16),
                 ]),
               );
