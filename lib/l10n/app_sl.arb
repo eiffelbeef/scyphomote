@@ -298,5 +298,9 @@
     "placeholders": {
       "time": { "type": "String" }
     }
-  }
+  },
+  "useVolumeButtonsTitle": "Uporabi gumbe za glasnost",
+  "useVolumeButtonsSubtitle": "Za nadzor glasnosti uporabi gumbe namesto drsnika",
+  "volume": "Glasnost",
+  "volumeLabel": "Glasnost (0-100)"
 }

@@ -99,6 +99,7 @@ class SettingsScreen extends ConsumerWidget {
                   'pt': 'Português',
                   'ja': '日本語',
                   'zh': '简体中文',
+                  'sl': 'Slovenščina',
                 }.entries.map(
                       (e) => DropdownMenuEntry<String?>(
                         value: e.key,
