@@ -299,5 +299,9 @@
     "placeholders": {
       "time": { "type": "String" }
     }
-  }
+  },
+  "useVolumeButtonsTitle": "使用音量按钮",
+  "useVolumeButtonsSubtitle": "使用按钮代替滑块来控制音量",
+  "volume": "音量",
+  "volumeLabel": "音量 (0-100)"
 }

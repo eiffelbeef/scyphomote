@@ -298,5 +298,9 @@
     "placeholders": {
       "time": { "type": "String" }
     }
-  }
+  },
+  "useVolumeButtonsTitle": "Lautstärketasten verwenden",
+  "useVolumeButtonsSubtitle": "Schaltflächen anstelle eines Schiebereglers zur Lautstärkeregelung verwenden",
+  "volume": "Lautstärke",
+  "volumeLabel": "Lautstärke (0-100)"
 }

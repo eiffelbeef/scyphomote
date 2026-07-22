@@ -9,6 +9,7 @@ class TextInputDialog extends StatefulWidget {
   final String? initialText;
   final int maxLines;
   final TextCapitalization textCapitalization;
+  final TextInputType? keyboardType;
   final Function(String message) onSend;
 
   const TextInputDialog({
@@ -20,6 +21,7 @@ class TextInputDialog extends StatefulWidget {
     this.initialText,
     this.maxLines = 1,
     this.textCapitalization = TextCapitalization.sentences,
+    this.keyboardType,
     required this.onSend,
   });
 
@@ -32,6 +34,7 @@ class TextInputDialog extends StatefulWidget {
     String? initialText,
     int maxLines = 1,
     TextCapitalization textCapitalization = TextCapitalization.sentences,
+    TextInputType? keyboardType,
     required Function(String message) onSend,
   }) {
     showDialog(
@@ -44,6 +47,7 @@ class TextInputDialog extends StatefulWidget {
         initialText: initialText,
         maxLines: maxLines,
         textCapitalization: textCapitalization,
+        keyboardType: keyboardType,
         onSend: onSend,
       ),
     );
@@ -91,6 +95,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
               border: const OutlineInputBorder(),
             ),
             textCapitalization: widget.textCapitalization,
+            keyboardType: widget.keyboardType,
             maxLines: widget.maxLines,
             autofocus: true,
             onSubmitted: widget.maxLines == 1

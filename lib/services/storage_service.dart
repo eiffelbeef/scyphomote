@@ -17,6 +17,7 @@ class StorageService {
   static const String _connectionTimeoutKey = 'connection_timeout';
   static const String _castAndCrewExpandedKey = 'cast_and_crew_expanded';
   static const String _externalLinksExpandedKey = 'external_links_expanded';
+  static const String _useVolumeToolbarKey = 'use_volume_toolbar';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -145,6 +146,18 @@ class StorageService {
     await _storage.write(
       key: _deviceListRefreshRateKey,
       value: seconds.toString(),
+    );
+  }
+
+  Future<bool?> getUseVolumeToolbar() async {
+    final val = await _storage.read(key: _useVolumeToolbarKey);
+    return val != null ? val == 'true' : null;
+  }
+
+  Future<void> saveUseVolumeToolbar(bool enabled) async {
+    await _storage.write(
+      key: _useVolumeToolbarKey,
+      value: enabled.toString(),
     );
   }
 

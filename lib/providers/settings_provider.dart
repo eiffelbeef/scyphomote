@@ -12,6 +12,7 @@ class SettingsState {
   final int connectionTimeout;
   final bool castAndCrewExpanded;
   final bool externalLinksExpanded;
+  final bool useVolumeToolbar;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -23,6 +24,7 @@ class SettingsState {
     this.connectionTimeout = 30,
     this.castAndCrewExpanded = true,
     this.externalLinksExpanded = true,
+    this.useVolumeToolbar = false,
   });
 
   SettingsState copyWith({
@@ -35,6 +37,7 @@ class SettingsState {
     int? connectionTimeout,
     bool? castAndCrewExpanded,
     bool? externalLinksExpanded,
+    bool? useVolumeToolbar,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -50,6 +53,7 @@ class SettingsState {
       connectionTimeout: connectionTimeout ?? this.connectionTimeout,
       castAndCrewExpanded: castAndCrewExpanded ?? this.castAndCrewExpanded,
       externalLinksExpanded: externalLinksExpanded ?? this.externalLinksExpanded,
+      useVolumeToolbar: useVolumeToolbar ?? this.useVolumeToolbar,
     );
   }
 }
@@ -76,6 +80,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final connectionTimeout = await _storageService.getConnectionTimeout();
     final castAndCrewExp = await _storageService.getCastAndCrewExpanded();
     final externalLinksExp = await _storageService.getExternalLinksExpanded();
+    final useVolToolbar = await _storageService.getUseVolumeToolbar();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -87,6 +92,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       connectionTimeout: connectionTimeout ?? 30,
       castAndCrewExpanded: castAndCrewExp ?? true,
       externalLinksExpanded: externalLinksExp ?? true,
+      useVolumeToolbar: useVolToolbar ?? false,
     );
   }
 
@@ -133,6 +139,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setExternalLinksExpanded(bool expanded) async {
     state = state.copyWith(externalLinksExpanded: expanded);
     await _storageService.saveExternalLinksExpanded(expanded);
+  }
+
+  Future<void> setUseVolumeToolbar(bool useToolbar) async {
+    state = state.copyWith(useVolumeToolbar: useToolbar);
+    await _storageService.saveUseVolumeToolbar(useToolbar);
   }
 }
 

@@ -163,6 +163,19 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (val) => ref.read(settingsProvider.notifier).setConnectionTimeout(val),
           ),
           const Divider(),
+          _buildSectionHeader(context, l10n.remoteControl),
+          SwitchListTile(
+            secondary: const Icon(Icons.gamepad_rounded),
+            title: Text(l10n.useVolumeButtonsTitle),
+            subtitle: Text(l10n.useVolumeButtonsSubtitle),
+            value: settings.useVolumeToolbar,
+            onChanged: (value) {
+              ref
+                  .read(settingsProvider.notifier)
+                  .setUseVolumeToolbar(value);
+            },
+          ),
+          const Divider(),
           _buildSectionHeader(context, l10n.librarySection),
           _buildSliderTile(
             icon: Icons.grid_view_rounded,

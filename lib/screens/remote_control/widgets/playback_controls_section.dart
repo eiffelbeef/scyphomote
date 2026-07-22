@@ -5,6 +5,7 @@ import '../../../models/session.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/playback_provider.dart';
 import '../../../providers/remote_providers.dart';
+import '../../../providers/settings_provider.dart';
 import '../../../widgets/playback_progress_control.dart';
 import '../../../widgets/smooth_animated_slider.dart';
 import '../../../constants/jellyfin_commands.dart';
@@ -55,6 +56,7 @@ class PlaybackControlsSection extends ConsumerWidget {
     final nowPlaying = session.nowPlaying;
     final playState = session.playState;
     final l10n = AppLocalizations.of(context)!;
+    final useVolumeToolbar = ref.watch(settingsProvider).useVolumeToolbar;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -260,23 +262,88 @@ class PlaybackControlsSection extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: SmoothAnimatedSlider(
-                  value: currentVolume.clamp(0, 100),
-                  min: 0,
-                  max: 100,
-                  width: availableWidth,
-                  onChanged: session.ifCapableValue(
-                    JellyfinCommands.setVolume,
-                    onVolumeChanged,
-                  ),
-                  onChangeEnd: session.ifCapableValue(
-                    JellyfinCommands.setVolume,
-                    (value) {
-                      onVolumeChangeEnd(value);
-                    },
-                  ),
-                ),
+                child: useVolumeToolbar
+                    ? Center(
+                        child: Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.volume_down_rounded, size: 20),
+                                onPressed: session.ifCapable(
+                                  JellyfinCommands.volumeDown,
+                                  () {
+                                    HapticFeedback.lightImpact();
+                                    ref.read(playbackProvider.notifier).sendCommand(JellyfinCommands.volumeDown, refreshAfter: true);
+                                  }
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: session.ifCapable(
+                                  JellyfinCommands.setVolume,
+                                  () async {
+                                    TextInputDialog.show(
+                                      context: context,
+                                      title: l10n.volume,
+                                      initialText: currentVolume.toInt().toString(),
+                                      labelText: l10n.volumeLabel,
+                                      keyboardType: TextInputType.number,
+                                      onSend: (message) {
+                                        final vol = int.tryParse(message);
+                                        if (vol != null && vol >= 0 && vol <= 100) {
+                                          onVolumeChangeEnd(vol.toDouble());
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                                style: TextButton.styleFrom(
+                                  minimumSize: const Size(80, 40),
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: Text(
+                                  '${currentVolume.toInt()}%',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.volume_up_rounded, size: 20),
+                                onPressed: session.ifCapable(
+                                  JellyfinCommands.volumeUp,
+                                  () {
+                                    HapticFeedback.lightImpact();
+                                    ref.read(playbackProvider.notifier).sendCommand(JellyfinCommands.volumeUp, refreshAfter: true);
+                                  }
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : SmoothAnimatedSlider(
+                        value: currentVolume.clamp(0, 100),
+                        min: 0,
+                        max: 100,
+                        width: availableWidth,
+                        onChanged: session.ifCapableValue(
+                          JellyfinCommands.setVolume,
+                          onVolumeChanged,
+                        ),
+                        onChangeEnd: session.ifCapableValue(
+                          JellyfinCommands.setVolume,
+                          (value) {
+                            onVolumeChangeEnd(value);
+                          },
+                        ),
+                      ),
               ),
+              if (useVolumeToolbar)
+                const SizedBox(width: 48),
             ],
           ),
 

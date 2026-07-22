@@ -298,5 +298,9 @@
     "placeholders": {
       "time": { "type": "String" }
     }
-  }
+  },
+  "useVolumeButtonsTitle": "音量ボタンを使用する",
+  "useVolumeButtonsSubtitle": "音量調節にスライダーの代わりにボタンを使用する",
+  "volume": "音量",
+  "volumeLabel": "音量 (0-100)"
 }

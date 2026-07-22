@@ -298,5 +298,9 @@
     "placeholders": {
       "time": { "type": "String" }
     }
-  }
+  },
+  "useVolumeButtonsTitle": "Utiliser les boutons de volume",
+  "useVolumeButtonsSubtitle": "Utiliser des boutons au lieu d'un curseur pour le contrôle du volume",
+  "volume": "Volume",
+  "volumeLabel": "Volume (0-100)"
 }

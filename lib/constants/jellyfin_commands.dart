@@ -37,6 +37,8 @@ class JellyfinCommands {
 
   // Volume commands
   static const String setVolume = 'SetVolume';
+  static const String volumeUp = 'VolumeUp';
+  static const String volumeDown = 'VolumeDown';
   static const String mute = 'Mute';
   static const String unmute = 'Unmute';
   static const String toggleMute = 'ToggleMute';
