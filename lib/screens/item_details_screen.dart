@@ -218,11 +218,17 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
                                         onPressed: () => playItemOnRemote(context, ref, widget.item, resume: false),
                                       ),
                                     if (type == 'Series' || type == 'Season' || type == 'MusicAlbum' || type == 'MusicArtist')
-                                  FilledButton.tonalIcon(
-                                    icon: const Icon(Icons.shuffle),
-                                    label: Text(l10n.shuffle),
-                                    onPressed: () => playItemOnRemote(context, ref, widget.item, playCommand: 'PlayShuffle'),
-                                  ),
+                                      FilledButton.tonalIcon(
+                                        icon: const Icon(Icons.shuffle),
+                                        label: Text(l10n.shuffle),
+                                        onPressed: () => playItemOnRemote(context, ref, widget.item, playCommand: 'PlayShuffle'),
+                                      ),
+                                    if (type == 'MusicAlbum' || type == 'MusicArtist' || type == 'Audio')
+                                      FilledButton.tonalIcon(
+                                        icon: const Icon(Icons.queue_music_rounded),
+                                        label: Text(type == 'MusicAlbum' ? l10n.addAlbumToQueue : l10n.addToQueue),
+                                        onPressed: () => queueItemOnRemote(context, ref, widget.item),
+                                      ),
                                   ],
                                 );
                               },

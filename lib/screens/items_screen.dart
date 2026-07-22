@@ -384,13 +384,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
                         'Id': widget.parentId,
                       }, playCommand: 'PlayShuffle'),
                     ),
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.queue_music_rounded),
-                      label: Text(AppLocalizations.of(context)!.addToQueue),
-                      onPressed: () => queueItemOnRemote(context, ref, {
-                        'Id': widget.parentId,
-                      }),
-                    ),
                   ],
                 ),
               ),
