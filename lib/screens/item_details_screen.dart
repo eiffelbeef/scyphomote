@@ -15,6 +15,7 @@ import '../widgets/music_track_tile.dart';
 import '../widgets/item_card.dart';
 import '../widgets/episode_row.dart';
 import '../widgets/external_links_section.dart';
+import '../widgets/remote_control_drawer.dart';
 import '../utils/playback_utils.dart';
 import '../utils/item_action_utils.dart';
 import '../utils/ui_utils.dart';
@@ -406,6 +407,7 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
                 ),
               ),
             ),
+          const RemoteControlDrawer(),
         ],
       ),
     );
