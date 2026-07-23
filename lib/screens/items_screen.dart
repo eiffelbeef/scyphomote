@@ -4,12 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/remote_control_drawer.dart';
-import '../utils/playback_utils.dart';
 import '../utils/ui_utils.dart';
 import '../constants.dart';
-import '../widgets/music_track_tile.dart';
 import '../widgets/item_card.dart';
-import '../widgets/episode_row.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   final String title;
@@ -158,14 +155,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
 
       String? sortBy = _sortBy;
       String? sortOrder = _sortOrder;
-
-      if (widget.parentType == 'MusicAlbum') {
-        sortBy = 'ParentIndexNumber,IndexNumber,SortName';
-        sortOrder = 'Ascending';
-      } else if (widget.parentType == 'Season') {
-        sortBy = 'IndexNumber,SortName';
-        sortOrder = 'Ascending';
-      }
 
       String? includeItemTypes;
       if (widget.collectionType == 'music' && widget.isRoot && !_isSearching) {
@@ -359,101 +348,36 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
         return _buildSearchResults();
       }
 
-      switch (widget.parentType) {
-        case 'MusicAlbum':
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 16.0,
-                  runSpacing: 16.0,
-                  children: [
-                    FilledButton.icon(
-                      icon: const Icon(Icons.play_arrow_rounded),
-                      label: Text(AppLocalizations.of(context)!.play),
-                      onPressed: () => playItemOnRemote(context, ref, {
-                        'Id': widget.parentId,
-                      }),
-                    ),
-                    FilledButton.tonalIcon(
-                      icon: const Icon(Icons.shuffle_rounded),
-                      label: Text(AppLocalizations.of(context)!.shuffle),
-                      onPressed: () => playItemOnRemote(context, ref, {
-                        'Id': widget.parentId,
-                      }, playCommand: 'PlayShuffle'),
-                    ),
-                  ],
-                ),
+      return CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            sliver: SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
+                childAspectRatio: UiUtils.getItemAspectRatio(_items.firstOrNull),
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
               ),
-              Expanded(
-                child: ListView.separated(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-                  itemCount: _items.length + 1,
-                  separatorBuilder: (context, index) =>
-                      const Divider(height: 1),
-                  itemBuilder: (context, index) {
-                    if (index == _items.length) {
-                      return _buildBottomPadding(8);
-                    }
-                    final item = _items[index];
-                    return MusicTrackTile(item: item);
-                  },
-                ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ItemCard(
+                    item: _items[index],
+                    apiService: ref.read(apiServiceProvider),
+                    collectionType: widget.collectionType,
+                    isMusic: isMusic,
+                  );
+                },
+                childCount: _items.length,
               ),
-            ],
-          );
-        case 'Season':
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-            controller: _scrollController,
-            itemCount: _items.length + 1,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              if (index == _items.length) {
-                return _buildBottomPadding(8);
-              }
-              final item = _items[index];
-              return EpisodeRow(
-                item: item,
-                apiService: ref.read(apiServiceProvider),
-              );
-            },
-          );
-        default:
-          return CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: ref.watch(settingsProvider).libraryItemsPerRow,
-                    childAspectRatio: UiUtils.getItemAspectRatio(_items.firstOrNull),
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return ItemCard(
-                        item: _items[index],
-                        apiService: ref.read(apiServiceProvider),
-                        collectionType: widget.collectionType,
-                        isMusic: isMusic,
-                      );
-                    },
-                    childCount: _items.length,
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: _buildBottomPadding(16),
-              ),
-            ],
-          );
-      }
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildBottomPadding(16),
+          ),
+        ],
+      );
     }
 
     return Scaffold(
