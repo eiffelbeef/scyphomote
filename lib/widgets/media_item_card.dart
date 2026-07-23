@@ -73,7 +73,7 @@ class MediaItemCard extends ConsumerWidget {
                       imageUrl: imageUrl,
                       userData: item['UserData'],
                       placeholderIcon: collectionType == 'music'
-                          ? Icons.music_note
+                          ? Icons.music_note_rounded
                           : Icons.movie_rounded,
                       showPlayedIndicator: collectionType != 'music' && item['Type'] != 'Audio',
                     ),

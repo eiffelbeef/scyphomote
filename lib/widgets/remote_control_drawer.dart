@@ -130,7 +130,7 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                                               .colorScheme
                                               .surfaceContainerHighest,
                                           child: const Icon(
-                                            Icons.music_note,
+                                            Icons.music_note_rounded,
                                           ),
                                         ),
                                       ),

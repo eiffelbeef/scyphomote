@@ -58,7 +58,7 @@ class PersonRow extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_right,
+              Icons.chevron_right_rounded,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ],

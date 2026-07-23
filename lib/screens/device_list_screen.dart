@@ -119,7 +119,7 @@ class DeviceListScreen extends ConsumerWidget {
                             Icon(
                               sessionState.error != null
                                   ? Icons.error_outline_rounded
-                                  : Icons.devices_other,
+                                  : Icons.devices_other_rounded,
                               size: 64,
                               color: sessionState.error != null
                                   ? Theme.of(context).colorScheme.error
@@ -299,7 +299,7 @@ class DeviceListScreen extends ConsumerWidget {
                   ],
                 ],
               ),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const Icon(Icons.chevron_right_rounded),
             ),
             if (isActive && progress > 0)
               LinearProgressIndicator(

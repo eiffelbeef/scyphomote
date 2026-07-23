@@ -66,7 +66,7 @@ class ItemCard extends ConsumerWidget {
                   ItemPoster(
                     imageUrl: imageUrl,
                     userData: item['UserData'],
-                    placeholderIcon: isMusic ? Icons.music_note : Icons.movie_rounded,
+                    placeholderIcon: isMusic ? Icons.music_note_rounded : Icons.movie_rounded,
                     showPlayedIndicator: !isMusic,
                   ),
                   QueueOverlayButton(item: item),

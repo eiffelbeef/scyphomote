@@ -205,7 +205,7 @@ class _QueueSheetState extends ConsumerState<QueueSheet> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                         child: TextButton.icon(
                           onPressed: () => setState(() => _showPreviousItems = true),
-                          icon: const Icon(Icons.history),
+                          icon: const Icon(Icons.history_rounded),
                           label: Text('Show Previous Items (${previousItems.length})'),
                           style: TextButton.styleFrom(
                             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,

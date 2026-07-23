@@ -28,9 +28,9 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           _buildSectionHeader(context, l10n.premiumSection),
           ListTile(
-            leading: const Icon(Icons.star_outline),
+            leading: const Icon(Icons.star_outline_rounded),
             title: Text(l10n.premiumSubtitle),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () {
               Navigator.of(context).pushNamed(PremiumScreen.routeName);
             },
@@ -221,7 +221,7 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(),
             _buildSectionHeader(context, l10n.debugSection),
             SwitchListTile(
-              secondary: const Icon(Icons.bug_report),
+              secondary: const Icon(Icons.bug_report_rounded),
               title: Text(
                 l10n.spoofPremiumStatusTitle,
               ),
@@ -234,11 +234,11 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           _buildSectionHeader(context, l10n.aboutSection),
           ListTile(
-            leading: const Icon(Icons.info_outline),
+            leading: const Icon(Icons.info_outline_rounded),
             title: Text(
               l10n.aboutAppTitle(AppConstants.appName),
             ),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () {
               Navigator.of(context).pushNamed(AboutScreen.routeName);
             },

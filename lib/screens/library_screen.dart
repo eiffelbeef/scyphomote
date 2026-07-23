@@ -172,7 +172,7 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.filter_list_off,
+                          Icons.filter_list_off_rounded,
                           size: 64,
                           color: Colors.grey,
                         ),

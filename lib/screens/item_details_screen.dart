@@ -202,24 +202,24 @@ class _ItemDetailsScreenState extends ConsumerState<ItemDetailsScreen> {
                                   children: [
                                     if (hasResume) ...[
                                       FilledButton.icon(
-                                        icon: const Icon(Icons.play_arrow),
+                                        icon: const Icon(Icons.play_arrow_rounded),
                                         label: Text(l10n.resumeFrom(formatDuration(playbackPositionTicks ~/ 10000000))),
                                         onPressed: () => playItemOnRemote(context, ref, widget.item, resume: true),
                                       ),
                                       FilledButton.tonalIcon(
-                                        icon: const Icon(Icons.replay),
+                                        icon: const Icon(Icons.replay_rounded),
                                         label: Text(l10n.play),
                                         onPressed: () => playItemOnRemote(context, ref, widget.item, resume: false),
                                       ),
                                     ] else
                                       FilledButton.icon(
-                                        icon: const Icon(Icons.play_arrow),
+                                        icon: const Icon(Icons.play_arrow_rounded),
                                         label: Text(l10n.play),
                                         onPressed: () => playItemOnRemote(context, ref, widget.item, resume: false),
                                       ),
                                     if (type == 'Series' || type == 'Season' || type == 'MusicAlbum' || type == 'MusicArtist')
                                       FilledButton.tonalIcon(
-                                        icon: const Icon(Icons.shuffle),
+                                        icon: const Icon(Icons.shuffle_rounded),
                                         label: Text(l10n.shuffle),
                                         onPressed: () => playItemOnRemote(context, ref, widget.item, playCommand: 'PlayShuffle'),
                                       ),

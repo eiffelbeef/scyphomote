@@ -483,7 +483,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
             ? TabBar(
                 controller: _tabController,
                 tabs: const [
-                  Tab(text: 'Artists', icon: Icon(Icons.person_outline)),
+                  Tab(text: 'Artists', icon: Icon(Icons.person_outline_rounded)),
                   Tab(text: 'Albums', icon: Icon(Icons.album_outlined)),
                 ],
               )

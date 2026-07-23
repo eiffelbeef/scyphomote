@@ -250,8 +250,8 @@ class PlaybackControlsSection extends ConsumerWidget {
               IconButton(
                 icon: Icon(
                   playState?.isMuted == true
-                      ? Icons.volume_off
-                      : Icons.volume_up,
+                      ? Icons.volume_off_rounded
+                      : Icons.volume_up_rounded,
                 ),
                 onPressed: session.ifAllCapable(
                   [JellyfinCommands.mute, JellyfinCommands.unmute],
@@ -366,7 +366,7 @@ class PlaybackControlsSection extends ConsumerWidget {
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  icon: const Icon(Icons.video_library, size: 20),
+                  icon: const Icon(Icons.video_library_rounded, size: 20),
                   label: Text(l10n.browse),
                 ),
               ),

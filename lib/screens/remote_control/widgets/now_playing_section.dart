@@ -157,7 +157,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                                 .read(playbackProvider.notifier)
                                 .seek(activeSegment.endSeconds.toInt());
                           },
-                          icon: const Icon(Icons.skip_next),
+                          icon: const Icon(Icons.skip_next_rounded),
                           label: Text(l10n.skipType(activeSegment.type)),
                           style: FilledButton.styleFrom(
                             backgroundColor: Theme.of(
@@ -202,7 +202,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
                     child: Icon(
-                      Icons.info_outline,
+                      Icons.info_outline_rounded,
                       size: 20,
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -298,7 +298,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         if (session.playMethod == 'Transcode') ...[
                           const SizedBox(width: 4),
                           const Icon(
-                            Icons.info_outline,
+                            Icons.info_outline_rounded,
                             size: 14,
                             color: Colors.grey,
                           ),
@@ -342,7 +342,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         ] else ...[
                           const SizedBox(width: 4),
                           const Icon(
-                            Icons.info_outline,
+                            Icons.info_outline_rounded,
                             size: 14,
                             color: Colors.grey,
                           ),

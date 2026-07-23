@@ -24,7 +24,7 @@ class MusicTrackTile extends ConsumerWidget {
     }
 
     return ListTile(
-      leading: const Icon(Icons.music_note),
+      leading: const Icon(Icons.music_note_rounded),
       title: Text(UiUtils.getDisplayTitle(item)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

@@ -35,7 +35,7 @@ class CollapsibleSection extends StatelessWidget {
                   ),
                 ),
                 if (isCollapsible)
-                  Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+                  Icon(isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
               ],
             ),
           ),

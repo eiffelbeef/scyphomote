@@ -50,12 +50,12 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
           actions: [
             if (HomeWidgetManager.isWidgetSupported)
               IconButton(
-                icon: const Icon(Icons.add_to_home_screen),
+                icon: const Icon(Icons.add_to_home_screen_rounded),
                 tooltip: l10n.addRemoteWidget,
                 onPressed: () => _showPinWidgetOptions(context, session),
               ),
             IconButton(
-              icon: const Icon(Icons.info_outline),
+              icon: const Icon(Icons.info_outline_rounded),
               onPressed: () => _showSessionInfoDialog(context, session),
             ),
           ],
@@ -90,7 +90,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.fast_forward),
+                leading: const Icon(Icons.fast_forward_rounded),
                 title: Text(l10n.compactRemoteWidget),
                 subtitle: Text(l10n.compactRemoteWidgetSubtitle),
                 onTap: () {
@@ -170,7 +170,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                   _infoItem(
                     'Item ID',
                     session.nowPlaying!.id,
-                    onTapIcon: Icons.open_in_new,
+                    onTapIcon: Icons.open_in_new_rounded,
                     onTap: () {
                       final user = ref.read(authProvider).currentUser;
                       if (user != null) {
@@ -278,7 +278,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
     String label,
     String value, {
     VoidCallback? onTap,
-    IconData onTapIcon = Icons.info_outline,
+    IconData onTapIcon = Icons.info_outline_rounded,
   }) {
     final l10n = AppLocalizations.of(context)!;
 
