@@ -712,7 +712,23 @@ class _MediaDetailsTabsState extends State<_MediaDetailsTabs>
   void initState() {
     super.initState();
     _tabController = TabController(length: widget.tabs.length, vsync: this);
+    _tabController.addListener(_handleTabChange);
+  }
 
+  void _handleTabChange() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(_MediaDetailsTabs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tabs.length != oldWidget.tabs.length) {
+      _tabController.removeListener(_handleTabChange);
+      _tabController.dispose();
+      _tabController = TabController(length: widget.tabs.length, vsync: this);
+      _tabController.addListener(_handleTabChange);
+    }
   }
 
   @override

@@ -72,6 +72,8 @@
   "loginWithEmbyConnect": "Mit Emby Connect anmelden",
   "noEmbyServersFound": "Keine Emby-Server für dieses Konto gefunden.",
   "selectAServer": "Wähle einen Server",
+  "unknownPerson": "Unbekannte Person",
+  "appearsIn": "Erscheint in",
   "unknownServer": "Unbekannter Server",
   "requiredField": "Erforderlich",
   "embyConnectUsernameEmail": "Benutzername/E-Mail",
@@ -302,5 +304,13 @@
   "useVolumeButtonsTitle": "Lautstärketasten verwenden",
   "useVolumeButtonsSubtitle": "Schaltflächen anstelle eines Schiebereglers zur Lautstärkeregelung verwenden",
   "volume": "Lautstärke",
-  "volumeLabel": "Lautstärke (0-100)"
+  "volumeLabel": "Lautstärke (0-100)",
+  "movies": "Filme",
+  "shows": "Serien",
+  "seasons": "Staffeln",
+  "episodes": "Episoden",
+  "artists": "Künstler",
+  "albums": "Alben",
+  "songs": "Lieder",
+  "otherResults": "Andere Ergebnisse"
 }

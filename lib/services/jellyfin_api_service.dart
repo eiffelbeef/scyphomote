@@ -471,6 +471,7 @@ class JellyfinApiService {
     String? excludeItemTypes,
     String? filters,
     String? ids,
+    String? personIds,
     String? fields,
     bool recursive = false,
     int? startIndex,
@@ -484,6 +485,7 @@ class JellyfinApiService {
       'ExcludeItemTypes': ?excludeItemTypes,
       'Filters': ?filters,
       'Ids': ?ids,
+      'PersonIds': ?personIds,
       'StartIndex': ?startIndex,
       'Limit': ?limit,
       if (searchTerm != null && searchTerm.isNotEmpty) ...{

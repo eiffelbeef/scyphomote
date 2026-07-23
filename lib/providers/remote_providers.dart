@@ -118,3 +118,27 @@ final itemChildrenProvider =
         return [];
       }
     });
+
+final personItemsProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, personId) async {
+      final authState = ref.watch(authProvider);
+      final user = authState.currentUser;
+      final apiService = ref.read(apiServiceProvider);
+
+      if (user == null) return [];
+
+      try {
+        final data = await apiService.getItems(
+          user.userId,
+          personIds: personId,
+          sortBy: 'ProductionYear,SortName',
+          sortOrder: 'Descending',
+          recursive: true,
+          includeItemTypes: 'Movie,Series,Episode,Audio',
+        );
+        return (data['Items'] as List).map((e) => e as Map<String, dynamic>).toList();
+      } catch (e) {
+        logError('Failed to fetch person items: $e');
+        return [];
+      }
+    });

@@ -302,5 +302,15 @@
   "useVolumeButtonsTitle": "Utiliser les boutons de volume",
   "useVolumeButtonsSubtitle": "Utiliser des boutons au lieu d'un curseur pour le contrôle du volume",
   "volume": "Volume",
-  "volumeLabel": "Volume (0-100)"
+  "volumeLabel": "Volume (0-100)",
+  "unknownPerson": "Personne inconnue",
+  "appearsIn": "Apparaît dans",
+  "movies": "Films",
+  "shows": "Séries",
+  "seasons": "Saisons",
+  "episodes": "Épisodes",
+  "artists": "Artistes",
+  "albums": "Albums",
+  "songs": "Chansons",
+  "otherResults": "Autres résultats"
 }

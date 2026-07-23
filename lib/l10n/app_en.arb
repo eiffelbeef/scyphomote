@@ -72,6 +72,8 @@
   "loginWithEmbyConnect": "Login with Emby Connect",
   "noEmbyServersFound": "No Emby servers found on this account.",
   "selectAServer": "Select a Server",
+  "unknownPerson": "Unknown Person",
+  "appearsIn": "Appears In",
   "unknownServer": "Unknown Server",
   "requiredField": "Required",
   "embyConnectUsernameEmail": "Username/email",
@@ -302,5 +304,13 @@
   "useVolumeButtonsTitle": "Use Volume Buttons",
   "useVolumeButtonsSubtitle": "Use buttons instead of a slider for volume control",
   "volume": "Volume",
-  "volumeLabel": "Volume (0-100)"
+  "volumeLabel": "Volume (0-100)",
+  "movies": "Movies",
+  "shows": "Shows",
+  "seasons": "Seasons",
+  "episodes": "Episodes",
+  "artists": "Artists",
+  "albums": "Albums",
+  "songs": "Songs",
+  "otherResults": "Other Results"
 }

@@ -309,13 +309,13 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
     }
 
     final sections = [
-      ('Artists', 'MusicArtist'),
-      ('Albums', 'MusicAlbum'),
-      ('Songs', 'Audio'),
-      ('Shows', 'Series'),
-      ('Seasons', 'Season'),
-      ('Episodes', 'Episode'),
-      ('Movies', 'Movie'),
+      (AppLocalizations.of(context)!.movies, 'Movie'),
+      (AppLocalizations.of(context)!.shows, 'Series'),
+      (AppLocalizations.of(context)!.seasons, 'Season'),
+      (AppLocalizations.of(context)!.episodes, 'Episode'),
+      (AppLocalizations.of(context)!.artists, 'MusicArtist'),
+      (AppLocalizations.of(context)!.albums, 'MusicAlbum'),
+      (AppLocalizations.of(context)!.songs, 'Audio'),
     ];
 
     final children = <Widget>[];
@@ -332,7 +332,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen>
           .where((e) => !processedTypes.contains(e.key))
           .expand((e) => e.value)
           .toList();
-      if (others.isNotEmpty) children.add(_buildSection('Other Results', others));
+      if (others.isNotEmpty) children.add(_buildSection(AppLocalizations.of(context)!.otherResults, others));
     }
 
     children.add(_buildBottomPadding(24));

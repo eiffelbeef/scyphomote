@@ -302,5 +302,15 @@
   "useVolumeButtonsTitle": "音量ボタンを使用する",
   "useVolumeButtonsSubtitle": "音量調節にスライダーの代わりにボタンを使用する",
   "volume": "音量",
-  "volumeLabel": "音量 (0-100)"
+  "volumeLabel": "音量 (0-100)",
+  "unknownPerson": "不明な人物",
+  "appearsIn": "出演・参加",
+  "movies": "映画",
+  "shows": "番組",
+  "seasons": "シーズン",
+  "episodes": "エピソード",
+  "artists": "アーティスト",
+  "albums": "アルバム",
+  "songs": "曲",
+  "otherResults": "その他の結果"
 }
