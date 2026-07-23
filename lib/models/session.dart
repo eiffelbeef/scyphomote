@@ -76,11 +76,8 @@ class Session {
   /// Check if this session supports remote navigation commands
   bool get canUseRemote => JellyfinCommands.remoteNavigation.any(hasCapability);
 
-  /// Check if this session supports media control commands
-  bool get canControlMedia => supportsMediaControl;
-
-  /// Check if this session supports playing content remotely (Play On)
-  bool get canPlayOn => hasCapability(JellyfinCommands.displayContent);
+  /// Check if this session supports displaying views (think movie page, season page etc)
+  bool get canDisplayContent => hasCapability(JellyfinCommands.displayContent);
 
   /// Check if this session supports displaying messages
   bool get canDisplayMessages => hasCapability(JellyfinCommands.displayMessage);

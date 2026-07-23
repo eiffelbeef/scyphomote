@@ -40,8 +40,8 @@ class DeviceListScreen extends ConsumerWidget {
     final idleSessions =
         filteredSessions.where((s) => !s.isPlaying && !s.isPaused).toList()
           ..sort((a, b) {
-            if (a.canPlayOn != b.canPlayOn) {
-              return a.canPlayOn ? -1 : 1;
+            if (a.supportsMediaControl != b.supportsMediaControl) {
+              return a.supportsMediaControl ? -1 : 1;
             }
             if (a.lastActivityDate == null && b.lastActivityDate == null) {
               return 0;
@@ -217,7 +217,7 @@ class DeviceListScreen extends ConsumerWidget {
                   Row(
                     children: [
                       Text(session.clientName),
-                      if (session.canPlayOn) ...[
+                      if (session.supportsMediaControl) ...[
                         const SizedBox(width: 4),
                         Icon(
                           Icons.cast_rounded,

@@ -356,7 +356,7 @@ class PlaybackControlsSection extends ConsumerWidget {
               Expanded(
                 flex: 2,
                 child: FilledButton.tonalIcon(
-                  onPressed: session.canPlayOn
+                  onPressed: session.supportsMediaControl
                       ? () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const LibraryScreen(),
