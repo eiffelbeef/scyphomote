@@ -1,29 +1,6 @@
 {
   "@@locale": "fr",
-  "appTitle": "Scyphomote",
-  "settingsTitle": "Paramètres",
-  "premiumSection": "Premium",
-  "premiumSubtitle": "Scyphomote Premium",
-  "appearanceSection": "Apparence",
-  "themeModeTitle": "Thème",
-  "themeAuto": "Auto",
-  "themeLight": "Clair",
-  "themeDark": "Sombre",
-  "themeFollowSystemName": "Suivre le système",
-  "themeLightModeName": "Mode clair",
-  "themeDarkModeName": "Mode sombre",
-  "performanceSection": "Performance",
-  "playerRefreshRateTitle": "Taux de rafraîchissement du lecteur",
-  "deviceListAutoRefreshTitle": "Rafraîchissement auto de la liste d'appareils",
-  "listRefreshRateTitle": "Taux de rafraîchissement de la liste",
-  "librarySection": "Bibliothèque",
-  "itemsPerRowTitle": "Éléments par ligne",
-  "adminSection": "Administration",
-  "hideOtherUsersSessionsTitle": "Masquer les sessions des autres utilisateurs",
-  "showNonMediaCapableSessionsTitle": "Afficher les sessions sans capacité multimédia",
-  "debugSection": "Débogage",
-  "spoofPremiumStatusTitle": "Simuler le statut Premium",
-  "aboutSection": "À propos",
+  "aRemoteForJellyfin": "Une télécommande pour Jellyfin",
   "aboutAppTitle": "À propos de {appName}",
   "@aboutAppTitle": {
     "placeholders": {
@@ -33,6 +10,233 @@
       }
     }
   },
+  "aboutSection": "À propos",
+  "activeDevices": "Appareils actifs",
+  "addAlbumToQueue": "Ajouter l'album à la file d'attente",
+  "addRemoteWidget": "Ajouter le widget télécommande",
+  "addToQueue": "Ajouter à la file d'attente",
+  "addUser": "Ajouter un utilisateur",
+  "addressCopied": "Adresse {label} copiée dans le presse-papiers",
+  "@addressCopied": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "adminSection": "Administration",
+  "album": "Album",
+  "albums": "Albums",
+  "appTitle": "Scyphomote",
+  "appVersion": "Version de l'application",
+  "appearanceSection": "Apparence",
+  "appearsIn": "Apparaît dans",
+  "artist": "Artiste",
+  "artists": "Artistes",
+  "audio": "Audio",
+  "author": "Auteur",
+  "bitrate": "Débit",
+  "browse": "Parcourir",
+  "buyNow": "Acheter",
+  "canSeek": "Peut avancer/reculer",
+  "cancel": "Annuler",
+  "castAndCrew": "Distribution et équipe",
+  "channels": "Canaux",
+  "client": "Client",
+  "close": "Fermer",
+  "codec": "Codec",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls",
+  "connectingToSession": "Connexion à la session...",
+  "connectionTimeout": "Délai de connexion dépassé",
+  "container": "Conteneur",
+  "copyAddress": "Copier l'adresse",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "debugSection": "Débogage",
+  "delete": "Supprimer",
+  "deleteUser": "Supprimer l'utilisateur",
+  "deleteUserConfirmation": "Supprimer {username} ?",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceListAutoRefreshTitle": "Rafraîchissement auto de la liste d'appareils",
+  "deviceName": "Nom de l'appareil",
+  "directPlay": "Lecture directe",
+  "directStream": "Direct Stream",
+  "donateUsingLiberapay": "Faire un don via Liberapay",
+  "embyConnectUsernameEmail": "Nom d'utilisateur/E-mail",
+  "episodeCast": "Épisode",
+  "episodes": "Épisodes",
+  "errorLoadingCast": "Erreur de chargement de la distribution : {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorMsg": "Erreur : {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "externalLinks": "Liens externes",
+  "failedToLoadItemDetails": "Impossible de charger les détails",
+  "favorites": "Favoris",
+  "framerate": "Fréquence d'images",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "githubRepository": "Dépôt GitHub",
+  "hideOtherUsersSessionsTitle": "Masquer les sessions des autres utilisateurs",
+  "home": "Accueil",
+  "idleDevices": "Appareils inactifs",
+  "ipLookupPrompt": "Voulez-vous rechercher des informations sur l'IP {ip} sur whatismyipaddress.com ?",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "ipLookupTitle": "Recherche IP",
+  "itemsPerRowTitle": "Éléments par ligne",
+  "itemsPlural": "{count, plural, =1{1 élément} other{{count} éléments}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labelFormat": "{label} : ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "language": "Langue",
+  "languageSystem": "Système",
+  "languageTitle": "Langue",
+  "lastAdded": "Derniers ajoutés",
+  "launchedFromRemoteWidget": "Lancé depuis le widget télécommande",
+  "library": "Bibliothèque",
+  "librarySection": "Bibliothèque",
+  "licenseDev": "Sous licence GNU AGPLv3",
+  "listRefreshRateTitle": "Taux de rafraîchissement de la liste",
+  "loading": "Chargement…",
+  "login": "Connexion",
+  "loginWithEmbyConnect": "Se connecter avec Emby Connect",
+  "manageUsers": "Gérer les utilisateurs",
+  "mediaDetails": "Détails du média",
+  "message": "Message",
+  "messageAllSessions": "Envoyer un message à toutes les sessions",
+  "messageSentToSessions": "{count, plural, =1{Message envoyé à 1 session} other{Message envoyé à {count} sessions}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movies": "Films",
+  "nameAZ": "Nom (A-Z)",
+  "nameZA": "Nom (Z-A)",
+  "noActiveDevicesFound": "Aucun appareil actif trouvé",
+  "noActiveSessionSelected": "Aucune session active sélectionnée",
+  "noCastInfo": "Aucune information sur la distribution disponible",
+  "noEmbyServersFound": "Aucun serveur Emby trouvé sur ce compte.",
+  "noMediaPlaying": "Aucun média en cours de lecture",
+  "noMediaSourcesFound": "Aucune source média trouvée",
+  "noOverviewAvailable": "Aucune biographie disponible",
+  "noResultsFound": "Aucun résultat",
+  "noSavedUsers": "Aucun utilisateur enregistré",
+  "noSessionSelected": "Aucune session sélectionnée",
+  "noStreamAvailable": "Aucun {streamType} disponible",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": {
+        "type": "String"
+      }
+    }
+  },
+  "none": "Aucun",
+  "notAuthenticated": "Non authentifié",
+  "oldestAdded": "Plus anciens",
+  "open": "Ouvrir",
+  "otherResults": "Autres résultats",
+  "password": "Mot de passe",
+  "performanceSection": "Performance",
+  "play": "Lecture",
+  "playMethod": "Méthode : {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "playableMediaTypes": "Types de médias lisibles :",
+  "playbackDetails": "Détails de lecture",
+  "playerRefreshRateTitle": "Taux de rafraîchissement du lecteur",
+  "playstateCommands": "Commandes d'état de lecture :",
+  "pleaseEnterServerUrl": "Veuillez entrer l'URL du serveur",
+  "pleaseEnterUsername": "Veuillez entrer le nom d'utilisateur",
+  "pleaseLogInFirst": "Veuillez d'abord vous connecter",
+  "premiered": "Première",
+  "premiumDescription": "L'achat de Premium vous donne accès à toutes les fonctionnalités premium, actuelles et futures, pour toujours.",
+  "premiumFeatureWidget": "Widget d'écran d'accueil (contrôler les appareils sans ouvrir l'application)",
+  "premiumFeatures": "Fonctionnalités Premium :",
+  "premiumSection": "Premium",
+  "premiumSubtitle": "Scyphomote Premium",
+  "premiumThankYou": "Merci de soutenir l'application. Vous avez désormais accès à toutes les fonctionnalités premium, actuelles et futures !",
+  "present": "Present",
+  "privacyPolicy": "Politique de confidentialité",
+  "privacyPolicyDesc": "Scyphomote ne collecte, ne stocke et ne traite aucune de vos données personnelles. Toute communication se fait directement entre votre appareil et votre serveur Jellyfin.",
+  "privateIpMessage": "L'IP {ip} est une adresse privée, généralement utilisée au sein d'un réseau local ou d'un VPN.",
+  "@privateIpMessage": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "privateIpTitle": "IP Privée",
+  "rateAndReview": "Noter et Évaluer",
+  "remote": "Télécommande",
+  "remoteControl": "Télécommande",
+  "remoteEndpoint": "IP Distante",
+  "requiredField": "Requis",
+  "resolution": "Résolution",
+  "restorePurchases": "Restaurer les achats",
+  "resumeFrom": "Reprendre à {time}",
+  "@resumeFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewTheApp": "Évaluer l'application",
+  "reviewTheAppDesc": "Si vous appréciez {appName}, n'hésitez pas à laisser un avis. Cela aide d'autres utilisateurs à découvrir l'application et soutient le développement !",
+  "@reviewTheAppDesc": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "seasonCast": "Saison",
+  "seasons": "Saisons",
   "secondsPlural": "{count, plural, =1{1 seconde} other{{count} secondes}}",
   "@secondsPlural": {
     "placeholders": {
@@ -49,268 +253,92 @@
       }
     }
   },
-  "itemsPlural": "{count, plural, =1{1 élément} other{{count} éléments}}",
-  "@itemsPlural": {
+  "selectAServer": "Sélectionnez un serveur",
+  "send": "Envoyer",
+  "serverUrl": "URL du serveur",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "sessionId": "ID de session",
+  "sessionInfo": "Informations de session",
+  "sessionNotFoundOrOffline": "Session introuvable ou hors ligne",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 session recevra ce message} other{{count} sessions recevront ce message}}",
+  "@sessionsWillReceiveMessage": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "cancel": "Annuler",
-  "send": "Envoyer",
-  "aRemoteForJellyfin": "Une télécommande pour Jellyfin",
-  "version": "Version {version}",
-  "@version": {
-    "placeholders": {
-      "version": { "type": "String" }
-    }
-  },
-  "githubRepository": "Dépôt GitHub",
-  "donateUsingLiberapay": "Faire un don via Liberapay",
-  "login": "Connexion",
-  "loginWithEmbyConnect": "Se connecter avec Emby Connect",
-  "noEmbyServersFound": "Aucun serveur Emby trouvé sur ce compte.",
-  "selectAServer": "Sélectionnez un serveur",
-  "unknownServer": "Serveur inconnu",
-  "requiredField": "Requis",
-  "embyConnectUsernameEmail": "Nom d'utilisateur/E-mail",
-  "tryOnJellyfinDemoServer": "Essayer sur le serveur démo de Jellyfin",
-  "manageUsers": "Gérer les utilisateurs",
-  "remoteControl": "Télécommande",
-  "noSessionSelected": "Aucune session sélectionnée",
-  "sessionInfo": "Informations de session",
-  "close": "Fermer",
-  "notAuthenticated": "Non authentifié",
-  "library": "Bibliothèque",
-  "errorMsg": "Erreur : {error}",
-  "@errorMsg": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "typeToSearch": "Rechercher...",
-  "noResultsFound": "Aucun résultat",
-  "lastAdded": "Derniers ajoutés",
-  "oldestAdded": "Plus anciens",
-  "nameAZ": "Nom (A-Z)",
-  "nameZA": "Nom (Z-A)",
-  "noSavedUsers": "Aucun utilisateur enregistré",
-  "deleteUser": "Supprimer l'utilisateur",
-  "deleteUserConfirmation": "Supprimer {username} ?",
-  "@deleteUserConfirmation": {
-    "placeholders": {
-      "username": { "type": "String" }
-    }
-  },
-  "delete": "Supprimer",
-  "addUser": "Ajouter un utilisateur",
-  "unlockPremium": "Premium & Soutien",
-  "supportFutureDevelopment": "Soutenir le développement futur",
-  "pleaseLogInFirst": "Veuillez d'abord vous connecter",
-  "connectingToSession": "Connexion à la session...",
-  "sessionNotFoundOrOffline": "Session introuvable ou hors ligne",
-  "launchedFromRemoteWidget": "Lancé depuis le widget télécommande",
-  "addressCopied": "Adresse {label} copiée dans le presse-papiers",
-  "@addressCopied": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "author": "Auteur",
-  "privacyPolicy": "Politique de confidentialité",
-  "privacyPolicyDesc": "Scyphomote ne collecte, ne stocke et ne traite aucune de vos données personnelles. Toute communication se fait directement entre votre appareil et votre serveur Jellyfin.",
-  "supportDeveloper": "Soutenir le développeur",
-  "licenseDev": "Sous licence GNU AGPLv3",
-  "copyrightEiffelBeef": "© 2026 EiffelBeef",
-  "copyAddress": "Copier l'adresse",
-  "browse": "Parcourir",
-  "remote": "Télécommande",
-  "failedToLoadItemDetails": "Impossible de charger les détails",
-  "noStreamAvailable": "Aucun {streamType} disponible",
-  "@noStreamAvailable": {
-    "placeholders": {
-      "streamType": { "type": "String" }
-    }
-  },
-  "none": "Aucun",
+  "settingsTitle": "Paramètres",
+  "showCast": "Série",
+  "showLess": "Voir moins",
+  "showMore": "Voir plus",
+  "showNonMediaCapableSessionsTitle": "Afficher les sessions sans capacité multimédia",
+  "shows": "Séries",
+  "shuffle": "Aléatoire",
+  "size": "Taille",
   "skipType": "Passer {type}",
   "@skipType": {
     "placeholders": {
-      "type": { "type": "String" }
-    }
-  },
-  "playbackDetails": "Détails de lecture",
-  "playMethod": "Méthode : {method}",
-  "@playMethod": {
-    "placeholders": {
-      "method": { "type": "String" }
-    }
-  },
-  "mediaDetails": "Détails du média",
-  "labelFormat": "{label} : ",
-  "@labelFormat": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "noCastInfo": "Aucune information sur la distribution disponible",
-  "errorLoadingCast": "Erreur de chargement de la distribution : {error}",
-  "@errorLoadingCast": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "buyNow": "Acheter",
-  "languageTitle": "Langue",
-  "languageSystem": "Système",
-  "serverUrl": "URL du serveur",
-  "serverUrlHint": "http://192.168.1.100:8096",
-  "username": "Nom d'utilisateur",
-  "password": "Mot de passe",
-  "pleaseEnterServerUrl": "Veuillez entrer l'URL du serveur",
-  "pleaseEnterUsername": "Veuillez entrer le nom d'utilisateur",
-  "youArePremium": "Vous êtes Premium !",
-  "unlockScyphomotePremium": "Débloquer Scyphomote Premium",
-  "premiumThankYou": "Merci de soutenir l'application. Vous avez désormais accès à toutes les fonctionnalités premium, actuelles et futures !",
-  "premiumDescription": "L'achat de Premium vous donne accès à toutes les fonctionnalités premium, actuelles et futures, pour toujours.",
-  "premiumFeatures": "Fonctionnalités Premium :",
-  "premiumFeatureWidget": "Widget d'écran d'accueil (contrôler les appareils sans ouvrir l'application)",
-  "addRemoteWidget": "Ajouter le widget télécommande",
-  "widgetPinned": "Widget épinglé sur l'écran d'accueil",
-  "widgetPinFailed": "Impossible d'épingler le widget : {error}",
-  "@widgetPinFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "playableMediaTypes": "Types de médias lisibles :",
-  "supportedCommands": "Commandes supportées :",
-  "playstateCommands": "Commandes d'état de lecture :",
-  "noActiveDevicesFound": "Aucun appareil actif trouvé",
-  "startPlayingMediaOnJellyfinClient": "Commencez à lire un média sur un client Jellyfin",
-  "activeDevices": "Appareils actifs",
-  "idleDevices": "Appareils inactifs",
-  "messageAllSessions": "Envoyer un message à toutes les sessions",
-  "sessionsWillReceiveMessage": "{count, plural, =1{1 session recevra ce message} other{{count} sessions recevront ce message}}",
-  "@sessionsWillReceiveMessage": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "messageSentToSessions": "{count, plural, =1{Message envoyé à 1 session} other{Message envoyé à {count} sessions}}",
-  "@messageSentToSessions": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "noActiveSessionSelected": "Aucune session active sélectionnée",
-  "transcoding": "Transcodage",
-  "directPlay": "Lecture directe",
-  "directStream": "Direct Stream",
-  "noMediaPlaying": "Aucun média en cours de lecture",
-  "useRemoteOrBrowse": "Utilisez la télécommande ou parcourez la bibliothèque pour lire",
-  "castAndCrew": "Distribution et équipe",
-  "message": "Message",
-  "container": "Conteneur",
-  "size": "Taille",
-  "video": "Vidéo",
-  "audio": "Audio",
-  "codec": "Codec",
-  "resolution": "Résolution",
-  "bitrate": "Débit",
-  "framerate": "Fréquence d'images",
-  "language": "Langue",
-  "channels": "Canaux",
-  "noMediaSourcesFound": "Aucune source média trouvée",
-  "user": "Utilisateur",
-  "client": "Client",
-  "deviceName": "Nom de l'appareil",
-  "appVersion": "Version de l'application",
-  "sessionId": "ID de session",
-  "canSeek": "Peut avancer/reculer",
-  "supportsMediaControl": "Supporte le contrôle média",
-  "supportsRemoteControl": "Supporte la télécommande",
-  "transcodeReasons": "Raisons du transcodage :",
-  "remoteEndpoint": "IP Distante",
-  "ipLookupTitle": "Recherche IP",
-  "ipLookupPrompt": "Voulez-vous rechercher des informations sur l'IP {ip} sur whatismyipaddress.com ?",
-  "@ipLookupPrompt": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "open": "Ouvrir",
-  "privateIpTitle": "IP Privée",
-  "privateIpMessage": "L'IP {ip} est une adresse privée, généralement utilisée au sein d'un réseau local ou d'un VPN.",
-  "@privateIpMessage": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "play": "Lecture",
-  "shuffle": "Aléatoire",
-  "noOverviewAvailable": "Aucune biographie disponible",
-  "externalLinks": "Liens externes",
-  "supportAppTitle": "Soutenir l'application",
-  "supportAppDescription": "Si vous souhaitez aider davantage au développement, vous pouvez utiliser ces options. Note : celles-ci ne débloquent aucune fonctionnalité supplémentaire.",
-  "supportTier1": "Soutien Niveau 1",
-  "supportTier2": "Soutien Niveau 2",
-  "supportTier3": "Soutien Niveau 3",
-  "supportThankYou": "Merci beaucoup pour votre soutien !",
-  "supportContactMessage": "N'hésitez pas à m'envoyer un e-mail pour quoi que ce soit : retours, idées, ou juste pour dire bonjour !",
-  "supportHistory": "Historique",
-  "restorePurchases": "Restaurer les achats",
-  "showMore": "Voir plus",
-  "showLess": "Voir moins",
-  "episodeCast": "Épisode",
-  "seasonCast": "Saison",
-  "showCast": "Série",
-  "reviewTheApp": "Évaluer l'application",
-  "reviewTheAppDesc": "Si vous appréciez {appName}, n'hésitez pas à laisser un avis. Cela aide d'autres utilisateurs à découvrir l'application et soutient le développement !",
-  "@reviewTheAppDesc": {
-    "placeholders": {
-      "appName": {
-        "type": "String",
-        "example": "Scyphomote"
+      "type": {
+        "type": "String"
       }
     }
   },
-  "rateAndReview": "Noter et Évaluer",
-  "premiered": "Première",
-  "home": "Accueil",
-  "favorites": "Favoris",
-  "addToQueue": "Ajouter à la file d'attente",
-  "addAlbumToQueue": "Ajouter l'album à la file d'attente",
-  "loading": "Chargement…",
-  "album": "Album",
-  "artist": "Artiste",
-  "connectionTimeout": "Délai de connexion dépassé",
-  "fullRemoteWidget": "Full Remote Widget",
-  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
-  "compactRemoteWidget": "Compact Remote Widget",
-  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
-,
-  "present": "Present"
-,
-  "resumeFrom": "Reprendre à {time}",
-  "@resumeFrom": {
+  "songs": "Chansons",
+  "spoofPremiumStatusTitle": "Simuler le statut Premium",
+  "startPlayingMediaOnJellyfinClient": "Commencez à lire un média sur un client Jellyfin",
+  "supportAppDescription": "Si vous souhaitez aider davantage au développement, vous pouvez utiliser ces options. Note : celles-ci ne débloquent aucune fonctionnalité supplémentaire.",
+  "supportAppTitle": "Soutenir l'application",
+  "supportContactMessage": "N'hésitez pas à m'envoyer un e-mail pour quoi que ce soit : retours, idées, ou juste pour dire bonjour !",
+  "supportDeveloper": "Soutenir le développeur",
+  "supportFutureDevelopment": "Soutenir le développement futur",
+  "supportHistory": "Historique",
+  "supportThankYou": "Merci beaucoup pour votre soutien !",
+  "supportTier1": "Soutien Niveau 1",
+  "supportTier2": "Soutien Niveau 2",
+  "supportTier3": "Soutien Niveau 3",
+  "supportedCommands": "Commandes supportées :",
+  "supportsMediaControl": "Supporte le contrôle média",
+  "supportsRemoteControl": "Supporte la télécommande",
+  "themeAuto": "Auto",
+  "themeDark": "Sombre",
+  "themeDarkModeName": "Mode sombre",
+  "themeFollowSystemName": "Suivre le système",
+  "themeLight": "Clair",
+  "themeLightModeName": "Mode clair",
+  "themeModeTitle": "Thème",
+  "transcodeReasons": "Raisons du transcodage :",
+  "transcoding": "Transcodage",
+  "tryOnJellyfinDemoServer": "Essayer sur le serveur démo de Jellyfin",
+  "typeToSearch": "Rechercher...",
+  "unknownPerson": "Personne inconnue",
+  "unknownServer": "Serveur inconnu",
+  "unlockPremium": "Premium & Soutien",
+  "unlockScyphomotePremium": "Débloquer Scyphomote Premium",
+  "useRemoteOrBrowse": "Utilisez la télécommande ou parcourez la bibliothèque pour lire",
+  "useVolumeButtonsSubtitle": "Utiliser des boutons au lieu d'un curseur pour le contrôle du volume",
+  "useVolumeButtonsTitle": "Utiliser les boutons de volume",
+  "user": "Utilisateur",
+  "username": "Nom d'utilisateur",
+  "version": "Version {version}",
+  "@version": {
     "placeholders": {
-      "time": { "type": "String" }
+      "version": {
+        "type": "String"
+      }
     }
   },
-  "useVolumeButtonsTitle": "Utiliser les boutons de volume",
-  "useVolumeButtonsSubtitle": "Utiliser des boutons au lieu d'un curseur pour le contrôle du volume",
+  "video": "Vidéo",
   "volume": "Volume",
   "volumeLabel": "Volume (0-100)",
-  "unknownPerson": "Personne inconnue",
-  "appearsIn": "Apparaît dans",
-  "movies": "Films",
-  "shows": "Séries",
-  "seasons": "Saisons",
-  "episodes": "Épisodes",
-  "artists": "Artistes",
-  "albums": "Albums",
-  "songs": "Chansons",
-  "otherResults": "Autres résultats"
+  "widgetPinFailed": "Impossible d'épingler le widget : {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetPinned": "Widget épinglé sur l'écran d'accueil",
+  "youArePremium": "Vous êtes Premium !"
 }

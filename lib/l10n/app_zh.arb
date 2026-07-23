@@ -1,29 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "Scyphomote",
-  "settingsTitle": "设置",
-  "premiumSection": "高级版",
-  "premiumSubtitle": "Scyphomote 高级版",
-  "appearanceSection": "外观",
-  "themeModeTitle": "主题模式",
-  "themeAuto": "自动",
-  "themeLight": "浅色",
-  "themeDark": "深色",
-  "themeFollowSystemName": "跟随系统",
-  "themeLightModeName": "浅色模式",
-  "themeDarkModeName": "深色模式",
-  "performanceSection": "性能",
-  "playerRefreshRateTitle": "播放器刷新率",
-  "deviceListAutoRefreshTitle": "设备列表自动刷新",
-  "listRefreshRateTitle": "列表刷新率",
-  "librarySection": "媒体库",
-  "itemsPerRowTitle": "每行项目数",
-  "adminSection": "管理",
-  "hideOtherUsersSessionsTitle": "隐藏其他用户的会话",
-  "showNonMediaCapableSessionsTitle": "显示无媒体功能的会话",
-  "debugSection": "调试",
-  "spoofPremiumStatusTitle": "伪装高级版状态",
-  "aboutSection": "关于",
+  "aRemoteForJellyfin": "Jellyfin 遥控器",
   "aboutAppTitle": "关于 {appName}",
   "@aboutAppTitle": {
     "placeholders": {
@@ -33,6 +10,234 @@
       }
     }
   },
+  "aboutSection": "关于",
+  "activeDevices": "活动设备",
+  "addAlbumToQueue": "将专辑添加到队列",
+  "addRemoteWidget": "添加遥控小部件",
+  "addToQueue": "添加到队列",
+  "addUser": "添加用户",
+  "addressCopied": "{label} 地址已复制到剪贴板",
+  "@addressCopied": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "adminSection": "管理",
+  "album": "专辑",
+  "albums": "专辑",
+  "appTitle": "Scyphomote",
+  "appVersion": "应用版本",
+  "appearanceSection": "外观",
+  "appearsIn": "出现于",
+  "artist": "艺术家",
+  "artists": "艺术家",
+  "audio": "音频",
+  "author": "作者",
+  "bitrate": "比特率",
+  "browse": "浏览",
+  "buyNow": "立即购买",
+  "canSeek": "支持跳转",
+  "cancel": "取消",
+  "castAndCrew": "演职员",
+  "channels": "声道",
+  "client": "客户端",
+  "close": "关闭",
+  "codec": "编解码器",
+  "compactRemoteWidget": "Compact Remote Widget",
+  "compactRemoteWidgetSubtitle": "Single line with basic playback controls",
+  "connectingToSession": "正在连接会话...",
+  "connectionTimeout": "连接超时",
+  "container": "容器",
+  "copyAddress": "复制地址",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "debugSection": "调试",
+  "delete": "删除",
+  "deleteUser": "删除用户",
+  "deleteUserConfirmation": "删除 {username}？",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceListAutoRefreshTitle": "设备列表自动刷新",
+  "deviceName": "设备名称",
+  "directPlay": "直接播放",
+  "directStream": "直接流",
+  "donateUsingLiberapay": "使用 Liberapay 捐赠",
+  "embyConnectUsernameEmail": "用户名/电子邮件",
+  "episodeCast": "剧集",
+  "episodes": "剧集",
+  "errorLoadingCast": "加载演职员出错: {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorMsg": "错误: {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "externalLinks": "外部链接",
+  "failedToLoadItemDetails": "加载项目详细信息失败",
+  "favorites": "收藏",
+  "framerate": "帧率",
+  "fullRemoteWidget": "Full Remote Widget",
+  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
+  "githubRepository": "GitHub 仓库",
+  "hideOtherUsersSessionsTitle": "隐藏其他用户的会话",
+  "home": "首页",
+  "idleDevices": "空闲设备",
+  "ipLookupPrompt": "您要在 whatismyipaddress.com 上查询 IP {ip} 的信息吗？",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "ipLookupTitle": "IP 查询",
+  "itemsPerRowTitle": "每行项目数",
+  "itemsPlural": "{count, plural, =1{1 个项目} other{{count} 个项目}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labelFormat": "{label}: ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "language": "语言",
+  "languageSystem": "系统",
+  "languageTitle": "语言",
+  "lastAdded": "最后添加",
+  "launchedFromRemoteWidget": "从遥控器小部件启动",
+  "library": "媒体库",
+  "librarySection": "媒体库",
+  "licenseDev": "根据 GNU AGPLv3 获得许可",
+  "listRefreshRateTitle": "列表刷新率",
+  "loading": "加载中…",
+  "login": "登录",
+  "loginWithEmbyConnect": "使用 Emby Connect 登录",
+  "manageUsers": "管理用户",
+  "mediaDetails": "媒体详情",
+  "message": "消息",
+  "messageAllSessions": "向所有会话发送消息",
+  "messageSentToSessions": "{count, plural, =1{消息已发送至 1 个会话} other{消息已发送至 {count} 个会话}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movies": "电影",
+  "nameAZ": "名称 (A-Z)",
+  "nameZA": "名称 (Z-A)",
+  "noActiveDevicesFound": "未找到活动设备",
+  "noActiveSessionSelected": "未选择活动会话",
+  "noCastInfo": "没有可用的演职员信息",
+  "noEmbyServersFound": "此帐户上未找到 Emby 服务器。",
+  "noMediaPlaying": "没有正在播放的媒体",
+  "noMediaSourcesFound": "未找到媒体源",
+  "noOverviewAvailable": "无传记可用",
+  "noResultsFound": "未找到结果",
+  "noSavedUsers": "没有已保存的用户",
+  "noSessionSelected": "未选择会话",
+  "noStreamAvailable": "没有可用的 {streamType}",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": {
+        "type": "String"
+      }
+    }
+  },
+  "none": "无",
+  "notAuthenticated": "未验证",
+  "oldestAdded": "最早添加",
+  "open": "打开",
+  "otherResults": "其他结果",
+  "password": "密码",
+  "performanceSection": "性能",
+  "play": "播放",
+  "playMethod": "方法: {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "playableMediaTypes": "可播放媒体类型：",
+  "playbackDetails": "播放详情",
+  "playerRefreshRateTitle": "播放器刷新率",
+  "playstateCommands": "播放状态命令：",
+  "pleaseEnterServerUrl": "请输入服务器 URL",
+  "pleaseEnterUsername": "请输入用户名",
+  "pleaseLogInFirst": "请先登录",
+  "premiered": "首播时间",
+  "premiumDescription": "购买高级版后，您将永久获得当前和未来所有高级功能的访问权限。",
+  "premiumFeatureWidget": "主屏幕小部件（无需打开应用即可控制设备）",
+  "premiumFeatures": "高级功能：",
+  "premiumSection": "高级版",
+  "premiumSubtitle": "Scyphomote 高级版",
+  "premiumThankYou": "感谢您对本应用的支持。您现在可以永久访问当前和未来的所有高级功能！",
+  "present": "Present",
+  "privacyPolicy": "隐私政策",
+  "privacyPolicyDesc": "Scyphomote 不会收集、存储或处理您的任何个人数据。所有通信都直接在您的设备和 Jellyfin 服务器之间进行。",
+  "privateIpMessage": "IP {ip} 是一个私有地址，通常用于本地网络或 VPN 内。",
+  "@privateIpMessage": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "privateIpTitle": "私有 IP",
+  "rateAndReview": "评分和评价",
+  "remote": "遥控",
+  "remoteControl": "遥控器",
+  "remoteEndpoint": "远程 IP",
+  "requiredField": "必填",
+  "resolution": "分辨率",
+  "restorePurchases": "恢复购买",
+  "resumeFrom": "从 {time} 恢复",
+  "@resumeFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewTheApp": "评价本应用",
+  "reviewTheAppDesc": "如果您喜欢使用 {appName}，请考虑留下您的评价。这有助于其他人找到该应用并支持开发！",
+  "@reviewTheAppDesc": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "search": "搜索...",
+  "seasonCast": "季",
+  "seasons": "季",
   "secondsPlural": "{count, plural, =1{1 秒} other{{count} 秒}}",
   "@secondsPlural": {
     "placeholders": {
@@ -49,269 +254,92 @@
       }
     }
   },
-  "itemsPlural": "{count, plural, =1{1 个项目} other{{count} 个项目}}",
-  "@itemsPlural": {
+  "selectAServer": "选择服务器",
+  "send": "发送",
+  "serverUrl": "服务器 URL",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "sessionId": "会话 ID",
+  "sessionInfo": "会话信息",
+  "sessionNotFoundOrOffline": "会话未找到或已离线",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 个会话将收到此消息} other{{count} 个会话将收到此消息}}",
+  "@sessionsWillReceiveMessage": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "cancel": "取消",
-  "send": "发送",
-  "aRemoteForJellyfin": "Jellyfin 遥控器",
-  "version": "版本 {version}",
-  "@version": {
-    "placeholders": {
-      "version": { "type": "String" }
-    }
-  },
-  "githubRepository": "GitHub 仓库",
-  "donateUsingLiberapay": "使用 Liberapay 捐赠",
-  "login": "登录",
-  "loginWithEmbyConnect": "使用 Emby Connect 登录",
-  "noEmbyServersFound": "此帐户上未找到 Emby 服务器。",
-  "selectAServer": "选择服务器",
-  "unknownServer": "未知服务器",
-  "requiredField": "必填",
-  "embyConnectUsernameEmail": "用户名/电子邮件",
-  "tryOnJellyfinDemoServer": "在 Jellfyn 演示服务器上试用",
-  "manageUsers": "管理用户",
-  "remoteControl": "遥控器",
-  "noSessionSelected": "未选择会话",
-  "sessionInfo": "会话信息",
-  "close": "关闭",
-  "notAuthenticated": "未验证",
-  "library": "媒体库",
-  "errorMsg": "错误: {error}",
-  "@errorMsg": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "search": "搜索...",
-  "typeToSearch": "输入以搜索...",
-  "noResultsFound": "未找到结果",
-  "lastAdded": "最后添加",
-  "oldestAdded": "最早添加",
-  "nameAZ": "名称 (A-Z)",
-  "nameZA": "名称 (Z-A)",
-  "noSavedUsers": "没有已保存的用户",
-  "deleteUser": "删除用户",
-  "deleteUserConfirmation": "删除 {username}？",
-  "@deleteUserConfirmation": {
-    "placeholders": {
-      "username": { "type": "String" }
-    }
-  },
-  "delete": "删除",
-  "addUser": "添加用户",
-  "unlockPremium": "高级版和支持",
-  "supportFutureDevelopment": "支持未来开发",
-  "pleaseLogInFirst": "请先登录",
-  "connectingToSession": "正在连接会话...",
-  "sessionNotFoundOrOffline": "会话未找到或已离线",
-  "launchedFromRemoteWidget": "从遥控器小部件启动",
-  "addressCopied": "{label} 地址已复制到剪贴板",
-  "@addressCopied": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "author": "作者",
-  "privacyPolicy": "隐私政策",
-  "privacyPolicyDesc": "Scyphomote 不会收集、存储或处理您的任何个人数据。所有通信都直接在您的设备和 Jellyfin 服务器之间进行。",
-  "supportDeveloper": "支持开发者",
-  "licenseDev": "根据 GNU AGPLv3 获得许可",
-  "copyrightEiffelBeef": "© 2026 EiffelBeef",
-  "copyAddress": "复制地址",
-  "browse": "浏览",
-  "remote": "遥控",
-  "failedToLoadItemDetails": "加载项目详细信息失败",
-  "noStreamAvailable": "没有可用的 {streamType}",
-  "@noStreamAvailable": {
-    "placeholders": {
-      "streamType": { "type": "String" }
-    }
-  },
-  "none": "无",
+  "settingsTitle": "设置",
+  "showCast": "节目",
+  "showLess": "显示更少",
+  "showMore": "显示更多",
+  "showNonMediaCapableSessionsTitle": "显示无媒体功能的会话",
+  "shows": "剧集",
+  "shuffle": "随机播放",
+  "size": "大小",
   "skipType": "跳过 {type}",
   "@skipType": {
     "placeholders": {
-      "type": { "type": "String" }
-    }
-  },
-  "playbackDetails": "播放详情",
-  "playMethod": "方法: {method}",
-  "@playMethod": {
-    "placeholders": {
-      "method": { "type": "String" }
-    }
-  },
-  "mediaDetails": "媒体详情",
-  "labelFormat": "{label}: ",
-  "@labelFormat": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "noCastInfo": "没有可用的演职员信息",
-  "errorLoadingCast": "加载演职员出错: {error}",
-  "@errorLoadingCast": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "buyNow": "立即购买",
-  "languageTitle": "语言",
-  "languageSystem": "系统",
-  "serverUrl": "服务器 URL",
-  "serverUrlHint": "http://192.168.1.100:8096",
-  "username": "用户名",
-  "password": "密码",
-  "pleaseEnterServerUrl": "请输入服务器 URL",
-  "pleaseEnterUsername": "请输入用户名",
-  "youArePremium": "您是高级版用户！",
-  "unlockScyphomotePremium": "解锁 Scyphomote 高级版",
-  "premiumThankYou": "感谢您对本应用的支持。您现在可以永久访问当前和未来的所有高级功能！",
-  "premiumDescription": "购买高级版后，您将永久获得当前和未来所有高级功能的访问权限。",
-  "premiumFeatures": "高级功能：",
-  "premiumFeatureWidget": "主屏幕小部件（无需打开应用即可控制设备）",
-  "addRemoteWidget": "添加遥控小部件",
-  "widgetPinned": "小部件已固定到主屏幕",
-  "widgetPinFailed": "固定小部件失败: {error}",
-  "@widgetPinFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "playableMediaTypes": "可播放媒体类型：",
-  "supportedCommands": "支持的命令：",
-  "playstateCommands": "播放状态命令：",
-  "noActiveDevicesFound": "未找到活动设备",
-  "startPlayingMediaOnJellyfinClient": "在 Jellyfin 客户端上开始播放媒体",
-  "activeDevices": "活动设备",
-  "idleDevices": "空闲设备",
-  "messageAllSessions": "向所有会话发送消息",
-  "sessionsWillReceiveMessage": "{count, plural, =1{1 个会话将收到此消息} other{{count} 个会话将收到此消息}}",
-  "@sessionsWillReceiveMessage": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "messageSentToSessions": "{count, plural, =1{消息已发送至 1 个会话} other{消息已发送至 {count} 个会话}}",
-  "@messageSentToSessions": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "noActiveSessionSelected": "未选择活动会话",
-  "transcoding": "转码",
-  "directPlay": "直接播放",
-  "directStream": "直接流",
-  "noMediaPlaying": "没有正在播放的媒体",
-  "useRemoteOrBrowse": "使用遥控器或浏览媒体库进行播放",
-  "castAndCrew": "演职员",
-  "message": "消息",
-  "container": "容器",
-  "size": "大小",
-  "video": "视频",
-  "audio": "音频",
-  "codec": "编解码器",
-  "resolution": "分辨率",
-  "bitrate": "比特率",
-  "framerate": "帧率",
-  "language": "语言",
-  "channels": "声道",
-  "noMediaSourcesFound": "未找到媒体源",
-  "user": "用户",
-  "client": "客户端",
-  "deviceName": "设备名称",
-  "appVersion": "应用版本",
-  "sessionId": "会话 ID",
-  "canSeek": "支持跳转",
-  "supportsMediaControl": "支持媒体控制",
-  "supportsRemoteControl": "支持遥控",
-  "transcodeReasons": "转码原因：",
-  "remoteEndpoint": "远程 IP",
-  "ipLookupTitle": "IP 查询",
-  "ipLookupPrompt": "您要在 whatismyipaddress.com 上查询 IP {ip} 的信息吗？",
-  "@ipLookupPrompt": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "open": "打开",
-  "privateIpTitle": "私有 IP",
-  "privateIpMessage": "IP {ip} 是一个私有地址，通常用于本地网络或 VPN 内。",
-  "@privateIpMessage": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "play": "播放",
-  "shuffle": "随机播放",
-  "noOverviewAvailable": "无传记可用",
-  "externalLinks": "外部链接",
-  "supportAppTitle": "支持本应用",
-  "supportAppDescription": "如果您想进一步帮助开发，可以使用以下选项。注意：这些不会在应用中解锁任何附加功能。",
-  "supportTier1": "支持第 1 档",
-  "supportTier2": "支持第 2 档",
-  "supportTier3": "支持第 3 档",
-  "supportThankYou": "非常感谢您的支持！",
-  "supportContactMessage": "随时向我发送关于任何内容的电子邮件：反馈、想法，或者只是打个招呼！",
-  "supportHistory": "历史记录",
-  "restorePurchases": "恢复购买",
-  "showMore": "显示更多",
-  "showLess": "显示更少",
-  "episodeCast": "剧集",
-  "seasonCast": "季",
-  "showCast": "节目",
-  "reviewTheApp": "评价本应用",
-  "reviewTheAppDesc": "如果您喜欢使用 {appName}，请考虑留下您的评价。这有助于其他人找到该应用并支持开发！",
-  "@reviewTheAppDesc": {
-    "placeholders": {
-      "appName": {
-        "type": "String",
-        "example": "Scyphomote"
+      "type": {
+        "type": "String"
       }
     }
   },
-  "rateAndReview": "评分和评价",
-  "premiered": "首播时间",
-  "home": "首页",
-  "favorites": "收藏",
-  "loading": "加载中…",
-  "addToQueue": "添加到队列",
-  "addAlbumToQueue": "将专辑添加到队列",
-  "album": "专辑",
-  "artist": "艺术家",
-  "connectionTimeout": "连接超时",
-  "fullRemoteWidget": "Full Remote Widget",
-  "fullRemoteWidgetSubtitle": "Includes D-Pad and full playback controls",
-  "compactRemoteWidget": "Compact Remote Widget",
-  "compactRemoteWidgetSubtitle": "Single line with basic playback controls"
-,
-  "present": "Present"
-,
-  "resumeFrom": "从 {time} 恢复",
-  "@resumeFrom": {
+  "songs": "歌曲",
+  "spoofPremiumStatusTitle": "伪装高级版状态",
+  "startPlayingMediaOnJellyfinClient": "在 Jellyfin 客户端上开始播放媒体",
+  "supportAppDescription": "如果您想进一步帮助开发，可以使用以下选项。注意：这些不会在应用中解锁任何附加功能。",
+  "supportAppTitle": "支持本应用",
+  "supportContactMessage": "随时向我发送关于任何内容的电子邮件：反馈、想法，或者只是打个招呼！",
+  "supportDeveloper": "支持开发者",
+  "supportFutureDevelopment": "支持未来开发",
+  "supportHistory": "历史记录",
+  "supportThankYou": "非常感谢您的支持！",
+  "supportTier1": "支持第 1 档",
+  "supportTier2": "支持第 2 档",
+  "supportTier3": "支持第 3 档",
+  "supportedCommands": "支持的命令：",
+  "supportsMediaControl": "支持媒体控制",
+  "supportsRemoteControl": "支持遥控",
+  "themeAuto": "自动",
+  "themeDark": "深色",
+  "themeDarkModeName": "深色模式",
+  "themeFollowSystemName": "跟随系统",
+  "themeLight": "浅色",
+  "themeLightModeName": "浅色模式",
+  "themeModeTitle": "主题模式",
+  "transcodeReasons": "转码原因：",
+  "transcoding": "转码",
+  "tryOnJellyfinDemoServer": "在 Jellfyn 演示服务器上试用",
+  "typeToSearch": "输入以搜索...",
+  "unknownPerson": "未知人员",
+  "unknownServer": "未知服务器",
+  "unlockPremium": "高级版和支持",
+  "unlockScyphomotePremium": "解锁 Scyphomote 高级版",
+  "useRemoteOrBrowse": "使用遥控器或浏览媒体库进行播放",
+  "useVolumeButtonsSubtitle": "使用按钮代替滑块来控制音量",
+  "useVolumeButtonsTitle": "使用音量按钮",
+  "user": "用户",
+  "username": "用户名",
+  "version": "版本 {version}",
+  "@version": {
     "placeholders": {
-      "time": { "type": "String" }
+      "version": {
+        "type": "String"
+      }
     }
   },
-  "useVolumeButtonsTitle": "使用音量按钮",
-  "useVolumeButtonsSubtitle": "使用按钮代替滑块来控制音量",
+  "video": "视频",
   "volume": "音量",
   "volumeLabel": "音量 (0-100)",
-  "unknownPerson": "未知人员",
-  "appearsIn": "出现于",
-  "movies": "电影",
-  "shows": "剧集",
-  "seasons": "季",
-  "episodes": "剧集",
-  "artists": "艺术家",
-  "albums": "专辑",
-  "songs": "歌曲",
-  "otherResults": "其他结果"
+  "widgetPinFailed": "固定小部件失败: {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetPinned": "小部件已固定到主屏幕",
+  "youArePremium": "您是高级版用户！"
 }

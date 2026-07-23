@@ -1,29 +1,6 @@
 {
   "@@locale": "sl",
-  "appTitle": "Scyphomote",
-  "settingsTitle": "Nastavitve",
-  "premiumSection": "Premium",
-  "premiumSubtitle": "Scyphomote Premium",
-  "appearanceSection": "Videz",
-  "themeModeTitle": "Tema",
-  "themeAuto": "Samodejno",
-  "themeLight": "Svetlo",
-  "themeDark": "Temno",
-  "themeFollowSystemName": "Sledi sistemu",
-  "themeLightModeName": "Svetli način",
-  "themeDarkModeName": "Temni način",
-  "performanceSection": "Učinkovitost",
-  "playerRefreshRateTitle": "Pogostost osveževanja predvajalnika",
-  "deviceListAutoRefreshTitle": "Samodejno osveževanje  seznama naprav",
-  "listRefreshRateTitle": "Pogostost osveževanja seznamov",
-  "librarySection": "Knjižnica",
-  "itemsPerRowTitle": "Elementov na vrstico",
-  "adminSection": "Skrbnik",
-  "hideOtherUsersSessionsTitle": "Skrij seje drugih uporabnikov",
-  "showNonMediaCapableSessionsTitle": "Prikaži seje brez podpore za predstavnost",
-  "debugSection": "Odpravljanje napak",
-  "spoofPremiumStatusTitle": "Ponaredi Premium stanje",
-  "aboutSection": "O aplikaciji",
+  "aRemoteForJellyfin": "Daljinski upravljalnik za Jellyfin",
   "aboutAppTitle": "O aplikaciji {appName}",
   "@aboutAppTitle": {
     "placeholders": {
@@ -33,6 +10,233 @@
       }
     }
   },
+  "aboutSection": "O aplikaciji",
+  "activeDevices": "Aktivne naprave",
+  "addAlbumToQueue": "Dodaj album v čakalno vrsto",
+  "addRemoteWidget": "Dodaj pripomoček za daljinsko upravljanje",
+  "addToQueue": "Dodaj v čakalno vrsto",
+  "addUser": "Dodaj uporabnika",
+  "addressCopied": "Naslov {label} je kopiran v odložišče",
+  "@addressCopied": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "adminSection": "Skrbnik",
+  "album": "Album",
+  "albums": "Albumi",
+  "appTitle": "Scyphomote",
+  "appVersion": "Različica aplikacije",
+  "appearanceSection": "Videz",
+  "appearsIn": "Nastopa v",
+  "artist": "Izvajalec",
+  "artists": "Izvajalci",
+  "audio": "Zvok",
+  "author": "Avtor",
+  "bitrate": "Bitna hitrost",
+  "browse": "Brskaj",
+  "buyNow": "Kupi zdaj",
+  "canSeek": "Podpira premikanje po posnetku",
+  "cancel": "Prekliči",
+  "castAndCrew": "Igralci & Ekipa",
+  "channels": "Kanali",
+  "client": "Odjemalec",
+  "close": "Zapri",
+  "codec": "Kodek",
+  "compactRemoteWidget": "Kompaktni pripomoček za daljinsko upravljanje",
+  "compactRemoteWidgetSubtitle": "Ena vrstica z osnovnimi ukazi predvajanja",
+  "connectingToSession": "Povezovanje s sejo...",
+  "connectionTimeout": "Časovna omejitev povezave",
+  "container": "Vsebnik",
+  "copyAddress": "Kopiraj naslov",
+  "copyrightEiffelBeef": "© 2026 EiffelBeef",
+  "debugSection": "Odpravljanje napak",
+  "delete": "Izbriši",
+  "deleteUser": "Izbriši uporabnika",
+  "deleteUserConfirmation": "Izbriši {username}?",
+  "@deleteUserConfirmation": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceListAutoRefreshTitle": "Samodejno osveževanje  seznama naprav",
+  "deviceName": "Ime naprave",
+  "directPlay": "Neposredno predvajanje",
+  "directStream": "Neposreden tok",
+  "donateUsingLiberapay": "Doniraj prek Liberapay",
+  "embyConnectUsernameEmail": "Uporabniško ime/e-pošta",
+  "episodeCast": "Epizoda",
+  "episodes": "Epizode",
+  "errorLoadingCast": "Napaka pri nalaganju zasedbe: {error}",
+  "@errorLoadingCast": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorMsg": "Napaka: {error}",
+  "@errorMsg": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "externalLinks": "Zunanje povezave",
+  "failedToLoadItemDetails": "Podrobnosti elementa ni bilo mogoče naložiti",
+  "favorites": "Priljubljeno",
+  "framerate": "Hitrost sličic",
+  "fullRemoteWidget": "Polni pripomoček za daljinsko upravljanje",
+  "fullRemoteWidgetSubtitle": "Vključuje smerne tipke in popoln nadzor predvajanja",
+  "githubRepository": "GitHub Projekt",
+  "hideOtherUsersSessionsTitle": "Skrij seje drugih uporabnikov",
+  "home": "Domov",
+  "idleDevices": "Nedejavne naprave",
+  "ipLookupPrompt": "Ali želite poiskati podatke za IP {ip} na whatismyipaddress.com?",
+  "@ipLookupPrompt": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "ipLookupTitle": "Iskanje IP",
+  "itemsPerRowTitle": "Elementov na vrstico",
+  "itemsPlural": "{count, plural, =1{1 element} =2{{count} elementa} few{{count} elementi} other{{count} elementov}}",
+  "@itemsPlural": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labelFormat": "{label}: ",
+  "@labelFormat": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "language": "Jezik",
+  "languageSystem": "Sistem",
+  "languageTitle": "Jezik",
+  "lastAdded": "Nazadnje dodano",
+  "launchedFromRemoteWidget": "Zagnano iz pripomočka za daljinsko upravljanje",
+  "library": "Knjižnica",
+  "librarySection": "Knjižnica",
+  "licenseDev": "Licencirano pod GNU AGPLv3",
+  "listRefreshRateTitle": "Pogostost osveževanja seznamov",
+  "loading": "Nalaganje",
+  "login": "Prijava",
+  "loginWithEmbyConnect": "Prijava z Emby Connect",
+  "manageUsers": "Upravljanje uporabnikov",
+  "mediaDetails": "Podrobnosti predstavnosti",
+  "message": "Sporočilo",
+  "messageAllSessions": "Pošlji sporočilo vsem sejam",
+  "messageSentToSessions": "{count, plural, =1{Sporočilo poslano 1 seji} =2{Sporočilo poslano 2 sejama} few{Sporočilo poslano {count} sejam} other{Sporočilo poslano {count} sejam}}",
+  "@messageSentToSessions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "movies": "Filmi",
+  "nameAZ": "Ime (A-Z)",
+  "nameZA": "Ime (Z-A)",
+  "noActiveDevicesFound": "Ni najdenih aktivnih naprav",
+  "noActiveSessionSelected": "Ni izbrane aktivne seje",
+  "noCastInfo": "Podatki o zasedbi niso na voljo",
+  "noEmbyServersFound": "V tem računu ni najdenih strežnikov Emby.",
+  "noMediaPlaying": "Nič se ne predvaja",
+  "noMediaSourcesFound": "Ni najdenih virov predstavnosti",
+  "noOverviewAvailable": "Opis ni na voljo",
+  "noResultsFound": "Ni najdenih rezultatov",
+  "noSavedUsers": "Ni shranjenih uporabnikov",
+  "noSessionSelected": "Ni izbrane seje",
+  "noStreamAvailable": "Ni razpoložljivih tokov {streamType}",
+  "@noStreamAvailable": {
+    "placeholders": {
+      "streamType": {
+        "type": "String"
+      }
+    }
+  },
+  "none": "Brez",
+  "notAuthenticated": "Ni overjeno",
+  "oldestAdded": "Najstarejše dodano",
+  "open": "Odpri",
+  "otherResults": "Drugi rezultati",
+  "password": "Geslo",
+  "performanceSection": "Učinkovitost",
+  "play": "Predvajaj",
+  "playMethod": "Način: {method}",
+  "@playMethod": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "playableMediaTypes": "Vrste predstavnosti za predvajanje:",
+  "playbackDetails": "Podrobnosti predvajanja",
+  "playerRefreshRateTitle": "Pogostost osveževanja predvajalnika",
+  "playstateCommands": "Ukazi stanja predvajanja:",
+  "pleaseEnterServerUrl": "Prosimo vnesite URL strežnika",
+  "pleaseEnterUsername": "Prosimo vnesite uporabniško ime",
+  "pleaseLogInFirst": "Najprej se prijavite",
+  "premiered": "Premiera",
+  "premiumDescription": "Nakup Premium različice vam za vedno omogoči dostop do trenutnih in prihodnjih Premium funckij.",
+  "premiumFeatureWidget": "Pripomoček za začetni zaslon (upravljanje naprav brez odpiranja aplikacije)",
+  "premiumFeatures": "Premium funkcije:",
+  "premiumSection": "Premium",
+  "premiumSubtitle": "Scyphomote Premium",
+  "premiumThankYou": "Hvala za podporo aplikacije. Zdaj imate popoln dostop do trenutnih in prihodnjih Premium funkcij!",
+  "present": "Prisotno",
+  "privacyPolicy": "Politika zasebnosti",
+  "privacyPolicyDesc": "Scyphomote ne zbira, shranjuje ali obdeluje vaših osebnih podatkov. Vsa komunikacija poteka neposredno med vašo napravo in vašim strežnikom Jellyfin.",
+  "privateIpMessage": "IP {ip} je zasebni naslov, ki se običajno uporablja znotraj lokalnega omrežja ali VPN-ja.",
+  "@privateIpMessage": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "privateIpTitle": "Zasebni IP",
+  "rateAndReview": "Oceni in napiši mnenje",
+  "remote": "Daljinski upravljalnik",
+  "remoteControl": "Daljinski upravljalnik",
+  "remoteEndpoint": "Oddaljeni IP",
+  "requiredField": "Obvezno",
+  "resolution": "Ločljivost",
+  "restorePurchases": "Obnovi nakupe",
+  "resumeFrom": "Nadaljuj od {time}",
+  "@resumeFrom": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewTheApp": "Ocenite aplikacijo",
+  "reviewTheAppDesc": "Če radi uporabljate {appName}, razmislite o oceni aplikacije. To pomaga drugim uporabnikom najti aplikacijo in podpira razvoj!",
+  "@reviewTheAppDesc": {
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "Scyphomote"
+      }
+    }
+  },
+  "seasonCast": "Sezona",
+  "seasons": "Sezone",
   "secondsPlural": "{count, plural, =1{1 sekunda} =2{{count} sekundi} few{{count} sekunde} other{{count} sekund}}",
   "@secondsPlural": {
     "placeholders": {
@@ -49,268 +253,92 @@
       }
     }
   },
-  "itemsPlural": "{count, plural, =1{1 element} =2{{count} elementa} few{{count} elementi} other{{count} elementov}}",
-  "@itemsPlural": {
+  "selectAServer": "Izberi strežnik",
+  "send": "Pošlji",
+  "serverUrl": "URL Strežnika",
+  "serverUrlHint": "http://192.168.1.100:8096",
+  "sessionId": "ID Seje",
+  "sessionInfo": "Podatki o seji",
+  "sessionNotFoundOrOffline": "Seja ni najdena ali je brez povezave",
+  "sessionsWillReceiveMessage": "{count, plural, =1{1 seja bo prejela to sporočilo} =2{2 seji bosta prejeli to sporočilo} few{{count} seje bodo prejele to sporočilo} other{{count} sej bo prejelo to sporočilo}}",
+  "@sessionsWillReceiveMessage": {
     "placeholders": {
       "count": {
         "type": "int"
       }
     }
   },
-  "cancel": "Prekliči",
-  "send": "Pošlji",
-  "aRemoteForJellyfin": "Daljinski upravljalnik za Jellyfin",
-  "version": "Verzija {version}",
-  "@version": {
-    "placeholders": {
-      "version": { "type": "String" }
-    }
-  },
-  "githubRepository": "GitHub Projekt",
-  "donateUsingLiberapay": "Doniraj prek Liberapay",
-  "login": "Prijava",
-  "loginWithEmbyConnect": "Prijava z Emby Connect",
-  "noEmbyServersFound": "V tem računu ni najdenih strežnikov Emby.",
-  "selectAServer": "Izberi strežnik",
-  "unknownServer": "Neznan strežnik",
-  "requiredField": "Obvezno",
-  "embyConnectUsernameEmail": "Uporabniško ime/e-pošta",
-  "tryOnJellyfinDemoServer": "Preizkuši predstavitveni strežnik Jellyfin",
-  "manageUsers": "Upravljanje uporabnikov",
-  "remoteControl": "Daljinski upravljalnik",
-  "noSessionSelected": "Ni izbrane seje",
-  "sessionInfo": "Podatki o seji",
-  "close": "Zapri",
-  "notAuthenticated": "Ni overjeno",
-  "library": "Knjižnica",
-  "errorMsg": "Napaka: {error}",
-  "@errorMsg": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "typeToSearch": "Vnesite za iskanje...",
-  "noResultsFound": "Ni najdenih rezultatov",
-  "lastAdded": "Nazadnje dodano",
-  "oldestAdded": "Najstarejše dodano",
-  "nameAZ": "Ime (A-Z)",
-  "nameZA": "Ime (Z-A)",
-  "noSavedUsers": "Ni shranjenih uporabnikov",
-  "deleteUser": "Izbriši uporabnika",
-  "deleteUserConfirmation": "Izbriši {username}?",
-  "@deleteUserConfirmation": {
-    "placeholders": {
-      "username": { "type": "String" }
-    }
-  },
-  "delete": "Izbriši",
-  "addUser": "Dodaj uporabnika",
-  "unlockPremium": "Premium & Podpora",
-  "supportFutureDevelopment": "Podpri prihodnji razvoj",
-  "pleaseLogInFirst": "Najprej se prijavite",
-  "connectingToSession": "Povezovanje s sejo...",
-  "sessionNotFoundOrOffline": "Seja ni najdena ali je brez povezave",
-  "launchedFromRemoteWidget": "Zagnano iz pripomočka za daljinsko upravljanje",
-  "addressCopied": "Naslov {label} je kopiran v odložišče",
-  "@addressCopied": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "author": "Avtor",
-  "privacyPolicy": "Politika zasebnosti",
-  "privacyPolicyDesc": "Scyphomote ne zbira, shranjuje ali obdeluje vaših osebnih podatkov. Vsa komunikacija poteka neposredno med vašo napravo in vašim strežnikom Jellyfin.",
-  "supportDeveloper": "Podpri razvijalca",
-  "licenseDev": "Licencirano pod GNU AGPLv3",
-  "copyrightEiffelBeef": "© 2026 EiffelBeef",
-  "copyAddress": "Kopiraj naslov",
-  "browse": "Brskaj",
-  "remote": "Daljinski upravljalnik",
-  "failedToLoadItemDetails": "Podrobnosti elementa ni bilo mogoče naložiti",
-  "noStreamAvailable": "Ni razpoložljivih tokov {streamType}",
-  "@noStreamAvailable": {
-    "placeholders": {
-      "streamType": { "type": "String" }
-    }
-  },
-  "none": "Brez",
+  "settingsTitle": "Nastavitve",
+  "showCast": "Oddaja",
+  "showLess": "Pokaži manj",
+  "showMore": "Pokaži več",
+  "showNonMediaCapableSessionsTitle": "Prikaži seje brez podpore za predstavnost",
+  "shows": "Serije",
+  "shuffle": "Naključno predvajanje",
+  "size": "Velikost",
   "skipType": "Prekoči {type}",
   "@skipType": {
     "placeholders": {
-      "type": { "type": "String" }
-    }
-  },
-  "playbackDetails": "Podrobnosti predvajanja",
-  "playMethod": "Način: {method}",
-  "@playMethod": {
-    "placeholders": {
-      "method": { "type": "String" }
-    }
-  },
-  "mediaDetails": "Podrobnosti predstavnosti",
-  "labelFormat": "{label}: ",
-  "@labelFormat": {
-    "placeholders": {
-      "label": { "type": "String" }
-    }
-  },
-  "noCastInfo": "Podatki o zasedbi niso na voljo",
-  "errorLoadingCast": "Napaka pri nalaganju zasedbe: {error}",
-  "@errorLoadingCast": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "buyNow": "Kupi zdaj",
-  "languageTitle": "Jezik",
-  "languageSystem": "Sistem",
-  "serverUrl": "URL Strežnika",
-  "serverUrlHint": "http://192.168.1.100:8096",
-  "username": "Uporabniško ime",
-  "password": "Geslo",
-  "pleaseEnterServerUrl": "Prosimo vnesite URL strežnika",
-  "pleaseEnterUsername": "Prosimo vnesite uporabniško ime",
-  "youArePremium": "Ste Premium uporabnik!",
-  "unlockScyphomotePremium": "Odkleni Scyphomote Premium",
-  "premiumThankYou": "Hvala za podporo aplikacije. Zdaj imate popoln dostop do trenutnih in prihodnjih Premium funkcij!",
-  "premiumDescription": "Nakup Premium različice vam za vedno omogoči dostop do trenutnih in prihodnjih Premium funckij.",
-  "premiumFeatures": "Premium funkcije:",
-  "premiumFeatureWidget": "Pripomoček za začetni zaslon (upravljanje naprav brez odpiranja aplikacije)",
-  "addRemoteWidget": "Dodaj pripomoček za daljinsko upravljanje",
-  "widgetPinned": "Pripomoček je dodan na začetni zaslon",
-  "widgetPinFailed": "Pripomočka ni bilo mogoče dodati: {error}",
-  "@widgetPinFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "playableMediaTypes": "Vrste predstavnosti za predvajanje:",
-  "supportedCommands": "Podprti ukazi:",
-  "playstateCommands": "Ukazi stanja predvajanja:",
-  "noActiveDevicesFound": "Ni najdenih aktivnih naprav",
-  "startPlayingMediaOnJellyfinClient": "Začni predvajati predstavnost v odjemalcu Jellyfin",
-  "activeDevices": "Aktivne naprave",
-  "idleDevices": "Nedejavne naprave",
-  "messageAllSessions": "Pošlji sporočilo vsem sejam",
-  "sessionsWillReceiveMessage": "{count, plural, =1{1 seja bo prejela to sporočilo} =2{2 seji bosta prejeli to sporočilo} few{{count} seje bodo prejele to sporočilo} other{{count} sej bo prejelo to sporočilo}}",
-  "@sessionsWillReceiveMessage": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "messageSentToSessions": "{count, plural, =1{Sporočilo poslano 1 seji} =2{Sporočilo poslano 2 sejama} few{Sporočilo poslano {count} sejam} other{Sporočilo poslano {count} sejam}}",
-  "@messageSentToSessions": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "noActiveSessionSelected": "Ni izbrane aktivne seje",
-  "transcoding": "Prekodiranje",
-  "directPlay": "Neposredno predvajanje",
-  "directStream": "Neposreden tok",
-  "noMediaPlaying": "Nič se ne predvaja",
-  "useRemoteOrBrowse": "Za predvajanje uporabite daljinski upravljalnik ali prebrskajte knjižnico",
-  "castAndCrew": "Igralci & Ekipa",
-  "message": "Sporočilo",
-  "container": "Vsebnik",
-  "size": "Velikost",
-  "video": "Video",
-  "audio": "Zvok",
-  "codec": "Kodek",
-  "resolution": "Ločljivost",
-  "bitrate": "Bitna hitrost",
-  "framerate": "Hitrost sličic",
-  "language": "Jezik",
-  "channels": "Kanali",
-  "noMediaSourcesFound": "Ni najdenih virov predstavnosti",
-  "user": "Uporabnik",
-  "client": "Odjemalec",
-  "deviceName": "Ime naprave",
-  "appVersion": "Različica aplikacije",
-  "sessionId": "ID Seje",
-  "canSeek": "Podpira premikanje po posnetku",
-  "supportsMediaControl": "Podpira upravljanje predstavnosti",
-  "supportsRemoteControl": "Podpira daljinsko upravljanje",
-  "transcodeReasons": "Razlogi za prekodiranje:",
-  "remoteEndpoint": "Oddaljeni IP",
-  "ipLookupTitle": "Iskanje IP",
-  "ipLookupPrompt": "Ali želite poiskati podatke za IP {ip} na whatismyipaddress.com?",
-  "@ipLookupPrompt": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "open": "Odpri",
-  "privateIpTitle": "Zasebni IP",
-  "privateIpMessage": "IP {ip} je zasebni naslov, ki se običajno uporablja znotraj lokalnega omrežja ali VPN-ja.",
-  "@privateIpMessage": {
-    "placeholders": {
-      "ip": { "type": "String" }
-    }
-  },
-  "play": "Predvajaj",
-  "shuffle": "Naključno predvajanje",
-  "noOverviewAvailable": "Opis ni na voljo",
-  "externalLinks": "Zunanje povezave",
-  "supportAppTitle": "Podpri aplikacijo",
-  "supportAppDescription": "Če želite dodatno podpreti razvoj, lahko uporabite te možnosti. Opomba: te možnosti ne odklenejo dodatnih funkcij v aplikaciji.",
-  "supportTier1": "Podpora 1 stopnje",
-  "supportTier2": "Podpora 2 stopnje",
-  "supportTier3": "Podpora 3 stopnje",
-  "supportThankYou": "Najlepša hvala za vašo podporo!",
-  "supportContactMessage": "Lahko mi pošljete e-pošto o čemerkoli: povratne informacije, ideje ali samo pozdrav!",
-  "supportHistory": "Zgodovina",
-  "restorePurchases": "Obnovi nakupe",
-  "showMore": "Pokaži več",
-  "showLess": "Pokaži manj",
-  "episodeCast": "Epizoda",
-  "seasonCast": "Sezona",
-  "showCast": "Oddaja",
-  "reviewTheApp": "Ocenite aplikacijo",
-  "reviewTheAppDesc": "Če radi uporabljate {appName}, razmislite o oceni aplikacije. To pomaga drugim uporabnikom najti aplikacijo in podpira razvoj!",
-  "@reviewTheAppDesc": {
-    "placeholders": {
-      "appName": {
-        "type": "String",
-        "example": "Scyphomote"
+      "type": {
+        "type": "String"
       }
     }
   },
-  "rateAndReview": "Oceni in napiši mnenje",
-  "premiered": "Premiera",
-  "home": "Domov",
-  "favorites": "Priljubljeno",
-  "loading": "Nalaganje",
-  "addToQueue": "Dodaj v čakalno vrsto",
-  "addAlbumToQueue": "Dodaj album v čakalno vrsto",
-  "album": "Album",
-  "artist": "Izvajalec",
-  "connectionTimeout": "Časovna omejitev povezave",
-  "fullRemoteWidget": "Polni pripomoček za daljinsko upravljanje",
-  "fullRemoteWidgetSubtitle": "Vključuje smerne tipke in popoln nadzor predvajanja",
-  "compactRemoteWidget": "Kompaktni pripomoček za daljinsko upravljanje",
-  "compactRemoteWidgetSubtitle": "Ena vrstica z osnovnimi ukazi predvajanja"
-,
-  "present": "Prisotno"
-,
-  "resumeFrom": "Nadaljuj od {time}",
-  "@resumeFrom": {
+  "songs": "Pesmi",
+  "spoofPremiumStatusTitle": "Ponaredi Premium stanje",
+  "startPlayingMediaOnJellyfinClient": "Začni predvajati predstavnost v odjemalcu Jellyfin",
+  "supportAppDescription": "Če želite dodatno podpreti razvoj, lahko uporabite te možnosti. Opomba: te možnosti ne odklenejo dodatnih funkcij v aplikaciji.",
+  "supportAppTitle": "Podpri aplikacijo",
+  "supportContactMessage": "Lahko mi pošljete e-pošto o čemerkoli: povratne informacije, ideje ali samo pozdrav!",
+  "supportDeveloper": "Podpri razvijalca",
+  "supportFutureDevelopment": "Podpri prihodnji razvoj",
+  "supportHistory": "Zgodovina",
+  "supportThankYou": "Najlepša hvala za vašo podporo!",
+  "supportTier1": "Podpora 1 stopnje",
+  "supportTier2": "Podpora 2 stopnje",
+  "supportTier3": "Podpora 3 stopnje",
+  "supportedCommands": "Podprti ukazi:",
+  "supportsMediaControl": "Podpira upravljanje predstavnosti",
+  "supportsRemoteControl": "Podpira daljinsko upravljanje",
+  "themeAuto": "Samodejno",
+  "themeDark": "Temno",
+  "themeDarkModeName": "Temni način",
+  "themeFollowSystemName": "Sledi sistemu",
+  "themeLight": "Svetlo",
+  "themeLightModeName": "Svetli način",
+  "themeModeTitle": "Tema",
+  "transcodeReasons": "Razlogi za prekodiranje:",
+  "transcoding": "Prekodiranje",
+  "tryOnJellyfinDemoServer": "Preizkuši predstavitveni strežnik Jellyfin",
+  "typeToSearch": "Vnesite za iskanje...",
+  "unknownPerson": "Neznana oseba",
+  "unknownServer": "Neznan strežnik",
+  "unlockPremium": "Premium & Podpora",
+  "unlockScyphomotePremium": "Odkleni Scyphomote Premium",
+  "useRemoteOrBrowse": "Za predvajanje uporabite daljinski upravljalnik ali prebrskajte knjižnico",
+  "useVolumeButtonsSubtitle": "Za nadzor glasnosti uporabi gumbe namesto drsnika",
+  "useVolumeButtonsTitle": "Uporabi gumbe za glasnost",
+  "user": "Uporabnik",
+  "username": "Uporabniško ime",
+  "version": "Verzija {version}",
+  "@version": {
     "placeholders": {
-      "time": { "type": "String" }
+      "version": {
+        "type": "String"
+      }
     }
   },
-  "useVolumeButtonsTitle": "Uporabi gumbe za glasnost",
-  "useVolumeButtonsSubtitle": "Za nadzor glasnosti uporabi gumbe namesto drsnika",
+  "video": "Video",
   "volume": "Glasnost",
   "volumeLabel": "Glasnost (0-100)",
-  "unknownPerson": "Neznana oseba",
-  "appearsIn": "Nastopa v",
-  "movies": "Filmi",
-  "shows": "Serije",
-  "seasons": "Sezone",
-  "episodes": "Epizode",
-  "artists": "Izvajalci",
-  "albums": "Albumi",
-  "songs": "Pesmi",
-  "otherResults": "Drugi rezultati"
+  "widgetPinFailed": "Pripomočka ni bilo mogoče dodati: {error}",
+  "@widgetPinFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "widgetPinned": "Pripomoček je dodan na začetni zaslon",
+  "youArePremium": "Ste Premium uporabnik!"
 }
