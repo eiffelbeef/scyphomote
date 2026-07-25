@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'themed_svg_icon.dart';
 
-String? _svgAssetForLinkName(String name) => switch (name.toLowerCase()) {
-      'imdb' => 'assets/imdb.svg',
-      'tmdb' => 'assets/tmdb.svg',
-      'thetvdb' => 'assets/tvdb.svg',
-      'trakt' => 'assets/trakt.svg',
-      'musicbrainz' => 'assets/musicbrainz.svg',
-      'lastfm' || 'last.fm' => 'assets/lastfm.svg',
-      _ => null,
-    };
+String? _svgAssetForLinkName(String name) {
+  final lower = name.toLowerCase();
+  if (lower.contains('imdb')) return 'assets/imdb.svg';
+  if (lower.contains('tmdb')) return 'assets/tmdb.svg';
+  if (lower.contains('thetvdb')) return 'assets/tvdb.svg';
+  if (lower.contains('trakt')) return 'assets/trakt.svg';
+  if (lower.contains('musicbrainz')) return 'assets/musicbrainz.svg';
+  if (lower.contains('lastfm') || lower.contains('last.fm')) return 'assets/lastfm.svg';
+  return null;
+}
 
 class ExternalLinksSection extends StatelessWidget {
   final List<Map<String, dynamic>> externalUrls;
