@@ -7,6 +7,7 @@ import 'screens/remote_control/remote_control_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
 import 'screens/premium_screen.dart';
+import 'screens/loading_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/locale_provider.dart';
@@ -212,7 +213,7 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
       ),
       themeMode: themeMode,
       home: switch ((isLoading, authState.currentUser != null)) {
-        (true, _) => const Scaffold(body: Center(child: SizedBox.shrink())),
+        (true, _) => const LoadingScreen(),
         (false, true) => const DeviceListScreen(),
         (false, false) => const LoginScreen(),
       },

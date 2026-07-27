@@ -12,6 +12,7 @@ import '../widgets/user_avatar.dart';
 import 'remote_control/remote_control_screen.dart';
 import 'user_management_screen.dart';
 import 'settings_screen.dart';
+import 'loading_screen.dart';
 import '../widgets/text_input_dialog.dart';
 import '../utils/logger.dart';
 
@@ -89,20 +90,10 @@ class DeviceListScreen extends ConsumerWidget {
           ],
         ),
         body: sessionState.isLoading && sessionState.sessions.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/scyphomote.png', width: 120, height: 120),
-                    const SizedBox(height: 24),
-                    const SizedBox(
-                      width: 120,
-                      child: LinearProgressIndicator(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                      ),
-                    ),
-                  ],
-                ),
+            ? LoadingScreen(
+                subtitle: authState.currentUser != null
+                    ? '${authState.currentUser!.username}@${authState.currentUser!.serverName ?? authState.currentUser!.serverUrl}'
+                    : null,
               )
             : RefreshIndicator(
                 onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),
