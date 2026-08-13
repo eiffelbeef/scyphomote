@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.PowerManager
+import android.util.Log
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -64,7 +65,9 @@ class MainActivity : FlutterActivity() {
                     screenReceiver?.let {
                         try {
                             unregisterReceiver(it)
-                        } catch (e: Exception) {}
+                        } catch (e: IllegalArgumentException) {
+                            Log.w("MainActivity", "Screen receiver already unregistered: ${e.message}")
+                        }
                         screenReceiver = null
                     }
                 }
