@@ -91,9 +91,7 @@ class DeviceListScreen extends ConsumerWidget {
         ),
         body: sessionState.isLoading && sessionState.sessions.isEmpty
             ? LoadingScreen(
-                subtitle: authState.currentUser != null
-                    ? '${authState.currentUser!.username}@${authState.currentUser!.serverName ?? authState.currentUser!.serverUrl}'
-                    : null,
+                subtitle: authState.currentUser?.userServerDisplayName,
               )
             : RefreshIndicator(
                 onRefresh: () => ref.read(sessionProvider.notifier).fetchSessions(),

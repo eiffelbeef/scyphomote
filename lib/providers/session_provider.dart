@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/session.dart';
 import '../services/jellyfin_api_service.dart';
+import '../services/background_session_service.dart';
 import '../constants.dart';
-import '../utils/logger.dart';
+import '../utils/screen_service.dart';
 import 'auth_provider.dart';
 import 'settings_provider.dart';
 
@@ -41,6 +44,7 @@ class SessionState {
 class SessionNotifier extends Notifier<SessionState> {
   late JellyfinApiService _apiService;
   Timer? _pollTimer;
+  StreamSubscription<String>? _screenSubscription;
 
   @override
   SessionState build() {
@@ -50,57 +54,73 @@ class SessionNotifier extends Notifier<SessionState> {
     // This resets the state to 'loading' and triggers a fresh fetch.
     ref.watch(authProvider.select((s) => s.currentUser?.userId));
 
+    // Listen for screen unlock events to refresh sessions immediately
+    if (!kIsWeb && Platform.isAndroid) {
+      _screenSubscription?.cancel();
+      _screenSubscription = ScreenService.onScreenEvent.listen((event) {
+        if (event == 'screen_on' || event == 'unlocked') {
+          final settings = ref.read(settingsProvider);
+          if (settings.backgroundMonitoringEnabled || AppConstants.isInForeground) {
+            fetchSessions();
+          }
+        }
+      });
+    }
+
     // React to settings changes or session selection to update polling
     ref.listen(settingsProvider, (previous, next) {
       if (previous != null) {
         final pollingChanged =
             previous.playerRefreshRate != next.playerRefreshRate ||
             previous.deviceListAutoRefresh != next.deviceListAutoRefresh ||
-            previous.deviceListRefreshRate != next.deviceListRefreshRate;
+            previous.deviceListRefreshRate != next.deviceListRefreshRate ||
+            previous.backgroundMonitoringEnabled != next.backgroundMonitoringEnabled ||
+            previous.backgroundMonitoringRefreshRate != next.backgroundMonitoringRefreshRate;
 
         if (pollingChanged) {
-          _startPolling();
+          _startPolling(fetchImmediately: false);
         }
       }
     });
 
     ref.onDispose(() {
       _pollTimer?.cancel();
+      _screenSubscription?.cancel();
     });
 
-    Future.microtask(() => _startPolling());
+    Future.microtask(() => _startPolling(fetchImmediately: true));
     return SessionState();
   }
 
-  void _startPolling() {
+  void _startPolling({bool fetchImmediately = false}) {
     _pollTimer?.cancel();
 
     final settings = ref.read(settingsProvider);
     final isPlayerMode = state.selectedSession != null;
 
     int? interval;
-    if (isPlayerMode) {
-      interval = settings.playerRefreshRate;
-    } else {
-      if (settings.deviceListAutoRefresh) {
+    if (AppConstants.isInForeground) {
+      if (isPlayerMode) {
+        interval = settings.playerRefreshRate;
+      } else if (settings.deviceListAutoRefresh) {
         interval = settings.deviceListRefreshRate;
-      } else {
-        // Auto refresh disabled for list mode
-        interval = null;
       }
+    } else if (settings.backgroundMonitoringEnabled) {
+      interval = settings.backgroundMonitoringRefreshRate;
     }
 
-    // Always fetch once immediately if app is foregrounded
-    fetchSessions();
+    if (fetchImmediately && AppConstants.isInForeground) {
+      fetchSessions();
+    }
 
     if (interval != null) {
-      _pollTimer = Timer.periodic(Duration(seconds: interval), (_) {
-        if (AppConstants.isInForeground) {
-          fetchSessions();
-        } else {
-          logDebug(
-            'Skipping scheduled fetchSessions because app is not in foreground',
-          );
+      _pollTimer = Timer.periodic(Duration(seconds: interval), (_) async {
+        final currentSettings = ref.read(settingsProvider);
+        if (AppConstants.isInForeground || currentSettings.backgroundMonitoringEnabled) {
+          final isInteractive = await ScreenService.isScreenInteractive();
+          if (isInteractive) {
+            fetchSessions();
+          }
         }
       });
     }
@@ -145,6 +165,10 @@ class SessionNotifier extends Notifier<SessionState> {
         selectedSession: updatedSelectedSession,
         isLoading: false,
       );
+
+      if (!kIsWeb && Platform.isAndroid) {
+        SessionNotificationService().updateSessions(allSessions);
+      }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -155,16 +179,16 @@ class SessionNotifier extends Notifier<SessionState> {
 
   void selectSession(Session session) {
     state = state.copyWith(selectedSession: session);
-    _startPolling();
+    _startPolling(fetchImmediately: true);
   }
 
   void deselectSession() {
     state = state.copyWith(clearSelectedSession: true);
-    _startPolling();
+    _startPolling(fetchImmediately: true);
   }
 
   void refreshSessionPolling() {
-    _startPolling();
+    _startPolling(fetchImmediately: true);
   }
 }
 

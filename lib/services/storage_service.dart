@@ -18,6 +18,8 @@ class StorageService {
   static const String _castAndCrewExpandedKey = 'cast_and_crew_expanded';
   static const String _externalLinksExpandedKey = 'external_links_expanded';
   static const String _useVolumeToolbarKey = 'use_volume_toolbar';
+  static const String _backgroundMonitoringEnabledKey = 'background_monitoring_enabled';
+  static const String _backgroundMonitoringRefreshRateKey = 'background_monitoring_refresh_rate';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -239,6 +241,30 @@ class StorageService {
     await _storage.write(
       key: _externalLinksExpandedKey,
       value: expanded.toString(),
+    );
+  }
+
+  Future<bool?> getBackgroundMonitoringEnabled() async {
+    final val = await _storage.read(key: _backgroundMonitoringEnabledKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveBackgroundMonitoringEnabled(bool enabled) async {
+    await _storage.write(
+      key: _backgroundMonitoringEnabledKey,
+      value: enabled.toString(),
+    );
+  }
+
+  Future<int?> getBackgroundMonitoringRefreshRate() async {
+    final val = await _storage.read(key: _backgroundMonitoringRefreshRateKey);
+    return val != null ? int.tryParse(val) : null;
+  }
+
+  Future<void> saveBackgroundMonitoringRefreshRate(int rate) async {
+    await _storage.write(
+      key: _backgroundMonitoringRefreshRateKey,
+      value: rate.toString(),
     );
   }
 }

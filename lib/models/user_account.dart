@@ -27,6 +27,19 @@ class UserAccount {
     this.embySystemId,
   });
 
+  String get serverDisplayName {
+    if (serverName != null && serverName!.trim().isNotEmpty) {
+      return serverName!.trim();
+    }
+    try {
+      final uri = Uri.parse(serverUrl);
+      if (uri.host.isNotEmpty) return uri.host;
+    } catch (_) {}
+    return serverUrl;
+  }
+
+  String get userServerDisplayName => '$username@$serverDisplayName';
+
   Map<String, dynamic> toJson() => {
     'userId': userId,
     'username': username,

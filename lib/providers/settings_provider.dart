@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_provider.dart';
 import '../services/storage_service.dart';
+import '../services/background_session_service.dart';
 
 class SettingsState {
   final int playerRefreshRate;
@@ -13,6 +14,8 @@ class SettingsState {
   final bool castAndCrewExpanded;
   final bool externalLinksExpanded;
   final bool useVolumeToolbar;
+  final bool backgroundMonitoringEnabled;
+  final int backgroundMonitoringRefreshRate;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -25,6 +28,8 @@ class SettingsState {
     this.castAndCrewExpanded = true,
     this.externalLinksExpanded = true,
     this.useVolumeToolbar = false,
+    this.backgroundMonitoringEnabled = false,
+    this.backgroundMonitoringRefreshRate = 60,
   });
 
   SettingsState copyWith({
@@ -38,6 +43,8 @@ class SettingsState {
     bool? castAndCrewExpanded,
     bool? externalLinksExpanded,
     bool? useVolumeToolbar,
+    bool? backgroundMonitoringEnabled,
+    int? backgroundMonitoringRefreshRate,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -54,6 +61,8 @@ class SettingsState {
       castAndCrewExpanded: castAndCrewExpanded ?? this.castAndCrewExpanded,
       externalLinksExpanded: externalLinksExpanded ?? this.externalLinksExpanded,
       useVolumeToolbar: useVolumeToolbar ?? this.useVolumeToolbar,
+      backgroundMonitoringEnabled: backgroundMonitoringEnabled ?? this.backgroundMonitoringEnabled,
+      backgroundMonitoringRefreshRate: backgroundMonitoringRefreshRate ?? this.backgroundMonitoringRefreshRate,
     );
   }
 }
@@ -81,6 +90,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final castAndCrewExp = await _storageService.getCastAndCrewExpanded();
     final externalLinksExp = await _storageService.getExternalLinksExpanded();
     final useVolToolbar = await _storageService.getUseVolumeToolbar();
+    final backgroundMonitoring = await _storageService.getBackgroundMonitoringEnabled();
+    final backgroundRate = await _storageService.getBackgroundMonitoringRefreshRate();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -93,6 +104,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       castAndCrewExpanded: castAndCrewExp ?? true,
       externalLinksExpanded: externalLinksExp ?? true,
       useVolumeToolbar: useVolToolbar ?? false,
+      backgroundMonitoringEnabled: backgroundMonitoring ?? false,
+      backgroundMonitoringRefreshRate: backgroundRate ?? 60,
     );
   }
 
@@ -144,6 +157,17 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setUseVolumeToolbar(bool useToolbar) async {
     state = state.copyWith(useVolumeToolbar: useToolbar);
     await _storageService.saveUseVolumeToolbar(useToolbar);
+  }
+
+  Future<void> setBackgroundMonitoringEnabled(bool enabled) async {
+    state = state.copyWith(backgroundMonitoringEnabled: enabled);
+    await _storageService.saveBackgroundMonitoringEnabled(enabled);
+    SessionNotificationService().setEnabled(enabled);
+  }
+
+  Future<void> setBackgroundMonitoringRefreshRate(int rate) async {
+    state = state.copyWith(backgroundMonitoringRefreshRate: rate);
+    await _storageService.saveBackgroundMonitoringRefreshRate(rate);
   }
 }
 

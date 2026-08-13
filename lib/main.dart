@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/login_screen.dart';
@@ -18,6 +20,8 @@ import 'package:scyphomote/l10n/app_localizations.dart';
 import 'widgets/home_widget_manager.dart';
 import 'utils/logger.dart';
 import 'utils/ui_utils.dart';
+import 'services/background_session_service.dart';
+import 'providers/settings_provider.dart';
 import 'constants.dart';
 
 void main() async {
@@ -168,6 +172,27 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authProvider, (previous, next) {
+      if (!kIsWeb && Platform.isAndroid) {
+        final settings = ref.read(settingsProvider);
+        final user = next.currentUser;
+        SessionNotificationService().setEnabled(
+          user != null && settings.backgroundMonitoringEnabled,
+          user: user,
+        );
+      }
+    });
+
+    ref.listen(settingsProvider, (previous, next) {
+      if (!kIsWeb && Platform.isAndroid) {
+        final user = ref.read(authProvider).currentUser;
+        SessionNotificationService().setEnabled(
+          user != null && next.backgroundMonitoringEnabled,
+          user: user,
+        );
+      }
+    });
+
     final authState = ref.watch(authProvider);
     final themeMode = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,13 +120,12 @@ class SettingsScreen extends ConsumerWidget {
           _buildSliderTile(
             icon: Icons.speed_rounded,
             title: l10n.playerRefreshRateTitle,
-            subtitle: l10n.secondsPlural(settings.playerRefreshRate),
-            label: l10n.secondsShort(settings.playerRefreshRate),
+            subtitleBuilder: (val) => l10n.secondsPlural(val),
             value: settings.playerRefreshRate,
             min: 3,
             max: 30,
             divisions: 27,
-            onChanged: (val) => ref.read(settingsProvider.notifier).setPlayerRefreshRate(val),
+            onChangeEnd: (val) => ref.read(settingsProvider.notifier).setPlayerRefreshRate(val),
           ),
           SwitchListTile(
             secondary: const Icon(Icons.sync_rounded),
@@ -143,25 +143,23 @@ class SettingsScreen extends ConsumerWidget {
             _buildSliderTile(
               icon: Icons.timer_outlined,
               title: l10n.listRefreshRateTitle,
-              subtitle: l10n.secondsPlural(settings.deviceListRefreshRate),
-              label: l10n.secondsShort(settings.deviceListRefreshRate),
+              subtitleBuilder: (val) => l10n.secondsPlural(val),
               value: settings.deviceListRefreshRate,
               min: 5,
               max: 60,
               divisions: 11,
-              onChanged: (val) => ref.read(settingsProvider.notifier).setDeviceListRefreshRate(val),
+              onChangeEnd: (val) => ref.read(settingsProvider.notifier).setDeviceListRefreshRate(val),
             ),
           const Divider(),
           _buildSliderTile(
             icon: Icons.timer_rounded,
             title: l10n.connectionTimeout,
-            subtitle: l10n.secondsPlural(settings.connectionTimeout),
-            label: l10n.secondsShort(settings.connectionTimeout),
+            subtitleBuilder: (val) => l10n.secondsPlural(val),
             value: settings.connectionTimeout,
             min: 5,
             max: 60,
             divisions: 11,
-            onChanged: (val) => ref.read(settingsProvider.notifier).setConnectionTimeout(val),
+            onChangeEnd: (val) => ref.read(settingsProvider.notifier).setConnectionTimeout(val),
           ),
           const Divider(),
           _buildSectionHeader(context, l10n.remoteControl),
@@ -176,18 +174,44 @@ class SettingsScreen extends ConsumerWidget {
                   .setUseVolumeToolbar(value);
             },
           ),
+          if (!kIsWeb && Platform.isAndroid) ...[
+            const Divider(),
+            _buildSectionHeader(context, l10n.backgroundMonitoringSection),
+            SwitchListTile(
+              secondary: const Icon(Icons.notifications_active_outlined),
+              title: Text(l10n.backgroundMonitoringTitle),
+              value: settings.backgroundMonitoringEnabled,
+              onChanged: (value) {
+                ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringEnabled(value);
+              },
+            ),
+            if (settings.backgroundMonitoringEnabled)
+              _buildSliderTile(
+                icon: Icons.timer_outlined,
+                title: l10n.backgroundRefreshIntervalTitle,
+                subtitleBuilder: (val) => l10n.secondsPlural(val),
+                value: settings.backgroundMonitoringRefreshRate,
+                min: 15,
+                max: 300,
+                divisions: 19,
+                onChangeEnd: (val) => ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringRefreshRate(val),
+              ),
+          ],
           const Divider(),
           _buildSectionHeader(context, l10n.librarySection),
           _buildSliderTile(
             icon: Icons.grid_view_rounded,
             title: l10n.itemsPerRowTitle,
-            subtitle: l10n.itemsPlural(settings.libraryItemsPerRow),
-            label: '${settings.libraryItemsPerRow}',
+            subtitleBuilder: (val) => l10n.itemsPlural(val),
             value: settings.libraryItemsPerRow,
             min: 1,
             max: 6,
             divisions: 5,
-            onChanged: (val) => ref.read(settingsProvider.notifier).setLibraryItemsPerRow(val),
+            onChangeEnd: (val) => ref.read(settingsProvider.notifier).setLibraryItemsPerRow(val),
           ),
           if (ref.watch(authProvider).currentUser?.isAdmin ?? false) ...[
             const Divider(),
@@ -265,29 +289,22 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildSliderTile({
     required IconData icon,
     required String title,
-    required String subtitle,
-    required String label,
+    required String Function(int value) subtitleBuilder,
     required int value,
     required double min,
     required double max,
     required int divisions,
-    required ValueChanged<int> onChanged,
+    required ValueChanged<int> onChangeEnd,
   }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing: SizedBox(
-        width: 200,
-        child: Slider(
-          value: value.toDouble(),
-          min: min,
-          max: max,
-          divisions: divisions,
-          label: label,
-          onChanged: (val) => onChanged(val.round()),
-        ),
-      ),
+    return _SliderTile(
+      icon: icon,
+      title: title,
+      subtitleBuilder: subtitleBuilder,
+      value: value,
+      min: min,
+      max: max,
+      divisions: divisions,
+      onChangeEnd: onChangeEnd,
     );
   }
 
@@ -296,4 +313,64 @@ class SettingsScreen extends ConsumerWidget {
         ThemeMode.light => AppLocalizations.of(context)!.themeLightModeName,
         ThemeMode.dark => AppLocalizations.of(context)!.themeDarkModeName,
       };
+}
+
+class _SliderTile extends StatefulWidget {
+  final IconData icon;
+  final String title;
+  final String Function(int value) subtitleBuilder;
+  final int value;
+  final double min;
+  final double max;
+  final int divisions;
+  final ValueChanged<int> onChangeEnd;
+
+  const _SliderTile({
+    required this.icon,
+    required this.title,
+    required this.subtitleBuilder,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.divisions,
+    required this.onChangeEnd,
+  });
+
+  @override
+  State<_SliderTile> createState() => _SliderTileState();
+}
+
+class _SliderTileState extends State<_SliderTile> {
+  double? _dragValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentValue = (_dragValue ?? widget.value.toDouble()).round();
+    return ListTile(
+      leading: Icon(widget.icon),
+      title: Text(widget.title),
+      subtitle: Text(widget.subtitleBuilder(currentValue)),
+      trailing: SizedBox(
+        width: 200,
+        child: Slider(
+          value: _dragValue ?? widget.value.toDouble(),
+          min: widget.min,
+          max: widget.max,
+          divisions: widget.divisions,
+          label: '$currentValue',
+          onChanged: (val) {
+            setState(() {
+              _dragValue = val;
+            });
+          },
+          onChangeEnd: (val) {
+            widget.onChangeEnd(val.round());
+            setState(() {
+              _dragValue = null;
+            });
+          },
+        ),
+      ),
+    );
+  }
 }

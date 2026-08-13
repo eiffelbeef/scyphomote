@@ -12,6 +12,25 @@
   },
   "aboutSection": "About",
   "activeDevices": "Active Devices",
+  "activeSessionsCountPlaying": "{count, plural, =1{1 active session, {playingCount} playing} other{{count} active sessions, {playingCount} playing}}",
+  "@activeSessionsCountPlaying": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "playingCount": {
+        "type": "int"
+      }
+    }
+  },
+  "activeSessionsNonePlaying": "{count, plural, =1{1 active session, none playing} other{{count} active sessions, none playing}}",
+  "@activeSessionsNonePlaying": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "addAlbumToQueue": "Add album to queue",
   "addRemoteWidget": "Add Remote Widget",
   "addToQueue": "Add to queue",
@@ -35,6 +54,10 @@
   "artists": "Artists",
   "audio": "Audio",
   "author": "Author",
+  "backgroundMonitoringSection": "Background Monitoring",
+  "backgroundMonitoringTitle": "Background Session Monitoring",
+  "backgroundMonitoringChannelDescription": "Shows the number of active Jellyfin sessions",
+  "backgroundRefreshIntervalTitle": "Background Refresh Interval",
   "bitrate": "Bitrate",
   "browse": "Browse",
   "buyNow": "Buy Now",
@@ -152,6 +175,7 @@
   "nameZA": "Name (Z-A)",
   "noActiveDevicesFound": "No active devices found",
   "noActiveSessionSelected": "No active session selected",
+  "noActiveSessions": "No active sessions",
   "noCastInfo": "No cast information available",
   "noEmbyServersFound": "No Emby servers found on this account.",
   "noMediaPlaying": "No media playing",
