@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'about_screen.dart';
+import 'crash_log_screen.dart';
 import 'premium_screen.dart';
 import '../providers/settings_provider.dart';
 import '../providers/theme_provider.dart';
@@ -241,9 +242,9 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ],
-          if (kDebugMode) ...[
-            const Divider(),
-            _buildSectionHeader(context, l10n.debugSection),
+          const Divider(),
+          _buildSectionHeader(context, l10n.debugSection),
+          if (kDebugMode)
             SwitchListTile(
               secondary: const Icon(Icons.bug_report_rounded),
               title: Text(
@@ -254,7 +255,14 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(isPremiumProvider.notifier).setPremium(value);
               },
             ),
-          ],
+          ListTile(
+            leading: const Icon(Icons.bug_report_outlined),
+            title: Text(l10n.crashLogsTitle),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () {
+              Navigator.of(context).pushNamed(CrashLogScreen.routeName);
+            },
+          ),
           const Divider(),
           _buildSectionHeader(context, l10n.aboutSection),
           ListTile(

@@ -10,6 +10,7 @@ import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -90,41 +91,45 @@ class MediaSessionManager(private val context: Context, private val methodChanne
     }
 
     fun updateSessions(sessionDataList: List<Map<String, Any?>>) {
-        val currentSessionIds = sessionDataList.mapNotNull { it["sessionId"] as? String }.toSet()
+        try {
+            val currentSessionIds = sessionDataList.mapNotNull { it["sessionId"] as? String }.toSet()
 
-        // Remove sessions no longer active
-        val removedIds = activeSessions.keys.filter { !currentSessionIds.contains(it) }
-        for (id in removedIds) {
-            removeSession(id)
-        }
-
-        // Create or update active sessions
-        for ((index, data) in sessionDataList.withIndex()) {
-            val sessionId = data["sessionId"] as? String ?: continue
-            val title = data["title"] as? String ?: "Jellyfin"
-            val artist = data["artist"] as? String ?: ""
-            val album = data["album"] as? String ?: ""
-            val deviceName = data["deviceName"] as? String ?: ""
-            val isPlaying = data["isPlaying"] as? Boolean ?: false
-            val artworkUrl = data["artworkUrl"] as? String
-            val positionMs = (data["positionMs"] as? Number)?.toLong() ?: 0L
-            val durationMs = (data["durationMs"] as? Number)?.toLong() ?: 0L
-            val supportsRemoteControl = data["supportsRemoteControl"] as? Boolean ?: false
-            val canPlayPause = data["canPlayPause"] as? Boolean ?: supportsRemoteControl
-            val canNext = data["canNext"] as? Boolean ?: supportsRemoteControl
-            val canPrevious = data["canPrevious"] as? Boolean ?: supportsRemoteControl
-            val canStop = data["canStop"] as? Boolean ?: supportsRemoteControl
-            val canSeek = data["canSeek"] as? Boolean ?: false
-
-            val holder = activeSessions.getOrPut(sessionId) {
-                val notificationId = BASE_NOTIFICATION_ID + activeSessions.size + index
-                createHolder(sessionId, notificationId)
+            // Remove sessions no longer active
+            val removedIds = activeSessions.keys.filter { !currentSessionIds.contains(it) }
+            for (id in removedIds) {
+                removeSession(id)
             }
 
-            updateSessionHolder(
-                holder, sessionId, title, artist, album, deviceName, isPlaying, artworkUrl, positionMs, durationMs,
-                supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop, canSeek
-            )
+            // Create or update active sessions
+            for ((index, data) in sessionDataList.withIndex()) {
+                val sessionId = data["sessionId"] as? String ?: continue
+                val title = data["title"] as? String ?: "Jellyfin"
+                val artist = data["artist"] as? String ?: ""
+                val album = data["album"] as? String ?: ""
+                val deviceName = data["deviceName"] as? String ?: ""
+                val isPlaying = data["isPlaying"] as? Boolean ?: false
+                val artworkUrl = data["artworkUrl"] as? String
+                val positionMs = (data["positionMs"] as? Number)?.toLong() ?: 0L
+                val durationMs = (data["durationMs"] as? Number)?.toLong() ?: 0L
+                val supportsRemoteControl = data["supportsRemoteControl"] as? Boolean ?: false
+                val canPlayPause = data["canPlayPause"] as? Boolean ?: supportsRemoteControl
+                val canNext = data["canNext"] as? Boolean ?: supportsRemoteControl
+                val canPrevious = data["canPrevious"] as? Boolean ?: supportsRemoteControl
+                val canStop = data["canStop"] as? Boolean ?: supportsRemoteControl
+                val canSeek = data["canSeek"] as? Boolean ?: false
+
+                val holder = activeSessions.getOrPut(sessionId) {
+                    val notificationId = BASE_NOTIFICATION_ID + activeSessions.size + index
+                    createHolder(sessionId, notificationId)
+                }
+
+                updateSessionHolder(
+                    holder, sessionId, title, artist, album, deviceName, isPlaying, artworkUrl, positionMs, durationMs,
+                    supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop, canSeek
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("MediaSessionManager", "Error updating sessions", e)
         }
     }
 

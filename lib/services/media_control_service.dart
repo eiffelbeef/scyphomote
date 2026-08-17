@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/session.dart';
 import '../services/jellyfin_api_service.dart';
+import '../utils/logger.dart';
 import '../providers/auth_provider.dart';
 
 import '../providers/settings_provider.dart';
@@ -133,6 +134,9 @@ class MediaControlService {
 
     try {
       await _channel.invokeMethod('updateSessions', {'sessions': sessionDataList});
-    } catch (_) {}
+    } on PlatformException catch (e, stackTrace) {
+      debugPrint('PlatformException in MediaControlService.updateSessions: $e');
+      CrashLog.record(e, stackTrace);
+    }
   }
 }

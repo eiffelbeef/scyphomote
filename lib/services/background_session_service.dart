@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/session.dart';
 import '../models/user_account.dart';
 import '../constants.dart';
+import '../utils/logger.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 
 class SessionNotificationService {
@@ -108,13 +110,24 @@ class SessionNotificationService {
     final androidPlugin = _notifications!.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     if (androidPlugin != null) {
-      await androidPlugin.startForegroundService(
-        id: _notificationId,
-        title: title,
-        body: body,
-        notificationDetails: androidDetails,
-        foregroundServiceTypes: {AndroidServiceForegroundType.foregroundServiceTypeDataSync},
-      );
+      try {
+        await androidPlugin.startForegroundService(
+          id: _notificationId,
+          title: title,
+          body: body,
+          notificationDetails: androidDetails,
+          foregroundServiceTypes: {AndroidServiceForegroundType.foregroundServiceTypeDataSync},
+        );
+      } on PlatformException catch (e, stackTrace) {
+        debugPrint('PlatformException starting foreground service: $e. Falling back to standard notification.');
+        CrashLog.record(e, stackTrace);
+        await _notifications!.show(
+          id: _notificationId,
+          title: title,
+          body: body,
+          notificationDetails: NotificationDetails(android: androidDetails),
+        );
+      }
     } else {
       await _notifications!.show(
         id: _notificationId,

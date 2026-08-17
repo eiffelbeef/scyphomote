@@ -9,6 +9,7 @@ import 'screens/remote_control/remote_control_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
 import 'screens/premium_screen.dart';
+import 'screens/crash_log_screen.dart';
 import 'screens/loading_screen.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
@@ -25,14 +26,19 @@ import 'services/media_control_service.dart';
 import 'providers/settings_provider.dart';
 import 'constants.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final packageInfo = await PackageInfo.fromPlatform();
-  AppConstants.appVersion = packageInfo.version;
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final packageInfo = await PackageInfo.fromPlatform();
+    AppConstants.appVersion = packageInfo.version;
 
-  await HomeWidgetManager.init();
+    await HomeWidgetManager.init();
 
-  runApp(const ProviderScope(child: ScyphomoteApp()));
+    runApp(const ProviderScope(child: ScyphomoteApp()));
+  }, (error, stackTrace) {
+    logError('Uncaught async error: $error');
+    CrashLog.record(error, stackTrace);
+  });
 }
 
 class ScyphomoteApp extends ConsumerStatefulWidget {
@@ -252,6 +258,7 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
         PremiumScreen.routeName: (context) => const PremiumScreen(),
+        CrashLogScreen.routeName: (context) => const CrashLogScreen(),
       },
     );
   }
