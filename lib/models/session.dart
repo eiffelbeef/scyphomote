@@ -242,3 +242,53 @@ class Session {
     return hasCapability(command) ? action : null;
   }
 }
+
+extension SessionListFiltering on Iterable<Session> {
+  List<Session> filterVisible({
+    required String? currentUserId,
+    required bool hideOtherUsersSessions,
+  }) {
+    return where((s) {
+      if (hideOtherUsersSessions && s.userId != currentUserId) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  List<Session> getActiveSessions({
+    required String? currentUserId,
+    required bool hideOtherUsersSessions,
+  }) {
+    return filterVisible(
+      currentUserId: currentUserId,
+      hideOtherUsersSessions: hideOtherUsersSessions,
+    )
+        .where((s) => s.isPlaying || s.isPaused)
+        .toList()
+      ..sort((a, b) => a.deviceName.toLowerCase().compareTo(b.deviceName.toLowerCase()));
+  }
+
+  List<Session> getIdleSessions({
+    required String? currentUserId,
+    required bool hideOtherUsersSessions,
+  }) {
+    return filterVisible(
+      currentUserId: currentUserId,
+      hideOtherUsersSessions: hideOtherUsersSessions,
+    )
+        .where((s) => !s.isPlaying && !s.isPaused)
+        .toList()
+      ..sort((a, b) {
+        if (a.supportsMediaControl != b.supportsMediaControl) {
+          return a.supportsMediaControl ? -1 : 1;
+        }
+        if (a.lastActivityDate == null && b.lastActivityDate == null) {
+          return 0;
+        }
+        if (a.lastActivityDate == null) return 1;
+        if (b.lastActivityDate == null) return -1;
+        return b.lastActivityDate!.compareTo(a.lastActivityDate!);
+      });
+  }
+}

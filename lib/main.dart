@@ -21,6 +21,7 @@ import 'widgets/home_widget_manager.dart';
 import 'utils/logger.dart';
 import 'utils/ui_utils.dart';
 import 'services/background_session_service.dart';
+import 'services/media_control_service.dart';
 import 'providers/settings_provider.dart';
 import 'constants.dart';
 
@@ -172,6 +173,10 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
 
   @override
   Widget build(BuildContext context) {
+    if (!kIsWeb && Platform.isAndroid) {
+      MediaControlService().init(ref);
+    }
+
     ref.listen(authProvider, (previous, next) {
       if (!kIsWeb && Platform.isAndroid) {
         final settings = ref.read(settingsProvider);

@@ -15,7 +15,8 @@ plugins {
 
 android {
     namespace = "com.eiffelbeef.scyphomote"
-    compileSdk = flutter.compileSdkVersion
+    //compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -68,4 +69,5 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation("androidx.media:media:1.7.0")
 }

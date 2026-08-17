@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/session.dart';
 import '../services/jellyfin_api_service.dart';
 import '../services/background_session_service.dart';
+import '../services/media_control_service.dart';
 import '../constants.dart';
 import '../utils/screen_service.dart';
 import 'auth_provider.dart';
@@ -70,6 +71,9 @@ class SessionNotifier extends Notifier<SessionState> {
     // React to settings changes or session selection to update polling
     ref.listen(settingsProvider, (previous, next) {
       if (previous != null) {
+        final filterChanged =
+            previous.hideOtherUsersSessions != next.hideOtherUsersSessions ||
+            previous.showNonMediaCapableSessions != next.showNonMediaCapableSessions;
         final pollingChanged =
             previous.playerRefreshRate != next.playerRefreshRate ||
             previous.deviceListAutoRefresh != next.deviceListAutoRefresh ||
@@ -77,7 +81,9 @@ class SessionNotifier extends Notifier<SessionState> {
             previous.backgroundMonitoringEnabled != next.backgroundMonitoringEnabled ||
             previous.backgroundMonitoringRefreshRate != next.backgroundMonitoringRefreshRate;
 
-        if (pollingChanged) {
+        if (filterChanged) {
+          fetchSessions();
+        } else if (pollingChanged) {
           _startPolling(fetchImmediately: false);
         }
       }
@@ -168,6 +174,7 @@ class SessionNotifier extends Notifier<SessionState> {
 
       if (!kIsWeb && Platform.isAndroid) {
         SessionNotificationService().updateSessions(allSessions);
+        MediaControlService().updateSessions(allSessions, _apiService);
       }
     } catch (e) {
       state = state.copyWith(

@@ -15,8 +15,10 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val METHOD_CHANNEL = "com.eiffelbeef.scyphomote/screen"
     private val EVENT_CHANNEL = "com.eiffelbeef.scyphomote/screen_events"
+    private val MEDIA_CONTROLS_CHANNEL = "com.eiffelbeef.scyphomote/media_controls"
 
     private var screenReceiver: BroadcastReceiver? = null
+    private var mediaSessionManager: MediaSessionManager? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -25,6 +27,19 @@ class MainActivity : FlutterActivity() {
             if (call.method == "isScreenInteractive") {
                 val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
                 result.success(powerManager.isInteractive)
+            } else {
+                result.notImplemented()
+            }
+        }
+
+        val mediaChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_CONTROLS_CHANNEL)
+        mediaSessionManager = MediaSessionManager(context, mediaChannel)
+
+        mediaChannel.setMethodCallHandler { call, result ->
+            if (call.method == "updateSessions") {
+                val sessionsList = call.argument<List<Map<String, Any?>>>("sessions") ?: emptyList()
+                mediaSessionManager?.updateSessions(sessionsList)
+                result.success(true)
             } else {
                 result.notImplemented()
             }
@@ -73,5 +88,10 @@ class MainActivity : FlutterActivity() {
                 }
             }
         )
+    }
+
+    override fun onDestroy() {
+        mediaSessionManager?.cleanUp()
+        super.onDestroy()
     }
 }

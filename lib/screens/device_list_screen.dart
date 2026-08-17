@@ -26,31 +26,23 @@ class DeviceListScreen extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    final filteredSessions = sessionState.sessions.where((s) {
-      if (settings.hideOtherUsersSessions &&
-          s.userId != authState.currentUser?.userId) {
-        return false;
-      }
-      return true;
-    }).toList();
+    final currentUserId = authState.currentUser?.userId;
+    final hideOtherUsersSessions = settings.hideOtherUsersSessions;
 
-    final activeSessions =
-        filteredSessions.where((s) => s.isPlaying || s.isPaused).toList()
-          ..sort((a, b) => a.deviceName.toLowerCase().compareTo(b.deviceName.toLowerCase()));
+    final filteredSessions = sessionState.sessions.filterVisible(
+      currentUserId: currentUserId,
+      hideOtherUsersSessions: hideOtherUsersSessions,
+    );
 
-    final idleSessions =
-        filteredSessions.where((s) => !s.isPlaying && !s.isPaused).toList()
-          ..sort((a, b) {
-            if (a.supportsMediaControl != b.supportsMediaControl) {
-              return a.supportsMediaControl ? -1 : 1;
-            }
-            if (a.lastActivityDate == null && b.lastActivityDate == null) {
-              return 0;
-            }
-            if (a.lastActivityDate == null) return 1;
-            if (b.lastActivityDate == null) return -1;
-            return b.lastActivityDate!.compareTo(a.lastActivityDate!);
-          });
+    final activeSessions = sessionState.sessions.getActiveSessions(
+      currentUserId: currentUserId,
+      hideOtherUsersSessions: hideOtherUsersSessions,
+    );
+
+    final idleSessions = sessionState.sessions.getIdleSessions(
+      currentUserId: currentUserId,
+      hideOtherUsersSessions: hideOtherUsersSessions,
+    );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).bottomSystemUiOverlayStyleOverScrolled,
