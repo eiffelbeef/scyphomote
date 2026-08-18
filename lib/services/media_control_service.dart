@@ -78,7 +78,7 @@ class MediaControlService {
           case 'adjustVolume':
             final direction = args['direction'] as num?;
             if (direction == null || direction == 0) break;
-            final currentVolume = targetSession.playState?.volumeLevel ?? 100;
+            final currentVolume = targetSession.volumeLevel;
             final newVolume = (currentVolume + (direction > 0 ? 5 : -5)).clamp(0, 100);
             await apiService.setVolume(sessionId, newVolume);
             break;
@@ -125,7 +125,7 @@ class MediaControlService {
       final canPrevious = supportsRemoteControl;
       final canStop = supportsRemoteControl;
       final canSeek = session.canSeek;
-      final volumeLevel = session.playState?.volumeLevel ?? 100;
+      final volumeLevel = session.volumeLevel;
       final canSetVolume = session.supportsRemoteControl &&
           session.supportedCommands.contains(JellyfinCommands.setVolume);
 
@@ -138,7 +138,7 @@ class MediaControlService {
         'album': session.deviceName,
         'isPlaying': isPlaying,
         'artworkUrl': artworkUrl,
-        'positionMs': (session.playState?.positionTicks ?? 0) ~/ 10000,
+        'positionMs': session.positionTicks ~/ 10000,
         'durationMs': (nowPlaying?.runTimeTicks ?? 0) ~/ 10000,
         'volumeLevel': volumeLevel,
         'canSetVolume': canSetVolume,

@@ -49,12 +49,11 @@ class _RemoteControlPanelState extends ConsumerState<RemoteControlPanel> {
     }
 
     final nowPlaying = session.nowPlaying;
-    final playState = session.playState;
-    final isPaused = playState?.isPaused ?? true;
+    final isPaused = session.isPaused;
     final duration = nowPlaying?.durationSeconds ?? 0;
 
-    final currentServerSeek = playState?.positionSeconds ?? 0;
-    final currentServerVolume = playState?.volumeLevel ?? 0;
+    final currentServerSeek = session.positionSeconds;
+    final currentServerVolume = session.playState?.volumeLevel ?? 0;
 
     if (_optimisticSeek != null) {
       if (_lastServerSeek != null && currentServerSeek != _lastServerSeek) {

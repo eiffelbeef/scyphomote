@@ -129,9 +129,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                   );
                   return segmentsAsync.maybeWhen(
                     data: (segments) {
-                      final playState = session.playState;
-                      final currentPos = (playState?.positionSeconds ?? 0)
-                          .toInt();
+                      final currentPos = session.positionSeconds;
                       final activeSegment = segments.firstWhere(
                         (s) => s.isActive(currentPos),
                         orElse: () => MediaSegment(

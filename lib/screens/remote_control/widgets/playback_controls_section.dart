@@ -54,7 +54,6 @@ class PlaybackControlsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nowPlaying = session.nowPlaying;
-    final playState = session.playState;
     final l10n = AppLocalizations.of(context)!;
     final useVolumeToolbar = ref.watch(settingsProvider).useVolumeToolbar;
 
@@ -72,7 +71,7 @@ class PlaybackControlsSection extends ConsumerWidget {
             onSeek: (val) => onSeek(val.toDouble()),
             onSeekEnd: (val) => onSeekEnd(val.toDouble()),
             overlayBuilder: (context, value, thumbCenter) {
-              final sourceId = session.playState?.mediaSourceId;
+              final sourceId = session.mediaSourceId;
               if (sourceId == null) return const SizedBox();
 
               final info = nowPlaying.trickplay?.getBestTilesInfo(sourceId);
@@ -249,7 +248,7 @@ class PlaybackControlsSection extends ConsumerWidget {
             children: [
               IconButton(
                 icon: Icon(
-                  playState?.isMuted == true
+                  session.isMuted
                       ? Icons.volume_off_rounded
                       : Icons.volume_up_rounded,
                 ),

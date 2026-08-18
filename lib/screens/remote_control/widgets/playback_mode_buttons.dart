@@ -17,7 +17,7 @@ class RepeatButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repeatMode = session.playState?.repeatMode ?? 'RepeatNone';
+    final repeatMode = session.repeatMode;
     final nextMode = switch (repeatMode) {
       'RepeatNone' => 'RepeatAll',
       'RepeatAll' => 'RepeatOne',
@@ -77,7 +77,7 @@ class ShuffleButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isShuffle = session.playState?.playbackOrder == 'Shuffle';
+    final isShuffle = session.isShuffle;
     final iconSize = useTonal ? 20.0 : 24.0;
     
     final style = useTonal && isShuffle

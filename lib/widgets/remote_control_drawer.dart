@@ -86,7 +86,7 @@ class _RemoteControlDrawerState extends ConsumerState<RemoteControlDrawer> {
                   child: ValueListenableBuilder<double>(
                     valueListenable: _dragExtent,
                     builder: (context, extent, child) {
-                      final isPaused = session.playState?.isPaused ?? true;
+                      final isPaused = session.isPaused;
 
                       return RemoteControlPanel(
                         scrollController: scrollController,

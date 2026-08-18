@@ -52,11 +52,10 @@ class _StreamSelectionSheetState extends ConsumerState<StreamSelectionSheet> {
         }
 
         final currentSession = ref.watch(sessionProvider).selectedSession;
-        final playState = currentSession?.playState;
 
         final int? serverIndex = widget.streamType == 'Subtitle'
-            ? playState?.subtitleStreamIndex
-            : playState?.audioStreamIndex;
+            ? currentSession?.subtitleStreamIndex
+            : currentSession?.audioStreamIndex;
 
         final effectiveIndex = _optimisticSelection != -2
             ? _optimisticSelection

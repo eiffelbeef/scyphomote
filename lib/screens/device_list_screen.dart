@@ -150,7 +150,7 @@ class DeviceListScreen extends ConsumerWidget {
     // Calculate progress for active sessions
     double progress = 0.0;
     final duration = session.nowPlaying?.durationSeconds ?? 0;
-    final position = session.playState?.positionSeconds ?? 0;
+    final position = session.positionSeconds;
 
     if (duration > 0) {
       progress = (position / duration).clamp(0.0, 1.0);
@@ -245,7 +245,7 @@ class DeviceListScreen extends ConsumerWidget {
                                       children: [
                                         TextSpan(
                                           text: formatDuration(
-                                            session.playState!.positionSeconds!,
+                                            session.positionSeconds,
                                           ),
                                         ),
                                         TextSpan(

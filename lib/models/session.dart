@@ -56,6 +56,36 @@ class Session {
   bool get isPlaying => nowPlaying != null && !(playState?.isPaused ?? true);
   bool get isPaused => nowPlaying != null && (playState?.isPaused ?? false);
 
+  /// Whether the session is currently muted
+  bool get isMuted => playState?.isMuted ?? false;
+
+  /// Current playback position in ticks
+  int get positionTicks => playState?.positionTicks ?? 0;
+
+  /// Current playback position in seconds
+  int get positionSeconds => playState?.positionSeconds ?? 0;
+
+  /// Current volume level (0-100)
+  int get volumeLevel => playState?.volumeLevel ?? 100;
+
+  /// Current repeat mode ('RepeatNone', 'RepeatAll', 'RepeatOne')
+  String get repeatMode => playState?.repeatMode ?? 'RepeatNone';
+
+  /// Whether shuffle is enabled
+  bool get isShuffle => playState?.playbackOrder == 'Shuffle';
+
+  /// Current playback order
+  String? get playbackOrder => playState?.playbackOrder;
+
+  /// Selected subtitle stream index
+  int? get subtitleStreamIndex => playState?.subtitleStreamIndex;
+
+  /// Selected audio stream index
+  int? get audioStreamIndex => playState?.audioStreamIndex;
+
+  /// Current media source id
+  String? get mediaSourceId => playState?.mediaSourceId;
+
   /// Returns the estimated accurate position in ticks, factoring in time elapsed since last fetch
   int get estimatedPositionTicks {
     if (playState?.positionTicks == null) return 0;

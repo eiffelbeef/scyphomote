@@ -101,7 +101,7 @@ class PlaybackNotifier extends Notifier<void> {
   Future<void> rewind() => _withSession(
     (user, session) {
       if (user.isEmby) {
-        final current = session.playState?.positionSeconds ?? 0;
+        final current = session.positionSeconds;
         final newPos = current - 10;
         return _apiService.seek(
           session.sessionId,
@@ -121,7 +121,7 @@ class PlaybackNotifier extends Notifier<void> {
   Future<void> fastForward() => _withSession(
     (user, session) {
       if (user.isEmby) {
-        final current = session.playState?.positionSeconds ?? 0;
+        final current = session.positionSeconds;
         return _apiService.seek(
           session.sessionId,
           current + 30,
@@ -139,7 +139,7 @@ class PlaybackNotifier extends Notifier<void> {
 
   Future<void> toggleMute() => _withSession(
     (user, session) async {
-      if (session.playState?.isMuted ?? false) {
+      if (session.isMuted) {
         await _apiService.unmute(session.sessionId);
       } else {
         await _apiService.mute(session.sessionId);
