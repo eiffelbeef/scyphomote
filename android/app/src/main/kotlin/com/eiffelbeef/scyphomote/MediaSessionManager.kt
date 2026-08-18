@@ -17,6 +17,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.media.VolumeProviderCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -107,10 +108,13 @@ class MediaSessionManager(private val context: Context, private val methodChanne
                 val artist = data["artist"] as? String ?: ""
                 val album = data["album"] as? String ?: ""
                 val deviceName = data["deviceName"] as? String ?: ""
+                val clientName = data["clientName"] as? String ?: ""
                 val isPlaying = data["isPlaying"] as? Boolean ?: false
                 val artworkUrl = data["artworkUrl"] as? String
                 val positionMs = (data["positionMs"] as? Number)?.toLong() ?: 0L
                 val durationMs = (data["durationMs"] as? Number)?.toLong() ?: 0L
+                val volumeLevel = (data["volumeLevel"] as? Number)?.toInt() ?: 100
+                val canSetVolume = data["canSetVolume"] as? Boolean ?: false
                 val supportsRemoteControl = data["supportsRemoteControl"] as? Boolean ?: false
                 val canPlayPause = data["canPlayPause"] as? Boolean ?: supportsRemoteControl
                 val canNext = data["canNext"] as? Boolean ?: supportsRemoteControl
@@ -120,12 +124,12 @@ class MediaSessionManager(private val context: Context, private val methodChanne
 
                 val holder = activeSessions.getOrPut(sessionId) {
                     val notificationId = BASE_NOTIFICATION_ID + activeSessions.size + index
-                    createHolder(sessionId, notificationId)
+                    createHolder(sessionId, deviceName, notificationId)
                 }
 
                 updateSessionHolder(
-                    holder, sessionId, title, artist, album, deviceName, isPlaying, artworkUrl, positionMs, durationMs,
-                    supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop, canSeek
+                    holder, sessionId, title, artist, album, deviceName, clientName, isPlaying, artworkUrl, positionMs, durationMs,
+                    volumeLevel, canSetVolume, supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop, canSeek
                 )
             }
         } catch (e: Exception) {
@@ -133,8 +137,9 @@ class MediaSessionManager(private val context: Context, private val methodChanne
         }
     }
 
-    private fun createHolder(sessionId: String, notificationId: Int): SessionHolder {
-        val mediaSession = MediaSessionCompat(context, "Jellyfin_$sessionId").apply {
+    private fun createHolder(sessionId: String, deviceName: String, notificationId: Int): SessionHolder {
+        val tag = if (deviceName.isNotEmpty()) "Scyphomote ($deviceName)" else "Jellyfin_$sessionId"
+        val mediaSession = MediaSessionCompat(context, tag).apply {
             setCallback(object : MediaSessionCompat.Callback() {
                 override fun onPlay() = sendMediaCommand(sessionId, "playPause")
                 override fun onPause() = sendMediaCommand(sessionId, "playPause")
@@ -157,10 +162,13 @@ class MediaSessionManager(private val context: Context, private val methodChanne
         artist: String,
         album: String,
         deviceName: String,
+        clientName: String,
         isPlaying: Boolean,
         artworkUrl: String?,
         positionMs: Long,
         durationMs: Long,
+        volumeLevel: Int,
+        canSetVolume: Boolean,
         supportsRemoteControl: Boolean,
         canPlayPause: Boolean,
         canNext: Boolean,
@@ -199,26 +207,56 @@ class MediaSessionManager(private val context: Context, private val methodChanne
 
         holder.mediaSession.setPlaybackState(playbackState)
 
+        val controlType = if (canSetVolume) VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE else VolumeProviderCompat.VOLUME_CONTROL_FIXED
+        val volumeProvider = object : VolumeProviderCompat(controlType, 100, volumeLevel.coerceIn(0, 100)) {
+            override fun onSetVolumeTo(volume: Int) {
+                currentVolume = volume
+                sendMediaCommand(sessionId, "setVolume", mapOf("volume" to volume))
+            }
+
+            override fun onAdjustVolume(direction: Int) {
+                sendMediaCommand(sessionId, "adjustVolume", mapOf("direction" to direction))
+            }
+        }
+        holder.mediaSession.setPlaybackToRemote(volumeProvider)
+
+        val deviceLabel = if (clientName.isNotEmpty() && !deviceName.contains(clientName, ignoreCase = true)) {
+            "$deviceName ($clientName)"
+        } else {
+            deviceName.ifEmpty { "Jellyfin" }
+        }
+
         val metadataBuilder = MediaMetadataCompat.Builder()
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist.ifEmpty { deviceName })
-            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album.ifEmpty { deviceName })
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, deviceLabel)
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, deviceLabel)
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title)
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, deviceLabel)
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, deviceLabel)
             .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, durationMs)
+
+        if (holder.currentBitmap != null) {
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, holder.currentBitmap)
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, holder.currentBitmap)
+        }
 
         holder.mediaSession.setMetadata(metadataBuilder.build())
 
         // Display Notification with MediaStyle
         showNotification(
-            holder, sessionId, title, artist.ifEmpty { deviceName }, isPlaying, holder.currentBitmap,
+            holder, sessionId, title, deviceLabel, deviceLabel, isPlaying, holder.currentBitmap,
             supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop
         )
 
-        // Load Artwork Asynchronously if updated
-        if (artworkUrl != null && artworkUrl != holder.lastArtworkUrl) {
+        // Handle Artwork Loading / Reset
+        if (artworkUrl == null) {
+            holder.lastArtworkUrl = null
+            holder.currentBitmap = null
+        } else if (artworkUrl != holder.lastArtworkUrl) {
             holder.lastArtworkUrl = artworkUrl
             scope.launch(Dispatchers.IO) {
                 val bitmap = loadBitmap(artworkUrl)
-                if (bitmap != null) {
+                if (bitmap != null && holder.lastArtworkUrl == artworkUrl) {
                     holder.currentBitmap = bitmap
                     withContext(Dispatchers.Main) {
                         val updatedMetadata = MediaMetadataCompat.Builder(holder.mediaSession.controller.metadata)
@@ -227,7 +265,7 @@ class MediaSessionManager(private val context: Context, private val methodChanne
                             .build()
                         holder.mediaSession.setMetadata(updatedMetadata)
                         showNotification(
-                            holder, sessionId, title, artist.ifEmpty { deviceName }, isPlaying, bitmap,
+                            holder, sessionId, title, deviceLabel, deviceLabel, isPlaying, bitmap,
                             supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop
                         )
                     }
@@ -241,6 +279,7 @@ class MediaSessionManager(private val context: Context, private val methodChanne
         sessionId: String,
         title: String,
         subtitle: String,
+        deviceLabel: String,
         isPlaying: Boolean,
         bitmap: Bitmap?,
         supportsRemoteControl: Boolean,
@@ -260,6 +299,7 @@ class MediaSessionManager(private val context: Context, private val methodChanne
             .setSmallIcon(R.mipmap.launcher_icon)
             .setContentTitle(title)
             .setContentText(subtitle)
+            .setSubText(deviceLabel)
             .setLargeIcon(bitmap)
             .setContentIntent(contentPendingIntent)
             .setOngoing(isPlaying)

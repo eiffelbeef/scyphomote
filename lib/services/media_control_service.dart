@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/session.dart';
 import '../services/jellyfin_api_service.dart';
 import '../utils/logger.dart';
+import '../constants/jellyfin_commands.dart';
 import '../providers/auth_provider.dart';
 
 import '../providers/settings_provider.dart';
@@ -68,6 +69,19 @@ class MediaControlService {
               await apiService.seek(sessionId, positionMs.toInt() ~/ 1000);
             }
             break;
+          case 'setVolume':
+            final volume = args['volume'] as num?;
+            if (volume != null) {
+              await apiService.setVolume(sessionId, volume.toInt());
+            }
+            break;
+          case 'adjustVolume':
+            final direction = args['direction'] as num?;
+            if (direction == null || direction == 0) break;
+            final currentVolume = targetSession.playState?.volumeLevel ?? 100;
+            final newVolume = (currentVolume + (direction > 0 ? 5 : -5)).clamp(0, 100);
+            await apiService.setVolume(sessionId, newVolume);
+            break;
         }
       } catch (e) {
         debugPrint('Error executing media command $command: $e');
@@ -97,14 +111,13 @@ class MediaControlService {
       if (nowPlaying != null) {
         final tag = nowPlaying.resolvedPrimaryImageTag;
         if (tag != null) {
-          artworkUrl = apiService.getArtworkUrl(nowPlaying.artworkId, 'Primary', maxWidth: 600, tag: tag);
+          artworkUrl = apiService.getArtworkUrl(nowPlaying.artworkId, 'Primary', maxWidth: 800, tag: tag);
         }
       }
 
-      final title = nowPlaying?.displayTitle.isNotEmpty == true
-          ? nowPlaying!.displayTitle
-          : session.deviceName;
-      final subtitle = nowPlaying?.displaySubtitle ?? session.clientName;
+      final hasTitle = nowPlaying?.displayTitle.isNotEmpty == true;
+      final title = hasTitle ? nowPlaying!.displayTitle : session.deviceName;
+      final subtitle = hasTitle ? session.deviceName : session.clientName;
 
       final supportsRemoteControl = session.supportsRemoteControl;
       final canPlayPause = supportsRemoteControl;
@@ -112,10 +125,14 @@ class MediaControlService {
       final canPrevious = supportsRemoteControl;
       final canStop = supportsRemoteControl;
       final canSeek = session.playState?.canSeek ?? false;
+      final volumeLevel = session.playState?.volumeLevel ?? 100;
+      final canSetVolume = session.supportsRemoteControl &&
+          session.supportedCommands.contains(JellyfinCommands.setVolume);
 
       return {
         'sessionId': session.sessionId,
         'deviceName': session.deviceName,
+        'clientName': session.clientName,
         'title': title,
         'artist': subtitle,
         'album': session.deviceName,
@@ -123,6 +140,8 @@ class MediaControlService {
         'artworkUrl': artworkUrl,
         'positionMs': (session.playState?.positionTicks ?? 0) ~/ 10000,
         'durationMs': (nowPlaying?.runTimeTicks ?? 0) ~/ 10000,
+        'volumeLevel': volumeLevel,
+        'canSetVolume': canSetVolume,
         'supportsRemoteControl': supportsRemoteControl,
         'canPlayPause': canPlayPause,
         'canNext': canNext,
