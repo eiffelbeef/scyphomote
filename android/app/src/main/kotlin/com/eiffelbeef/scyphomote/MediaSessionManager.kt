@@ -25,12 +25,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.SupervisorJob
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import android.net.Uri
 import java.net.URL
 
 class MediaSessionManager(private val context: Context, private val methodChannel: MethodChannel) {
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e("MediaSessionManager", "Uncaught coroutine exception", throwable)
+        NativeCrashLogger.record(context, "MediaSessionCoroutine", throwable)
+    }
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + coroutineExceptionHandler)
     private val activeSessions = mutableMapOf<String, SessionHolder>()
     private val notificationManager = NotificationManagerCompat.from(context)
 
@@ -259,15 +265,29 @@ class MediaSessionManager(private val context: Context, private val methodChanne
                 if (bitmap != null && holder.lastArtworkUrl == artworkUrl) {
                     holder.currentBitmap = bitmap
                     withContext(Dispatchers.Main) {
-                        val updatedMetadata = MediaMetadataCompat.Builder(holder.mediaSession.controller.metadata)
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
-                            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
-                            .build()
-                        holder.mediaSession.setMetadata(updatedMetadata)
-                        showNotification(
-                            holder, sessionId, title, deviceLabel, deviceLabel, isPlaying, bitmap,
-                            supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop
-                        )
+                        if (activeSessions.containsKey(sessionId) && holder.mediaSession.isActive) {
+                            try {
+                                val currentMeta = holder.mediaSession.controller.metadata
+                                val updatedMetadata = if (currentMeta != null) {
+                                    MediaMetadataCompat.Builder(currentMeta)
+                                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                                        .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
+                                        .build()
+                                } else {
+                                    null
+                                }
+                                if (updatedMetadata != null) {
+                                    holder.mediaSession.setMetadata(updatedMetadata)
+                                }
+                                showNotification(
+                                    holder, sessionId, title, deviceLabel, deviceLabel, isPlaying, bitmap,
+                                    supportsRemoteControl, canPlayPause, canNext, canPrevious, canStop
+                                )
+                            } catch (e: Exception) {
+                                Log.e("MediaSessionManager", "Error updating notification with bitmap", e)
+                                NativeCrashLogger.record(context, "BitmapNotification", e)
+                            }
+                        }
                     }
                 }
             }

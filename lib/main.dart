@@ -29,6 +29,19 @@ import 'constants.dart';
 void main() {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      logError('Flutter framework error: ${details.exception}');
+      CrashLog.record(details.exception, details.stack);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      logError('PlatformDispatcher unhandled error: $error');
+      CrashLog.record(error, stack);
+      return true;
+    };
+
     final packageInfo = await PackageInfo.fromPlatform();
     AppConstants.appVersion = packageInfo.version;
 
