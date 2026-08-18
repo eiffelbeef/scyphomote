@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'media_info.dart';
 import 'play_state.dart';
 import '../constants/jellyfin_commands.dart';
+import '../constants/emby_commands.dart';
 
 class Session {
   final String sessionId;
@@ -85,7 +86,7 @@ class Session {
   /// Check if this session supports shuffling
   bool get canShuffle =>
       hasCapability(JellyfinCommands.setShuffleQueue) ||
-      hasCapability('SetShuffle');
+      hasCapability(EmbyCommands.setShuffle);
 
   /// Check if this session supports repeat
   bool get canRepeat => hasCapability(JellyfinCommands.setRepeatMode);

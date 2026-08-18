@@ -7,6 +7,7 @@ import '../models/media_info.dart';
 import '../models/user_account.dart';
 import '../models/session.dart';
 import '../constants/jellyfin_commands.dart';
+import '../constants/emby_commands.dart';
 
 class PlaybackNotifier extends Notifier<void> {
   late JellyfinApiService _apiService;
@@ -153,7 +154,7 @@ class PlaybackNotifier extends Notifier<void> {
       final isEmby = user.isEmby;
       return _apiService.sendCommand(
         session.sessionId,
-        isEmby ? 'SetShuffle' : JellyfinCommands.setShuffleQueue,
+        isEmby ? EmbyCommands.setShuffle : JellyfinCommands.setShuffleQueue,
         arguments: isEmby
             ? {'Shuffle': !isCurrentlyShuffle}
             : {'ShuffleMode': isCurrentlyShuffle ? 'Sorted' : 'Shuffle'},
