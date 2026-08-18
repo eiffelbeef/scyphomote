@@ -142,9 +142,7 @@ class SessionNotifier extends Notifier<SessionState> {
     }
 
     try {
-      final allSessions = await _apiService.getSessions(
-        deviceId: state.selectedSession?.deviceId,
-      );
+      final allSessions = await _apiService.getSessions();
 
       final isAdmin = ref.read(authProvider).currentUser?.isAdmin ?? false;
       final showNonMediaCapable = isAdmin && ref.read(settingsProvider).showNonMediaCapableSessions;
