@@ -24,7 +24,7 @@ class BasicControlsRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isEmby = ref.watch(authProvider).currentUser?.isEmby ?? false;
     final canJump = isEmby
-        ? (session.playState?.canSeek ?? false)
+        ? session.canSeek
         : session.supportsRemoteControl;
 
     return Row(

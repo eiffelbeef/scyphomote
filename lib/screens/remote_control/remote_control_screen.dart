@@ -204,7 +204,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                   ),
                 _infoItem(
                   l10n.canSeek,
-                  session.playState?.canSeek.toString() ?? l10n.none,
+                  session.canSeek.toString(),
                 ),
                 _infoItem(
                   l10n.supportsMediaControl,

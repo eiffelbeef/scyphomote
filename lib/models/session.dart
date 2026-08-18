@@ -91,6 +91,9 @@ class Session {
   /// Check if this session supports repeat
   bool get canRepeat => hasCapability(JellyfinCommands.setRepeatMode);
 
+  /// Check if this session supports remote seeking
+  bool get canSeek => supportsRemoteControl && (playState?.canSeek ?? false);
+
   factory Session.fromJson(Map<String, dynamic> json) {
     final List<String> supportedCommands =
         (json['SupportedCommands'] as List<dynamic>?)

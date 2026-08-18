@@ -143,7 +143,7 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                         ),
                       );
 
-                      if (activeSegment.id.isEmpty || !(playState?.canSeek ?? false)) {
+                      if (activeSegment.id.isEmpty || !session.canSeek) {
                         return const SizedBox.shrink();
                       }
 

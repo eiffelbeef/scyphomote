@@ -67,7 +67,7 @@ class PlaybackControlsSection extends ConsumerWidget {
             currentPositionSeconds: currentPositionSeconds,
             durationSeconds: durationSeconds,
             isPlaying: !isPaused,
-            interactable: session.playState?.canSeek ?? false,
+            interactable: session.canSeek,
             width: availableWidth,
             onSeek: (val) => onSeek(val.toDouble()),
             onSeekEnd: (val) => onSeekEnd(val.toDouble()),

@@ -124,7 +124,7 @@ class MediaControlService {
       final canNext = supportsRemoteControl;
       final canPrevious = supportsRemoteControl;
       final canStop = supportsRemoteControl;
-      final canSeek = session.playState?.canSeek ?? false;
+      final canSeek = session.canSeek;
       final volumeLevel = session.playState?.volumeLevel ?? 100;
       final canSetVolume = session.supportsRemoteControl &&
           session.supportedCommands.contains(JellyfinCommands.setVolume);
