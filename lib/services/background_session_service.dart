@@ -116,7 +116,7 @@ class SessionNotificationService {
           title: title,
           body: body,
           notificationDetails: androidDetails,
-          foregroundServiceTypes: {AndroidServiceForegroundType.foregroundServiceTypeDataSync},
+          foregroundServiceTypes: {AndroidServiceForegroundType.foregroundServiceTypeConnectedDevice},
         );
       } on PlatformException catch (e, stackTrace) {
         debugPrint('PlatformException starting foreground service: $e. Falling back to standard notification.');
