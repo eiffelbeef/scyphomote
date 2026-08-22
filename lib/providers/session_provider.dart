@@ -171,8 +171,12 @@ class SessionNotifier extends Notifier<SessionState> {
       );
 
       if (!kIsWeb && Platform.isAndroid) {
-        SessionNotificationService().updateSessions(allSessions);
-        MediaControlService().updateSessions(allSessions, _apiService);
+        final visibleSessions = sessions.filterVisible(
+          currentUserId: ref.read(authProvider).currentUser?.userId,
+          hideOtherUsersSessions: ref.read(settingsProvider).hideOtherUsersSessions,
+        );
+        SessionNotificationService().updateSessions(visibleSessions);
+        MediaControlService().updateSessions(visibleSessions, _apiService);
       }
     } catch (e) {
       state = state.copyWith(
