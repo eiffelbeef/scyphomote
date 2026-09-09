@@ -55,3 +55,4 @@ lib/l10n/app_localizations_*.dart
 
 /android/build/
 jellyfin-openapi-stable.json
+CLOUDFLARE_RESEND_SETUP.md

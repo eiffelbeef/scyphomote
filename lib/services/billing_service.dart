@@ -6,10 +6,12 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/home_widget_manager.dart';
 import '../utils/logger.dart';
+import 'license_service.dart';
 
 class BillingService {
   static const _premiumId = 'scyphomote_premium';
   static const _historyKey = 'support_history';
+  static const _licenseKeyPref = 'license_key';
   static bool get isBillingSupported => !kIsWeb && Platform.isAndroid;
 
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -22,15 +24,31 @@ class BillingService {
   bool _isAvailable = true;
   bool get isAvailable => _isAvailable;
 
+  String? _licensedIdentifier;
+  String? get licensedIdentifier => _licensedIdentifier;
+  bool get isLicensed => _licensedIdentifier != null;
+
   List<String> _supportHistory = [];
   List<String> get supportHistory => List.unmodifiable(_supportHistory);
   bool get hasSupported => _supportHistory.isNotEmpty;
 
   VoidCallback? onSupportHistoryChanged;
+  VoidCallback? onPremiumChanged;
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
-    _isPremium = _prefs.getBool('is_premium') ?? false;
+
+    final savedLicense = _prefs.getString(_licenseKeyPref);
+    if (savedLicense != null &&
+        savedLicense.isNotEmpty &&
+        await LicenseService.verifyKey(savedLicense)) {
+      _licensedIdentifier = LicenseService.extractIdentifier(savedLicense);
+      _isPremium = true;
+    } else {
+      if (savedLicense != null) await _prefs.remove(_licenseKeyPref);
+      _isPremium = _prefs.getBool('is_premium') ?? false;
+    }
+
     _supportHistory = _prefs.getStringList(_historyKey) ?? [];
 
     _isAvailable = isBillingSupported && await _iap.isAvailable();
@@ -57,8 +75,22 @@ class BillingService {
   Future<void> buySupport(String productId) =>
       _buy(productId, consumable: true);
 
-  Future<void> setPremiumLocal(bool value) async {
-    await _setPremium(value);
+  Future<void> setPremiumLocal(bool value) => _setPremium(value);
+
+  Future<bool> activateLicense(String licenseKey) async {
+    final isValid = await LicenseService.verifyKey(licenseKey);
+    if (!isValid) return false;
+
+    await _prefs.setString(_licenseKeyPref, licenseKey.trim());
+    _licensedIdentifier = LicenseService.extractIdentifier(licenseKey);
+    await _setPremium(true);
+    return true;
+  }
+
+  Future<void> removeLicense() async {
+    await _prefs.remove(_licenseKeyPref);
+    _licensedIdentifier = null;
+    await _setPremium(false);
   }
 
   Future<void> _buy(String productId, {required bool consumable}) async {
@@ -79,6 +111,7 @@ class BillingService {
     _isPremium = value;
     await _prefs.setBool('is_premium', value);
     await HomeWidgetManager.syncPremiumStatus(value);
+    onPremiumChanged?.call();
   }
 
   Future<void> _recordSupport(String productId) async {

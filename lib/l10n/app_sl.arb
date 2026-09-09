@@ -207,6 +207,7 @@
   "premiered": "Premiera",
   "premiumDescription": "Nakup Premium različice vam za vedno omogoči dostop do trenutnih in prihodnjih Premium funckij.",
   "premiumFeatureWidget": "Pripomoček za začetni zaslon (upravljanje naprav brez odpiranja aplikacije)",
+  "premiumFeatureBackground": "Spremljanje v ozadju s trajnim obvestilom in nadzorom predvajanja",
   "premiumFeatures": "Premium funkcije:",
   "premiumSection": "Premium",
   "premiumSubtitle": "Scyphomote Premium",
@@ -353,5 +354,28 @@
     }
   },
   "widgetPinned": "Pripomoček je dodan na začetni zaslon",
-  "youArePremium": "Ste Premium uporabnik!"
+  "youArePremium": "Ste Premium uporabnik!",
+  "sponsorOnGitHub": "Sponzorirajte na GitHubu",
+  "sponsorOnGitHubDesc": "Sponzoriranje Scyphomote na GitHubu podpira razvoj in vam zagotovi licenčni ključ Premium za vse platforme.",
+  "enterLicenseKey": "Vnesite licenčni ključ",
+  "pasteLicenseKey": "Prilepite svoj licenčni ključ",
+  "licenseKey": "Licenčni ključ",
+  "licenseKeyHint": "user.signature...",
+  "licenseKeyInvalid": "Neveljaven licenčni ključ. Preverite in poskusite znova.",
+  "licenseKeyActivated": "Premium uspešno aktiviran! Hvala za vašo podporo.",
+  "licenseActive": "Aktivirano z licenco za {identifier}",
+  "@licenseActive": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLicense": "Odstrani licenco",
+  "removeLicenseConfirm": "Ali ste prepričani, da želite odstraniti ta licenčni ključ?",
+  "activate": "Aktiviraj",
+  "remove": "Odstrani",
+  "haveLicenseKey": "Že imate licenčni ključ ali ste sponzorirali na GitHubu?",
+  "inAppPurchasesUnavailable": "Nakupi v aplikaciji niso na voljo v tej različici. Funkcije Premium lahko odklenete s sponzoriranjem na GitHubu.",
+  "retrieveLicenseKey": "Pridobi licenčni ključ"
 }

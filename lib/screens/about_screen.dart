@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
@@ -10,13 +9,6 @@ import 'package:in_app_review/in_app_review.dart';
 class AboutScreen extends StatelessWidget {
   static const routeName = '/about';
   const AboutScreen({super.key});
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      throw Exception('Could not launch $url');
-    }
-  }
 
   void _copyToClipboard(BuildContext context, String label, String text) {
     Clipboard.setData(ClipboardData(text: text));
@@ -33,9 +25,11 @@ class AboutScreen extends StatelessWidget {
       appBar: AppBar(title: Text(l10n.aboutSection)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
             const SizedBox(height: 24),
             Image.asset('assets/scyphomote.png', width: 120, height: 120),
             const SizedBox(height: 16),
@@ -121,7 +115,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             InkWell(
-              onTap: () => _launchUrl(AppConstants.githubUrl),
+              onTap: () => UiUtils.launchUrl(AppConstants.githubUrl),
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -178,7 +172,7 @@ class AboutScreen extends StatelessWidget {
               const SizedBox(height: 16),
               InkWell(
                 onTap: () =>
-                    _launchUrl('https://liberapay.com/EiffelBeef/donate'),
+                    UiUtils.launchUrl('https://liberapay.com/EiffelBeef/donate'),
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -244,7 +238,8 @@ class AboutScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }
 

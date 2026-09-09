@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../../models/session.dart';
 
@@ -186,7 +185,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
                               ? '!/item?id=$itemId&serverId=${user.serverId}'
                               : '!/details?id=$itemId',
                         );
-                        launchUrl(uri, mode: LaunchMode.externalApplication);
+                        UiUtils.launchUrl(uri.toString());
                       }
                     },
                   ),
@@ -349,7 +348,7 @@ class _RemoteControlScreenState extends ConsumerState<RemoteControlScreen> {
             onPressed: () {
               Navigator.pop(dialogContext); // close prompt
               Navigator.pop(context); // close session info dialog
-              launchUrl(Uri.parse('https://whatismyipaddress.com/ip/$ip'));
+              UiUtils.launchUrl('https://whatismyipaddress.com/ip/$ip');
             },
             child: Text(l10n.open),
           ),

@@ -207,6 +207,7 @@
   "premiered": "首播时间",
   "premiumDescription": "购买高级版后，您将永久获得当前和未来所有高级功能的访问权限。",
   "premiumFeatureWidget": "主屏幕小部件（无需打开应用即可控制设备）",
+  "premiumFeatureBackground": "后台监控及带有播放控制的常驻通知",
   "premiumFeatures": "高级功能：",
   "premiumSection": "高级版",
   "premiumSubtitle": "Scyphomote 高级版",
@@ -354,5 +355,28 @@
     }
   },
   "widgetPinned": "小部件已固定到主屏幕",
-  "youArePremium": "您是高级版用户！"
+  "youArePremium": "您是高级版用户！",
+  "sponsorOnGitHub": "在 GitHub 上赞助",
+  "sponsorOnGitHubDesc": "在 GitHub 上赞助 Scyphomote 可支持开发并获得适用于所有平台的高级版许可证密钥。",
+  "enterLicenseKey": "输入许可证密钥",
+  "pasteLicenseKey": "粘贴您的许可证密钥",
+  "licenseKey": "许可证密钥",
+  "licenseKeyHint": "user.signature...",
+  "licenseKeyInvalid": "许可证密钥无效。请检查后重试。",
+  "licenseKeyActivated": "高级版激活成功！感谢您的支持。",
+  "licenseActive": "已为 {identifier} 激活许可证",
+  "@licenseActive": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLicense": "移除许可证",
+  "removeLicenseConfirm": "确定要移除此许可证密钥吗？",
+  "activate": "激活",
+  "remove": "移除",
+  "haveLicenseKey": "已有许可证密钥或已在 GitHub 上赞助？",
+  "inAppPurchasesUnavailable": "此版本不支持应用内购买。您可以通过在 GitHub 上赞助来解锁高级功能。",
+  "retrieveLicenseKey": "获取许可证密钥"
 }

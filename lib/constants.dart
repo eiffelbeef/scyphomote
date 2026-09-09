@@ -4,6 +4,8 @@ class AppConstants {
   static const String appName = 'Scyphomote';
   static String appVersion = '0.0.0';
   static const String githubUrl = 'https://github.com/EiffelBeef/Scyphomote';
+  static const String githubSponsorsUrl = 'https://github.com/sponsors/EiffelBeef';
+  static const String licensePortalUrl = 'https://scyphomote-premium.eiffelbeef.workers.dev';
   static const int paginationLimit = 50;
 
   static final GlobalKey<ScaffoldMessengerState> messengerKey =

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../utils/ui_utils.dart';
 import 'themed_svg_icon.dart';
 
 String? _svgAssetForLinkName(String name) {
@@ -29,10 +29,7 @@ class ExternalLinksSection extends StatelessWidget {
         final svgAsset = _svgAssetForLinkName(linkName);
         return OutlinedButton.icon(
           onPressed: linkUrl.isNotEmpty
-              ? () => launchUrl(
-                  Uri.parse(linkUrl),
-                  mode: LaunchMode.externalApplication,
-                )
+              ? () => UiUtils.launchUrl(linkUrl)
               : null,
           icon: svgAsset != null
               ? ThemedSvgIcon(

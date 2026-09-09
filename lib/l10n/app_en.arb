@@ -224,6 +224,7 @@
   "premiered": "Premiered",
   "premiumDescription": "Purchasing premium grants you access to current and future premium features, forever.",
   "premiumFeatureWidget": "Home Screen Widget (control devices without opening the app)",
+  "premiumFeatureBackground": "Background monitoring with persistent notification & playback controls",
   "premiumFeatures": "Premium Features:",
   "premiumSection": "Premium",
   "premiumSubtitle": "Scyphomote Premium",
@@ -370,5 +371,28 @@
     }
   },
   "widgetPinned": "Widget pinned to Home Screen",
-  "youArePremium": "You are Premium!"
+  "youArePremium": "You are Premium!",
+  "sponsorOnGitHub": "Sponsor on GitHub",
+  "sponsorOnGitHubDesc": "Sponsoring Scyphomote on GitHub supports development and grants you a premium license key for all platforms.",
+  "enterLicenseKey": "Enter License Key",
+  "pasteLicenseKey": "Paste your license key",
+  "licenseKey": "License Key",
+  "licenseKeyHint": "user.signature...",
+  "licenseKeyInvalid": "Invalid license key. Please verify and try again.",
+  "licenseKeyActivated": "Premium activated successfully! Thank you for your support.",
+  "licenseActive": "Activated with license for {identifier}",
+  "@licenseActive": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLicense": "Remove License",
+  "removeLicenseConfirm": "Are you sure you want to remove this license key?",
+  "activate": "Activate",
+  "remove": "Remove",
+  "haveLicenseKey": "Already have a license key or sponsored on GitHub?",
+  "inAppPurchasesUnavailable": "In-app purchases are not available on this version. You can unlock premium features by sponsoring on GitHub.",
+  "retrieveLicenseKey": "Retrieve License Key"
 }

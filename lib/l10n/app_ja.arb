@@ -207,6 +207,7 @@
   "premiered": "初演",
   "premiumDescription": "プレミアムを購入すると、現在および将来のすべてのプレミアム機能にいつでもアクセスできます。",
   "premiumFeatureWidget": "ホーム画面ウィジェット (アプリを開かずにデバイスを操作)",
+  "premiumFeatureBackground": "バックグラウンド監視と常駐通知による再生操作",
   "premiumFeatures": "プレミアム機能:",
   "premiumSection": "プレミアム",
   "premiumSubtitle": "Scyphomote プレミアム",
@@ -353,5 +354,28 @@
     }
   },
   "widgetPinned": "ウィジェットをホーム画面に固定しました",
-  "youArePremium": "プレミアムユーザーです！"
+  "youArePremium": "プレミアムユーザーです！",
+  "sponsorOnGitHub": "GitHubでスポンサーになる",
+  "sponsorOnGitHubDesc": "GitHubでScyphomoteのスポンサーになると、開発を支援し、全プラットフォーム向けのプレミアムライセンスキーを取得できます。",
+  "enterLicenseKey": "ライセンスキーを入力",
+  "pasteLicenseKey": "ライセンスキーを貼り付けてください",
+  "licenseKey": "ライセンスキー",
+  "licenseKeyHint": "user.signature...",
+  "licenseKeyInvalid": "無効なライセンスキーです。確認してもう一度お試しください。",
+  "licenseKeyActivated": "プレミアムが有効化されました！ご支援ありがとうございます。",
+  "licenseActive": "{identifier} のライセンスで有効化済み",
+  "@licenseActive": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLicense": "ライセンスを削除",
+  "removeLicenseConfirm": "このライセンスキーを削除してもよろしいですか？",
+  "activate": "有効化",
+  "remove": "削除",
+  "haveLicenseKey": "ライセンスキーをお持ちですか、またはGitHubでスポンサーになりましたか？",
+  "inAppPurchasesUnavailable": "このバージョンではアプリ内課金をご利用いただけません。GitHubでスポンサーになることでプレミアム機能をご利用いただけます。",
+  "retrieveLicenseKey": "ライセンスキーを取得"
 }

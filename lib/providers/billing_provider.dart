@@ -13,6 +13,10 @@ class IsPremiumNotifier extends Notifier<bool> {
   @override
   bool build() {
     _billing = ref.watch(billingServiceProvider);
+    _billing.onPremiumChanged = () {
+      state = _billing.isPremium;
+      ref.read(licensedIdentifierProvider.notifier).refresh();
+    };
     _init();
     return _billing.isPremium;
   }
@@ -20,21 +24,40 @@ class IsPremiumNotifier extends Notifier<bool> {
   Future<void> _init() async {
     await _billing.initialize();
     state = _billing.isPremium;
-    // Kick the history provider once billing is ready
+    ref.read(licensedIdentifierProvider.notifier).refresh();
     ref.read(supportHistoryProvider.notifier).refresh();
   }
 
   Future<void> buyPremium() => _billing.buyPremium();
 
-  Future<void> setPremium(bool value) async {
-    await _billing.setPremiumLocal(value);
-    state = value;
-  }
+  Future<void> setPremium(bool value) => _billing.setPremiumLocal(value);
+
+  Future<bool> activateLicense(String key) => _billing.activateLicense(key);
+
+  Future<void> removeLicense() => _billing.removeLicense();
 }
 
 final isPremiumProvider = NotifierProvider<IsPremiumNotifier, bool>(
   IsPremiumNotifier.new,
 );
+
+class LicensedIdentifierNotifier extends Notifier<String?> {
+  @override
+  String? build() {
+    final billing = ref.watch(billingServiceProvider);
+    return billing.licensedIdentifier;
+  }
+
+  void refresh() {
+    final billing = ref.read(billingServiceProvider);
+    state = billing.licensedIdentifier;
+  }
+}
+
+final licensedIdentifierProvider =
+    NotifierProvider<LicensedIdentifierNotifier, String?>(
+      LicensedIdentifierNotifier.new,
+    );
 
 class SupportHistoryNotifier extends Notifier<List<String>> {
   @override
@@ -58,3 +81,4 @@ final supportHistoryProvider =
     NotifierProvider<SupportHistoryNotifier, List<String>>(
       SupportHistoryNotifier.new,
     );
+

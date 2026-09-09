@@ -207,6 +207,7 @@
   "premiered": "Premiere",
   "premiumDescription": "Der Kauf von Premium ermöglicht Ihnen den dauerhaften Zugriff auf alle Premium-Funktionen.",
   "premiumFeatureWidget": "Startbildschirm-Widget (Geräte steuern, ohne die App zu öffnen)",
+  "premiumFeatureBackground": "Hintergrundüberwachung mit dauerhafter Benachrichtigung & Mediensteuerung",
   "premiumFeatures": "Premium-Funktionen:",
   "premiumSection": "Premium",
   "premiumSubtitle": "Scyphomote Premium",
@@ -353,5 +354,28 @@
     }
   },
   "widgetPinned": "Widget am Startbildschirm angepinnt",
-  "youArePremium": "Sie sind Premium!"
+  "youArePremium": "Sie sind Premium!",
+  "sponsorOnGitHub": "Auf GitHub sponsern",
+  "sponsorOnGitHubDesc": "Das Sponsoring von Scyphomote auf GitHub unterstützt die Entwicklung und gewährt Ihnen einen Premium-Lizenzschlüssel für alle Plattformen.",
+  "enterLicenseKey": "Lizenzschlüssel eingeben",
+  "pasteLicenseKey": "Fügen Sie Ihren Lizenzschlüssel ein",
+  "licenseKey": "Lizenzschlüssel",
+  "licenseKeyHint": "user.signature...",
+  "licenseKeyInvalid": "Ungültiger Lizenzschlüssel. Bitte überprüfen und erneut versuchen.",
+  "licenseKeyActivated": "Premium erfolgreich aktiviert! Vielen Dank für Ihre Unterstützung.",
+  "licenseActive": "Aktiviert mit Lizenz für {identifier}",
+  "@licenseActive": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
+  "removeLicense": "Lizenz entfernen",
+  "removeLicenseConfirm": "Möchten Sie diesen Lizenzschlüssel wirklich entfernen?",
+  "activate": "Aktivieren",
+  "remove": "Entfernen",
+  "haveLicenseKey": "Haben Sie bereits einen Lizenzschlüssel oder auf GitHub gesponsert?",
+  "inAppPurchasesUnavailable": "In-App-Käufe sind in dieser Version nicht verfügbar. Sie können Premium-Funktionen freischalten, indem Sie auf GitHub sponsern.",
+  "retrieveLicenseKey": "Lizenzschlüssel abrufen"
 }

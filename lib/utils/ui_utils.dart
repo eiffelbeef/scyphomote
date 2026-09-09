@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import '../providers/session_provider.dart';
 import '../constants.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
@@ -190,5 +191,18 @@ class UiUtils {
     }
     double mbps = bps / 1000000;
     return '${mbps.toStringAsFixed(mbps.truncateToDouble() == mbps ? 0 : 1)} Mbps';
+  }
+
+  static Future<bool> launchUrl(
+    String url, {
+    url_launcher.LaunchMode mode = url_launcher.LaunchMode.externalApplication,
+  }) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return false;
+    try {
+      return await url_launcher.launchUrl(uri, mode: mode);
+    } catch (_) {
+      return false;
+    }
   }
 }
