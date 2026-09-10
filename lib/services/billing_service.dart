@@ -13,6 +13,7 @@ class BillingService {
   static const _premiumId = 'scyphomote_premium';
   static const _historyKey = 'support_history';
   static const _licenseKeyPref = 'license_key';
+  static const _spoofPremiumKey = 'spoof_premium';
   static const _playStoreInstaller = 'com.android.vending';
   static bool get isBillingSupported => !kIsWeb && Platform.isAndroid;
 
@@ -48,7 +49,11 @@ class BillingService {
       _isPremium = true;
     } else {
       if (savedLicense != null) await _prefs.remove(_licenseKeyPref);
-      _isPremium = kDebugMode && (_prefs.getBool('is_premium') ?? false);
+      _isPremium = _prefs.getBool('is_premium') ?? false;
+    }
+
+    if (kDebugMode) {
+      _isPremium = _prefs.getBool(_spoofPremiumKey) ?? _isPremium;
     }
 
     _supportHistory = _prefs.getStringList(_historyKey) ?? [];
@@ -81,7 +86,7 @@ class BillingService {
   Future<void> buySupport(String productId) =>
       _buy(productId, consumable: true);
 
-  Future<void> setPremiumLocal(bool value) => _setPremium(value);
+  Future<void> setPremiumLocal(bool value) => _setPremium(value, isSpoof: true);
 
   Future<bool> activateLicense(String licenseKey) async {
     final isValid = await LicenseService.verifyKey(licenseKey);
@@ -113,10 +118,27 @@ class BillingService {
     }
   }
 
-  Future<void> _setPremium(bool value) async {
-    _isPremium = value;
-    await _prefs.setBool('is_premium', value);
-    await HomeWidgetManager.syncPremiumStatus(value);
+  Future<void> _setPremium(bool value, {bool isSpoof = false}) async {
+    if (isSpoof && !kDebugMode) return;
+    
+    if (isSpoof) {
+      if (value) {
+        await _prefs.setBool(_spoofPremiumKey, true);
+      } else {
+        await _prefs.remove(_spoofPremiumKey);
+      }
+    } else {
+      await _prefs.setBool('is_premium', value);
+    }
+    
+    // If spoofing is currently forcing premium ON, don't let real updates override the live state
+    if (!isSpoof && kDebugMode && _prefs.getBool(_spoofPremiumKey) == true) {
+      return;
+    }
+
+    _isPremium = isSpoof && !value ? (_prefs.getBool('is_premium') ?? false) : value;
+    
+    await HomeWidgetManager.syncPremiumStatus(_isPremium);
     onPremiumChanged?.call();
   }
 
