@@ -19,7 +19,7 @@ class EpisodeRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final imageUrl = apiService.getItemImageUrl(item);
     final runTimeTicks = item['RunTimeTicks'] as int?;
-    final overview = item['Overview'] as String?;
+    final overview = UiUtils.cleanHtmlEntities(item['Overview'] as String?);
 
     return InkWell(
       onTap: () {

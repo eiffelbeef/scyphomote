@@ -1,3 +1,4 @@
+import 'package:html_unescape/html_unescape.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,8 @@ String formatDuration(int seconds) {
 }
 
 class UiUtils {
+  static final _unescape = HtmlUnescape();
+
   static void showErrorToast(
     String endpoint,
     String error, {
@@ -204,5 +207,10 @@ class UiUtils {
     } catch (_) {
       return false;
     }
+  }
+
+  static String? cleanHtmlEntities(String? text) {
+    if (text == null || text.isEmpty) return text;
+    return _unescape.convert(text);
   }
 }

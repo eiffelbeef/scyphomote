@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
+import '../utils/ui_utils.dart';
 
 class OverviewSection extends StatefulWidget {
   final String overview;
@@ -19,10 +20,13 @@ class _OverviewSectionState extends State<OverviewSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    
+    final cleanOverview = UiUtils.cleanHtmlEntities(widget.overview) ?? '';
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final textSpan = TextSpan(
-          text: widget.overview,
+          text: cleanOverview,
           style: Theme.of(context).textTheme.bodyMedium,
         );
         final tp = TextPainter(
@@ -36,7 +40,7 @@ class _OverviewSectionState extends State<OverviewSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.overview,
+              cleanOverview,
               maxLines: _expanded ? null : 3,
               overflow: _expanded ? null : TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium,

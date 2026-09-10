@@ -36,7 +36,7 @@ void showPersonDetailSheet(BuildContext context, String personId, String personN
               return detailsAsync.when(
                 data: (details) {
                   final name = details?['Name'] as String? ?? personName;
-                  final overview = details?['Overview'] as String?;
+                  final overview = UiUtils.cleanHtmlEntities(details?['Overview'] as String?);
                   final externalUrls =
                       (details?['ExternalUrls'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
