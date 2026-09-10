@@ -98,7 +98,6 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
     if (ctx == null) return;
     final l10n = AppLocalizations.of(ctx)!;
     final msgPleaseLogin = l10n.pleaseLogInFirst;
-    final msgConnecting = l10n.connectingToSession;
     final msgNotFound = l10n.sessionNotFoundOrOffline;
     final msgLaunched = l10n.launchedFromRemoteWidget;
 
@@ -125,26 +124,43 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
           return;
         }
 
-        UiUtils.showSnackBar(
-          AppConstants.navigatorKey.currentContext,
-          msgConnecting,
-        );
-
         final sessionNotifier = ref.read(sessionProvider.notifier);
-        await sessionNotifier.fetchSessions();
-        final sessionState = ref.read(sessionProvider);
 
-        final session = sessionState.sessions
+        var session = ref
+            .read(sessionProvider)
+            .sessions
             .where((s) => s.sessionId == sessionId)
             .firstOrNull;
 
-        if (session != null) {
-          sessionNotifier.selectSession(session);
+        if (session == null) {
+          await sessionNotifier.fetchSessions();
+          session = ref
+              .read(sessionProvider)
+              .sessions
+              .where((s) => s.sessionId == sessionId)
+              .firstOrNull;
+        }
 
+        if (session != null) {
           final navigator = AppConstants.navigatorKey.currentState;
           if (navigator != null) {
-            navigator.popUntil((route) => route.isFirst);
-            navigator.pushNamed(RemoteControlScreen.routeName);
+            bool hasRemoteScreen = false;
+            navigator.popUntil((route) {
+              if (route.settings.name == RemoteControlScreen.routeName) {
+                hasRemoteScreen = true;
+                return true;
+              }
+              return route.isFirst;
+            });
+
+            sessionNotifier.selectSession(session);
+
+            if (!hasRemoteScreen) {
+              await navigator.pushNamed(RemoteControlScreen.routeName);
+              sessionNotifier.deselectSession();
+            }
+          } else {
+            sessionNotifier.selectSession(session);
           }
         } else {
           UiUtils.showSnackBar(

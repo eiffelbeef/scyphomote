@@ -91,6 +91,11 @@ class MainActivity : FlutterActivity() {
         )
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
     override fun onDestroy() {
         mediaSessionManager?.cleanUp()
         super.onDestroy()

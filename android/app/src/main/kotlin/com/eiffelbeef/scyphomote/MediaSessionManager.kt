@@ -39,6 +39,7 @@ class MediaSessionManager(private val context: Context, private val methodChanne
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob() + coroutineExceptionHandler)
     private val activeSessions = mutableMapOf<String, SessionHolder>()
     private val notificationManager = NotificationManagerCompat.from(context)
+    private var nextNotificationIdOffset = 0
 
     companion object {
         private const val CHANNEL_ID = "jellyfin_media_controls"
@@ -129,7 +130,9 @@ class MediaSessionManager(private val context: Context, private val methodChanne
                 val canSeek = data["canSeek"] as? Boolean ?: false
 
                 val holder = activeSessions.getOrPut(sessionId) {
-                    val notificationId = BASE_NOTIFICATION_ID + activeSessions.size + index
+                    val offset = nextNotificationIdOffset++
+                    if (nextNotificationIdOffset >= 1000) nextNotificationIdOffset = 0
+                    val notificationId = BASE_NOTIFICATION_ID + (offset * 10)
                     createHolder(sessionId, deviceName, notificationId)
                 }
 
