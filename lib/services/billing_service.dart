@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/home_widget_manager.dart';
 import '../utils/logger.dart';
@@ -12,6 +13,7 @@ class BillingService {
   static const _premiumId = 'scyphomote_premium';
   static const _historyKey = 'support_history';
   static const _licenseKeyPref = 'license_key';
+  static const _playStoreInstaller = 'com.android.vending';
   static bool get isBillingSupported => !kIsWeb && Platform.isAndroid;
 
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -51,11 +53,15 @@ class BillingService {
 
     _supportHistory = _prefs.getStringList(_historyKey) ?? [];
 
-    _isAvailable = isBillingSupported && await _iap.isAvailable();
-    if (!_isAvailable) {
-      logError('In-App Purchases are not available.');
-      return;
+    if (isBillingSupported) {
+      final info = await PackageInfo.fromPlatform();
+      _isAvailable = info.installerStore == _playStoreInstaller &&
+          await _iap.isAvailable();
+    } else {
+      _isAvailable = false;
     }
+
+    if (!_isAvailable) return;
 
     _subscription = _iap.purchaseStream.listen(
       _onPurchaseUpdated,
