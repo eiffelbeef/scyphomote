@@ -201,7 +201,10 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
       ref.read(sessionProvider.notifier).refreshSessionPolling();
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused) {
-      AppConstants.isInForeground = false;
+      if (AppConstants.isInForeground) {
+        AppConstants.isInForeground = false;
+        ref.read(sessionProvider.notifier).refreshSessionPolling();
+      }
       messenger?.clearSnackBars();
     }
   }
