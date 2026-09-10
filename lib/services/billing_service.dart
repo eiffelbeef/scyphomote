@@ -48,7 +48,7 @@ class BillingService {
       _isPremium = true;
     } else {
       if (savedLicense != null) await _prefs.remove(_licenseKeyPref);
-      _isPremium = _prefs.getBool('is_premium') ?? false;
+      _isPremium = kDebugMode && (_prefs.getBool('is_premium') ?? false);
     }
 
     _supportHistory = _prefs.getStringList(_historyKey) ?? [];
