@@ -88,9 +88,12 @@ class _EmbyConnectLoginScreenState extends ConsumerState<EmbyConnectLoginScreen>
 
   Future<void> _completeLogin(Map<String, dynamic> server) async {
     await ref.read(authProvider.notifier).completeEmbyConnectLogin(server);
+    if (!mounted) return;
     final authState = ref.read(authProvider);
-    if (mounted && authState.error == null && authState.currentUser != null) {
-      Navigator.of(context).pop(true);
+    if (authState.error == null && authState.currentUser != null) {
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop(true);
+      }
     }
   }
 

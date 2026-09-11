@@ -40,9 +40,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
 
       // Check if login was successful and we are still on this screen
+      if (!mounted) return;
       final authState = ref.read(authProvider);
-      if (mounted && authState.error == null && authState.currentUser != null) {
-        Navigator.of(context).pop();
+      if (authState.error == null && authState.currentUser != null) {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       }
     }
   }
@@ -52,9 +55,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .read(authProvider.notifier)
         .login('https://demo.jellyfin.org/stable/', 'demo', '', persist: false);
 
+    if (!mounted) return;
     final authState = ref.read(authProvider);
-    if (mounted && authState.error == null && authState.currentUser != null) {
-      Navigator.of(context).pop();
+    if (authState.error == null && authState.currentUser != null) {
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
     }
   }
 

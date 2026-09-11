@@ -47,15 +47,15 @@ class SessionNotificationService {
   }
 
   Future<void> setEnabled(bool enabled, {UserAccount? user}) async {
-    _enabled = enabled;
     _user = user ?? _user;
+    if (_enabled == enabled) return;
+    _enabled = enabled;
+
     if (enabled && isSupported) {
       await _ensureInitialized();
       final androidPlugin = _notifications!.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
-      if (androidPlugin != null) {
-        await androidPlugin.requestNotificationsPermission();
-      }
+      await androidPlugin?.requestNotificationsPermission().catchError((e) => null);
     } else if (!enabled) {
       await _dismiss();
     }
