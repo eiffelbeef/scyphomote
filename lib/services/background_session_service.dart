@@ -38,7 +38,7 @@ class SessionNotificationService {
           _channelId,
           l10n.backgroundMonitoringSection,
           description: l10n.backgroundMonitoringChannelDescription,
-          importance: Importance.defaultImportance,
+          importance: Importance.low,
           playSound: false,
           enableVibration: false,
         ),
@@ -80,25 +80,22 @@ class SessionNotificationService {
     }).toList();
 
     final sessionCount = activeSessions.length;
-    final playingCount = activeSessions.where((s) => s.nowPlaying != null).length;
+    final playingCount = activeSessions.where((s) => s.isPlaying).length;
+    final pausedCount = activeSessions.where((s) => s.isPaused).length;
 
-    String body;
-    if (sessionCount == 0) {
-      body = l10n.noActiveSessions;
-    } else if (playingCount == 0) {
-      body = l10n.activeSessionsNonePlaying(sessionCount);
-    } else {
-      body = l10n.activeSessionsCountPlaying(sessionCount, playingCount);
-    }
+    final body = sessionCount == 0
+        ? l10n.noActiveSessions
+        : l10n.activeSessionsStatus(sessionCount, playingCount, pausedCount);
 
     final androidDetails = AndroidNotificationDetails(
       _channelId,
       l10n.backgroundMonitoringSection,
       channelDescription: l10n.backgroundMonitoringChannelDescription,
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
+      importance: Importance.low,
+      priority: Priority.low,
       ongoing: true,
       autoCancel: false,
+      silent: true,
       playSound: false,
       enableVibration: false,
       showWhen: false,

@@ -12,21 +12,16 @@
   },
   "aboutSection": "About",
   "activeDevices": "Active Devices",
-  "activeSessionsCountPlaying": "{count, plural, =1{1 active session, {playingCount} playing} other{{count} active sessions, {playingCount} playing}}",
-  "@activeSessionsCountPlaying": {
+  "activeSessionsStatus": "{count, plural, =1{1 session, {playingCount} playing & {pausedCount} paused} other{{count} sessions, {playingCount} playing & {pausedCount} paused}}",
+  "@activeSessionsStatus": {
     "placeholders": {
       "count": {
         "type": "int"
       },
       "playingCount": {
         "type": "int"
-      }
-    }
-  },
-  "activeSessionsNonePlaying": "{count, plural, =1{1 active session, none playing} other{{count} active sessions, none playing}}",
-  "@activeSessionsNonePlaying": {
-    "placeholders": {
-      "count": {
+      },
+      "pausedCount": {
         "type": "int"
       }
     }
