@@ -12,6 +12,7 @@ import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import 'package:scyphomote/l10n/app_localizations.dart';
 import '../constants.dart';
+import '../utils/ui_utils.dart';
 
 class SettingsScreen extends ConsumerWidget {
   static const routeName = '/settings';
@@ -22,6 +23,7 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final settings = ref.watch(settingsProvider);
     final currentLocale = ref.watch(localeProvider);
+    final isPremium = ref.watch(isPremiumProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -181,14 +183,25 @@ class SettingsScreen extends ConsumerWidget {
             SwitchListTile(
               secondary: const Icon(Icons.notifications_active_outlined),
               title: Text(l10n.backgroundMonitoringTitle),
-              value: settings.backgroundMonitoringEnabled,
+              value: settings.backgroundMonitoringEnabled && isPremium,
               onChanged: (value) {
+                if (value && !isPremium) {
+                  UiUtils.showActionDialog(
+                    context: context,
+                    title: l10n.unlockScyphomotePremium,
+                    content: l10n.premiumFeatureBackground,
+                    actionLabel: l10n.getPremium,
+                    onAction: () =>
+                        Navigator.of(context).pushNamed(PremiumScreen.routeName),
+                  );
+                  return;
+                }
                 ref
                     .read(settingsProvider.notifier)
                     .setBackgroundMonitoringEnabled(value);
               },
             ),
-            if (settings.backgroundMonitoringEnabled)
+            if (settings.backgroundMonitoringEnabled && isPremium)
               _buildSliderTile(
                 icon: Icons.timer_outlined,
                 title: l10n.backgroundRefreshIntervalTitle,

@@ -89,6 +89,37 @@ class UiUtils {
       );
   }
 
+  static Future<void> showActionDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    String? cancelLabel,
+    required String actionLabel,
+    required VoidCallback onAction,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(cancelLabel ?? l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              onAction();
+            },
+            child: Text(actionLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
   static double getBottomPaddingForDrawer(BuildContext context, WidgetRef ref) {
     final sessionState = ref.watch(sessionProvider);
     final session = sessionState.selectedSession;
