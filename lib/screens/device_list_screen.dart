@@ -15,12 +15,30 @@ import 'settings_screen.dart';
 import 'loading_screen.dart';
 import '../widgets/text_input_dialog.dart';
 import '../utils/logger.dart';
+import '../services/review_service.dart';
 
-class DeviceListScreen extends ConsumerWidget {
+class DeviceListScreen extends ConsumerStatefulWidget {
   const DeviceListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DeviceListScreen> createState() => _DeviceListScreenState();
+}
+
+class _DeviceListScreenState extends ConsumerState<DeviceListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          ReviewService.requestReviewIfEligible();
+        }
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final sessionState = ref.watch(sessionProvider);
     final settings = ref.watch(settingsProvider);

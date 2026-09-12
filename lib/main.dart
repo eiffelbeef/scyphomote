@@ -23,6 +23,7 @@ import 'utils/logger.dart';
 import 'utils/ui_utils.dart';
 import 'services/background_session_service.dart';
 import 'services/media_control_service.dart';
+import 'services/review_service.dart';
 import 'providers/settings_provider.dart';
 import 'constants.dart';
 
@@ -46,6 +47,7 @@ void main() {
     AppConstants.appVersion = packageInfo.version;
 
     await HomeWidgetManager.init();
+    ReviewService.recordLaunch();
 
     runApp(const ProviderScope(child: ScyphomoteApp()));
   }, (error, stackTrace) {

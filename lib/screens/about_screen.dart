@@ -68,7 +68,7 @@ class AboutScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     InkWell(
-                      onTap: () => InAppReview.instance.requestReview(),
+                      onTap: () => InAppReview.instance.openStoreListing(),
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
