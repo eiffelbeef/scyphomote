@@ -67,30 +67,17 @@ class AboutScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    InkWell(
-                      onTap: () => InAppReview.instance.openStoreListing(),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
+                    OutlinedButton.icon(
+                      onPressed: () => InAppReview.instance.openStoreListing(),
+                      icon: const Icon(
+                        Icons.star_rate_rounded,
+                        color: Colors.amber,
+                      ),
+                      label: Text(l10n.rateAndReview),
+                      style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star_rate_rounded,
-                              color: Colors.amber,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(l10n.rateAndReview),
-                          ],
+                          horizontal: 24,
+                          vertical: 14,
                         ),
                       ),
                     ),
@@ -114,27 +101,14 @@ class AboutScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
-            InkWell(
-              onTap: () => UiUtils.launchUrl(AppConstants.githubUrl),
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
+            OutlinedButton.icon(
+              onPressed: () => UiUtils.launchUrl(AppConstants.githubUrl),
+              icon: const Icon(Icons.code_rounded, size: 20),
+              label: Text(l10n.githubRepository),
+              style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.code_rounded, size: 20),
-                    const SizedBox(width: 8),
-                    Text(l10n.githubRepository),
-                  ],
+                  horizontal: 24,
+                  vertical: 14,
                 ),
               ),
             ),
@@ -170,28 +144,15 @@ class AboutScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              InkWell(
-                onTap: () =>
+              OutlinedButton.icon(
+                onPressed: () =>
                     UiUtils.launchUrl('https://liberapay.com/EiffelBeef/donate'),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
+                icon: const Icon(Icons.favorite_rounded, color: Colors.amber),
+                label: Text(l10n.donateUsingLiberapay),
+                style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.favorite_rounded, color: Colors.amber),
-                      const SizedBox(width: 8),
-                      Text(l10n.donateUsingLiberapay),
-                    ],
+                    horizontal: 24,
+                    vertical: 14,
                   ),
                 ),
               ),
