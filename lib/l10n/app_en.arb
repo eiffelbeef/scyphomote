@@ -122,6 +122,14 @@
   "hideOtherUsersSessionsTitle": "Hide other users' sessions",
   "home": "Home",
   "idleDevices": "Idle Devices",
+  "idleSessionsCount": "{count, plural, =1{1 idle session} other{{count} idle sessions}}",
+  "@idleSessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "ipLookupPrompt": "Do you want to look up info for IP {ip} on whatismyipaddress.com?",
   "@ipLookupPrompt": {
     "placeholders": {

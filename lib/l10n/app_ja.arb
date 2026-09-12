@@ -109,6 +109,7 @@
   "hideOtherUsersSessionsTitle": "他のユーザーのセッションを非表示にする",
   "home": "ホーム",
   "idleDevices": "待機中のデバイス",
+  "idleSessionsCount": "{count, plural, =1{1 件の待機中セッション} other{{count} 件の待機中セッション}}",
   "ipLookupPrompt": "whatismyipaddress.comでIP {ip} の情報を検索しますか？",
   "@ipLookupPrompt": {
     "placeholders": {

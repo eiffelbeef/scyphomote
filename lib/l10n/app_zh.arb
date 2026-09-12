@@ -109,6 +109,7 @@
   "hideOtherUsersSessionsTitle": "隐藏其他用户的会话",
   "home": "首页",
   "idleDevices": "空闲设备",
+  "idleSessionsCount": "{count, plural, =1{1 个空闲会话} other{{count} 个空闲会话}}",
   "ipLookupPrompt": "您要在 whatismyipaddress.com 上查询 IP {ip} 的信息吗？",
   "@ipLookupPrompt": {
     "placeholders": {

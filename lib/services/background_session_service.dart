@@ -75,16 +75,17 @@ class SessionNotificationService {
     await _ensureInitialized();
     if (_notifications == null) return;
 
-    final activeSessions = sessions.where((s) {
+    final relevantSessions = sessions.where((s) {
       return s.playableMediaTypes.isNotEmpty || s.nowPlaying != null;
     }).toList();
 
-    final sessionCount = activeSessions.length;
-    final playingCount = activeSessions.where((s) => s.isPlaying).length;
-    final pausedCount = activeSessions.where((s) => s.isPaused).length;
+    final sessionCount = relevantSessions.length;
+    final playingCount = relevantSessions.where((s) => s.isPlaying).length;
+    final pausedCount = relevantSessions.where((s) => s.isPaused).length;
+    final activeCount = playingCount + pausedCount;
 
-    final body = sessionCount == 0
-        ? l10n.noActiveSessions
+    final body = activeCount == 0
+        ? l10n.idleSessionsCount(sessionCount)
         : l10n.activeSessionsStatus(sessionCount, playingCount, pausedCount);
 
     final androidDetails = AndroidNotificationDetails(

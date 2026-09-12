@@ -109,6 +109,7 @@
   "hideOtherUsersSessionsTitle": "Skrij seje drugih uporabnikov",
   "home": "Domov",
   "idleDevices": "Nedejavne naprave",
+  "idleSessionsCount": "{count, plural, =1{1 nedejavna seja} =2{2 nedejavni seji} few{{count} nedejavne seje} other{{count} nedejavnih sej}}",
   "ipLookupPrompt": "Ali želite poiskati podatke za IP {ip} na whatismyipaddress.com?",
   "@ipLookupPrompt": {
     "placeholders": {

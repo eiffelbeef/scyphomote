@@ -109,6 +109,7 @@
   "hideOtherUsersSessionsTitle": "Ocultar sessões de outros usuários",
   "home": "Início",
   "idleDevices": "Dispositivos Inativos",
+  "idleSessionsCount": "{count, plural, =1{1 sessão inativa} other{{count} sessões inativas}}",
   "ipLookupPrompt": "Deseja procurar informações sobre o IP {ip} em whatismyipaddress.com?",
   "@ipLookupPrompt": {
     "placeholders": {
