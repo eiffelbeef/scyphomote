@@ -118,6 +118,54 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+          if (!kIsWeb && Platform.isAndroid) ...[
+            const Divider(),
+            _buildSectionHeader(context, l10n.backgroundMonitoringSection),
+            SwitchListTile(
+              secondary: const Icon(Icons.notifications_active_outlined),
+              title: Text(l10n.backgroundMonitoringTitle),
+              value: settings.backgroundMonitoringEnabled && isPremium,
+              onChanged: (value) {
+                if (value && !isPremium) {
+                  UiUtils.showActionDialog(
+                    context: context,
+                    title: l10n.unlockScyphomotePremium,
+                    content: l10n.premiumFeatureBackground,
+                    actionLabel: l10n.getPremium,
+                    onAction: () =>
+                        Navigator.of(context).pushNamed(PremiumScreen.routeName),
+                  );
+                  return;
+                }
+                ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringEnabled(value);
+              },
+            ),
+            if (settings.backgroundMonitoringEnabled && isPremium) ...[
+              _buildSliderTile(
+                icon: Icons.timer_outlined,
+                title: l10n.backgroundRefreshIntervalTitle,
+                subtitleBuilder: (val) => l10n.secondsPlural(val),
+                value: settings.backgroundMonitoringRefreshRate,
+                min: 15,
+                max: 300,
+                divisions: 19,
+                onChangeEnd: (val) => ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringRefreshRate(val),
+              ),
+              SwitchListTile(
+                secondary: const Icon(Icons.volume_up_outlined),
+                title: Text(l10n.backgroundControlVolumeTitle),
+                subtitle: Text(l10n.backgroundControlVolumeSubtitle),
+                value: settings.backgroundMonitoringVolumeControl,
+                onChanged: (value) => ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringVolumeControl(value),
+              ),
+            ],
+          ],
           const Divider(),
           _buildSectionHeader(context, l10n.performanceSection),
           _buildSliderTile(
@@ -177,54 +225,6 @@ class SettingsScreen extends ConsumerWidget {
                   .setUseVolumeToolbar(value);
             },
           ),
-          if (!kIsWeb && Platform.isAndroid) ...[
-            const Divider(),
-            _buildSectionHeader(context, l10n.backgroundMonitoringSection),
-            SwitchListTile(
-              secondary: const Icon(Icons.notifications_active_outlined),
-              title: Text(l10n.backgroundMonitoringTitle),
-              value: settings.backgroundMonitoringEnabled && isPremium,
-              onChanged: (value) {
-                if (value && !isPremium) {
-                  UiUtils.showActionDialog(
-                    context: context,
-                    title: l10n.unlockScyphomotePremium,
-                    content: l10n.premiumFeatureBackground,
-                    actionLabel: l10n.getPremium,
-                    onAction: () =>
-                        Navigator.of(context).pushNamed(PremiumScreen.routeName),
-                  );
-                  return;
-                }
-                ref
-                    .read(settingsProvider.notifier)
-                    .setBackgroundMonitoringEnabled(value);
-              },
-            ),
-            if (settings.backgroundMonitoringEnabled && isPremium) ...[
-              _buildSliderTile(
-                icon: Icons.timer_outlined,
-                title: l10n.backgroundRefreshIntervalTitle,
-                subtitleBuilder: (val) => l10n.secondsPlural(val),
-                value: settings.backgroundMonitoringRefreshRate,
-                min: 15,
-                max: 300,
-                divisions: 19,
-                onChangeEnd: (val) => ref
-                    .read(settingsProvider.notifier)
-                    .setBackgroundMonitoringRefreshRate(val),
-              ),
-              SwitchListTile(
-                secondary: const Icon(Icons.volume_up_outlined),
-                title: Text(l10n.backgroundControlVolumeTitle),
-                subtitle: Text(l10n.backgroundControlVolumeSubtitle),
-                value: settings.backgroundMonitoringVolumeControl,
-                onChanged: (value) => ref
-                    .read(settingsProvider.notifier)
-                    .setBackgroundMonitoringVolumeControl(value),
-              ),
-            ],
-          ],
           const Divider(),
           _buildSectionHeader(context, l10n.librarySection),
           _buildSliderTile(
