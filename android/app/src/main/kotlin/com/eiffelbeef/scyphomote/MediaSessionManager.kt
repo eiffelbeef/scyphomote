@@ -3,6 +3,7 @@ package com.eiffelbeef.scyphomote
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.media.AudioManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -216,18 +217,21 @@ class MediaSessionManager(private val context: Context, private val methodChanne
 
         holder.mediaSession.setPlaybackState(playbackState)
 
-        val controlType = if (canSetVolume) VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE else VolumeProviderCompat.VOLUME_CONTROL_FIXED
-        val volumeProvider = object : VolumeProviderCompat(controlType, 100, volumeLevel.coerceIn(0, 100)) {
-            override fun onSetVolumeTo(volume: Int) {
-                currentVolume = volume
-                sendMediaCommand(sessionId, "setVolume", mapOf("volume" to volume))
-            }
+        if (canSetVolume) {
+            val volumeProvider = object : VolumeProviderCompat(VolumeProviderCompat.VOLUME_CONTROL_ABSOLUTE, 100, volumeLevel.coerceIn(0, 100)) {
+                override fun onSetVolumeTo(volume: Int) {
+                    currentVolume = volume
+                    sendMediaCommand(sessionId, "setVolume", mapOf("volume" to volume))
+                }
 
-            override fun onAdjustVolume(direction: Int) {
-                sendMediaCommand(sessionId, "adjustVolume", mapOf("direction" to direction))
+                override fun onAdjustVolume(direction: Int) {
+                    sendMediaCommand(sessionId, "adjustVolume", mapOf("direction" to direction))
+                }
             }
+            holder.mediaSession.setPlaybackToRemote(volumeProvider)
+        } else {
+            holder.mediaSession.setPlaybackToLocal(AudioManager.STREAM_MUSIC)
         }
-        holder.mediaSession.setPlaybackToRemote(volumeProvider)
 
         val deviceLabel = if (clientName.isNotEmpty() && !deviceName.contains(clientName, ignoreCase = true)) {
             "$deviceName ($clientName)"

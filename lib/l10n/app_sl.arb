@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "Spremljanje v ozadju",
   "backgroundMonitoringTitle": "Spremljanje sej v ozadju",
   "backgroundRefreshIntervalTitle": "Interval osveževanja v ozadju",
+  "backgroundControlVolumeTitle": "Nadzor glasnosti",
+  "backgroundControlVolumeSubtitle": "Prilagodite glasnost naprave z gumbi za glasnost in kontrolniki predstavnosti",
   "bitrate": "Bitna hitrost",
   "browse": "Brskaj",
   "buyNow": "Kupi zdaj",

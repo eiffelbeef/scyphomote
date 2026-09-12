@@ -20,6 +20,7 @@ class StorageService {
   static const String _useVolumeToolbarKey = 'use_volume_toolbar';
   static const String _backgroundMonitoringEnabledKey = 'background_monitoring_enabled';
   static const String _backgroundMonitoringRefreshRateKey = 'background_monitoring_refresh_rate';
+  static const String _backgroundMonitoringVolumeControlKey = 'background_monitoring_volume_control';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -265,6 +266,18 @@ class StorageService {
     await _storage.write(
       key: _backgroundMonitoringRefreshRateKey,
       value: rate.toString(),
+    );
+  }
+
+  Future<bool?> getBackgroundMonitoringVolumeControl() async {
+    final val = await _storage.read(key: _backgroundMonitoringVolumeControlKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveBackgroundMonitoringVolumeControl(bool enabled) async {
+    await _storage.write(
+      key: _backgroundMonitoringVolumeControlKey,
+      value: enabled.toString(),
     );
   }
 }

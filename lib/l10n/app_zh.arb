@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "后台监控",
   "backgroundMonitoringTitle": "后台会话监控",
   "backgroundRefreshIntervalTitle": "后台刷新间隔",
+  "backgroundControlVolumeTitle": "控制音量",
+  "backgroundControlVolumeSubtitle": "使用手机音量键和媒体控件调整设备音量",
   "bitrate": "比特率",
   "browse": "浏览",
   "buyNow": "立即购买",

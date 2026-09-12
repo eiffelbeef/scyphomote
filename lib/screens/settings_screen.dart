@@ -201,7 +201,7 @@ class SettingsScreen extends ConsumerWidget {
                     .setBackgroundMonitoringEnabled(value);
               },
             ),
-            if (settings.backgroundMonitoringEnabled && isPremium)
+            if (settings.backgroundMonitoringEnabled && isPremium) ...[
               _buildSliderTile(
                 icon: Icons.timer_outlined,
                 title: l10n.backgroundRefreshIntervalTitle,
@@ -214,6 +214,16 @@ class SettingsScreen extends ConsumerWidget {
                     .read(settingsProvider.notifier)
                     .setBackgroundMonitoringRefreshRate(val),
               ),
+              SwitchListTile(
+                secondary: const Icon(Icons.volume_up_outlined),
+                title: Text(l10n.backgroundControlVolumeTitle),
+                subtitle: Text(l10n.backgroundControlVolumeSubtitle),
+                value: settings.backgroundMonitoringVolumeControl,
+                onChanged: (value) => ref
+                    .read(settingsProvider.notifier)
+                    .setBackgroundMonitoringVolumeControl(value),
+              ),
+            ],
           ],
           const Divider(),
           _buildSectionHeader(context, l10n.librarySection),

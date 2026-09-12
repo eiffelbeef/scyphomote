@@ -70,12 +70,14 @@ class MediaControlService {
             }
             break;
           case 'setVolume':
+            if (_ref?.read(settingsProvider).backgroundMonitoringVolumeControl == false) break;
             final volume = args['volume'] as num?;
             if (volume != null) {
               await apiService.setVolume(sessionId, volume.toInt());
             }
             break;
           case 'adjustVolume':
+            if (_ref?.read(settingsProvider).backgroundMonitoringVolumeControl == false) break;
             final direction = args['direction'] as num?;
             if (direction == null || direction == 0) break;
             final currentVolume = targetSession.volumeLevel;
@@ -127,6 +129,7 @@ class MediaControlService {
       final canSeek = session.canSeek;
       final volumeLevel = session.volumeLevel;
       final canSetVolume = session.supportsRemoteControl &&
+          (settings?.backgroundMonitoringVolumeControl ?? true) &&
           session.supportedCommands.contains(JellyfinCommands.setVolume);
 
       return {

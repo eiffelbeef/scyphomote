@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "バックグラウンド監視",
   "backgroundMonitoringTitle": "バックグラウンドセッション監視",
   "backgroundRefreshIntervalTitle": "バックグラウンド更新間隔",
+  "backgroundControlVolumeTitle": "音量コントロール",
+  "backgroundControlVolumeSubtitle": "音量ボタンとメディア通知でデバイスの音量を調整する",
   "bitrate": "ビットレート",
   "browse": "ブラウズ",
   "buyNow": "今すぐ購入",

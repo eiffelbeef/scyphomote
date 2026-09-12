@@ -53,6 +53,8 @@
   "backgroundMonitoringSection": "Background Monitoring",
   "backgroundMonitoringTitle": "Background Session Monitoring",
   "backgroundRefreshIntervalTitle": "Background Refresh Interval",
+  "backgroundControlVolumeTitle": "Control Volume",
+  "backgroundControlVolumeSubtitle": "Adjust device volume using phone volume keys and media controls",
   "bitrate": "Bitrate",
   "browse": "Browse",
   "buyNow": "Buy Now",

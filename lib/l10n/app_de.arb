@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "Hintergrundüberwachung",
   "backgroundMonitoringTitle": "Hintergrund-Sitzungsüberwachung",
   "backgroundRefreshIntervalTitle": "Hintergrund-Aktualisierungsintervall",
+  "backgroundControlVolumeTitle": "Lautstärke steuern",
+  "backgroundControlVolumeSubtitle": "Lautstärke des Geräts über Lautstärketasten und Mediensteuerung anpassen",
   "bitrate": "Bitrate",
   "browse": "Durchsuchen",
   "buyNow": "Jetzt kaufen",

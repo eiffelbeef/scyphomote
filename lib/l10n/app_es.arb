@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "Monitoreo en segundo plano",
   "backgroundMonitoringTitle": "Monitoreo de sesiones en segundo plano",
   "backgroundRefreshIntervalTitle": "Intervalo de actualización en segundo plano",
+  "backgroundControlVolumeTitle": "Controlar volumen",
+  "backgroundControlVolumeSubtitle": "Ajustar el volumen del dispositivo con los botones de volumen y controles multimedia",
   "bitrate": "Tasa de bits",
   "browse": "Navegar",
   "buyNow": "Comprar ahora",

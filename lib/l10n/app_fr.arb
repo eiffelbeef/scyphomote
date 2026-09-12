@@ -40,6 +40,8 @@
   "backgroundMonitoringSection": "Surveillance en arrière-plan",
   "backgroundMonitoringTitle": "Surveillance des sessions en arrière-plan",
   "backgroundRefreshIntervalTitle": "Intervalle de rafraîchissement en arrière-plan",
+  "backgroundControlVolumeTitle": "Contrôler le volume",
+  "backgroundControlVolumeSubtitle": "Régler le volume de l'appareil avec les boutons de volume et les commandes multimédias",
   "bitrate": "Débit",
   "browse": "Parcourir",
   "buyNow": "Acheter",

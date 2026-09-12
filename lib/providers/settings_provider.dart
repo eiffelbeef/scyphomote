@@ -16,6 +16,7 @@ class SettingsState {
   final bool useVolumeToolbar;
   final bool backgroundMonitoringEnabled;
   final int backgroundMonitoringRefreshRate;
+  final bool backgroundMonitoringVolumeControl;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -30,6 +31,7 @@ class SettingsState {
     this.useVolumeToolbar = false,
     this.backgroundMonitoringEnabled = false,
     this.backgroundMonitoringRefreshRate = 60,
+    this.backgroundMonitoringVolumeControl = true,
   });
 
   SettingsState copyWith({
@@ -45,6 +47,7 @@ class SettingsState {
     bool? useVolumeToolbar,
     bool? backgroundMonitoringEnabled,
     int? backgroundMonitoringRefreshRate,
+    bool? backgroundMonitoringVolumeControl,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -63,6 +66,7 @@ class SettingsState {
       useVolumeToolbar: useVolumeToolbar ?? this.useVolumeToolbar,
       backgroundMonitoringEnabled: backgroundMonitoringEnabled ?? this.backgroundMonitoringEnabled,
       backgroundMonitoringRefreshRate: backgroundMonitoringRefreshRate ?? this.backgroundMonitoringRefreshRate,
+      backgroundMonitoringVolumeControl: backgroundMonitoringVolumeControl ?? this.backgroundMonitoringVolumeControl,
     );
   }
 }
@@ -92,6 +96,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final useVolToolbar = await _storageService.getUseVolumeToolbar();
     final backgroundMonitoring = await _storageService.getBackgroundMonitoringEnabled();
     final backgroundRate = await _storageService.getBackgroundMonitoringRefreshRate();
+    final backgroundVolControl = await _storageService.getBackgroundMonitoringVolumeControl();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -106,6 +111,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       useVolumeToolbar: useVolToolbar ?? false,
       backgroundMonitoringEnabled: backgroundMonitoring ?? false,
       backgroundMonitoringRefreshRate: backgroundRate ?? 60,
+      backgroundMonitoringVolumeControl: backgroundVolControl ?? true,
     );
   }
 
@@ -168,6 +174,11 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setBackgroundMonitoringRefreshRate(int rate) async {
     state = state.copyWith(backgroundMonitoringRefreshRate: rate);
     await _storageService.saveBackgroundMonitoringRefreshRate(rate);
+  }
+
+  Future<void> setBackgroundMonitoringVolumeControl(bool enabled) async {
+    state = state.copyWith(backgroundMonitoringVolumeControl: enabled);
+    await _storageService.saveBackgroundMonitoringVolumeControl(enabled);
   }
 }
 

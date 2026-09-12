@@ -73,7 +73,8 @@ class SessionNotifier extends Notifier<SessionState> {
       if (previous != null) {
         final filterChanged =
             previous.hideOtherUsersSessions != next.hideOtherUsersSessions ||
-            previous.showNonMediaCapableSessions != next.showNonMediaCapableSessions;
+            previous.showNonMediaCapableSessions != next.showNonMediaCapableSessions ||
+            previous.backgroundMonitoringVolumeControl != next.backgroundMonitoringVolumeControl;
         final pollingChanged =
             previous.playerRefreshRate != next.playerRefreshRate ||
             previous.deviceListAutoRefresh != next.deviceListAutoRefresh ||
