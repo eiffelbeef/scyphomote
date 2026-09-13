@@ -84,7 +84,7 @@ class SessionNotificationService {
     final pausedCount = relevantSessions.where((s) => s.isPaused).length;
     final activeCount = playingCount + pausedCount;
 
-    final body = activeCount == 0
+    final title = activeCount == 0
         ? l10n.idleSessionsCount(sessionCount)
         : l10n.activeSessionsStatus(sessionCount, playingCount, pausedCount);
 
@@ -101,9 +101,10 @@ class SessionNotificationService {
       enableVibration: false,
       showWhen: false,
       icon: '@mipmap/launcher_icon',
+      category: AndroidNotificationCategory.service,
     );
 
-    final title = _user?.userServerDisplayName ?? AppConstants.appName;
+    final body = _user?.userServerDisplayName ?? AppConstants.appName;
 
     final androidPlugin = _notifications!.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
