@@ -259,6 +259,8 @@ class _ScyphomoteAppState extends ConsumerState<ScyphomoteApp>
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale,
+      localeListResolutionCallback: (locales, supported) =>
+          basicLocaleListResolution(locales, [const Locale('en'), ...supported]),
       theme: ThemeData(
         colorScheme: lightColorScheme,
         useMaterial3: true,
