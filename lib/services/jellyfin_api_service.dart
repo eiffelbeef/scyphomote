@@ -8,6 +8,7 @@ import '../models/session.dart';
 import '../constants.dart';
 import '../utils/ui_utils.dart';
 import '../utils/logger.dart';
+import '../utils/auth_utils.dart';
 import 'emby_api_service.dart';
 
 class JellyfinApiService {
@@ -104,10 +105,13 @@ class JellyfinApiService {
   String get deviceId => _deviceId;
   String get deviceName => _deviceName;
 
-  String _buildAuthHeader(String? accessToken) {
-    final token = accessToken ?? _accessToken ?? '';
-    return 'MediaBrowser Token="$token", Client="$_clientName", Device="$_deviceName", DeviceId="$_deviceId", Version="$_version"';
-  }
+  String _buildAuthHeader(String? accessToken) => buildMediaBrowserAuthHeader(
+        deviceName: _deviceName,
+        deviceId: _deviceId,
+        clientName: _clientName,
+        version: _version,
+        token: accessToken ?? _accessToken,
+      );
 
   Future<UserAccount> authenticate(
     String serverUrl,

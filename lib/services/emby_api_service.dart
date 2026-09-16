@@ -3,6 +3,7 @@ import 'dart:convert';
 import '../models/user_account.dart';
 import '../constants.dart';
 import '../utils/logger.dart';
+import '../utils/auth_utils.dart';
 
 class EmbyApiService {
   final Dio _connectDio = Dio(BaseOptions(
@@ -62,9 +63,11 @@ class EmbyApiService {
       receiveTimeout: const Duration(seconds: 30),
     ));
 
-    String authHeader(String token) => 'MediaBrowser Client="${AppConstants.appName}", Device="$deviceName", DeviceId="$deviceId", Version="${AppConstants.appVersion}", Token="$token"';
-
-    dio.options.headers['Authorization'] = authHeader(accessKey);
+    dio.options.headers['Authorization'] = buildMediaBrowserAuthHeader(
+      deviceName: deviceName,
+      deviceId: deviceId,
+      token: accessKey,
+    );
 
     final response = await dio.get(
       'Connect/Exchange',
@@ -74,7 +77,11 @@ class EmbyApiService {
     final accessToken = data['AccessToken'] as String;
     final localUserId = data['LocalUserId'] as String;
 
-    dio.options.headers['Authorization'] = authHeader(accessToken);
+    dio.options.headers['Authorization'] = buildMediaBrowserAuthHeader(
+      deviceName: deviceName,
+      deviceId: deviceId,
+      token: accessToken,
+    );
 
     final userResponse = await dio.get('Users/$localUserId');
     final username = userResponse.data['Name'] as String;
