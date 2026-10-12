@@ -88,8 +88,13 @@ class JellyfinApiService {
     _deviceName = deviceName;
   }
 
+  void _setBaseUrl(String serverUrl) {
+    final clean = serverUrl.trim();
+    _dio.options.baseUrl = clean.endsWith('/') ? clean : '$clean/';
+  }
+
   void setCredentials(String serverUrl, String accessToken, {String? embyConnectAccessToken, String? embyConnectUserId, String? embySystemId}) {
-    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    _setBaseUrl(serverUrl);
     _dio.options.headers['Authorization'] = _buildAuthHeader(accessToken);
     _embyConnectAccessToken = embyConnectAccessToken;
     _embyConnectUserId = embyConnectUserId;
@@ -147,7 +152,7 @@ class JellyfinApiService {
     String username,
     String password,
   ) async {
-    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    _setBaseUrl(serverUrl);
 
     try {
       final response = await _dio.post(
@@ -166,7 +171,7 @@ class JellyfinApiService {
   }
 
   Future<Map<String, dynamic>> initiateQuickConnect(String serverUrl) async {
-    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    _setBaseUrl(serverUrl);
     try {
       final response = await _dio.post(
         '/QuickConnect/Initiate',
@@ -184,7 +189,7 @@ class JellyfinApiService {
   }
 
   Future<bool> checkQuickConnect(String serverUrl, String secret) async {
-    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    _setBaseUrl(serverUrl);
     try {
       final response = await _dio.get(
         '/QuickConnect/Connect',
@@ -201,7 +206,7 @@ class JellyfinApiService {
     String serverUrl,
     String secret,
   ) async {
-    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    _setBaseUrl(serverUrl);
     try {
       final response = await _dio.post(
         '/Users/AuthenticateWithQuickConnect',
