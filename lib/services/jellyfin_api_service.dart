@@ -12,16 +12,18 @@ import '../utils/auth_utils.dart';
 import 'emby_api_service.dart';
 
 class JellyfinApiService {
-  final Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 30),
-    receiveTimeout: const Duration(seconds: 30),
-  ));
+  final Dio _dio;
 
   void setConnectTimeout(int seconds) {
     _dio.options.connectTimeout = Duration(seconds: seconds);
   }
 
-  JellyfinApiService() {
+  JellyfinApiService({Dio? dio})
+      : _dio = dio ??
+            Dio(BaseOptions(
+              connectTimeout: const Duration(seconds: 30),
+              receiveTimeout: const Duration(seconds: 30),
+            )) {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
@@ -113,6 +115,33 @@ class JellyfinApiService {
         token: accessToken ?? _accessToken,
       );
 
+  Future<UserAccount> _buildUserAccountFromAuthData(
+    Map<String, dynamic> data,
+    String serverUrl,
+  ) async {
+    bool isEmby = false;
+    String? serverName;
+    try {
+      final infoResponse = await _dio.get('/System/Info/Public');
+      serverName = infoResponse.data['ServerName'] as String?;
+      final productName = infoResponse.data['ProductName'] as String?;
+      if (productName == null || !productName.toLowerCase().contains('jellyfin')) {
+        isEmby = true;
+      }
+    } catch (_) {}
+
+    return UserAccount(
+      userId: data['User']['Id'] as String,
+      username: data['User']['Name'] as String,
+      serverUrl: serverUrl,
+      serverName: serverName,
+      accessToken: data['AccessToken'] as String,
+      serverId: data['ServerId'] as String,
+      isAdmin: data['User']?['Policy']?['IsAdministrator'] as bool? ?? false,
+      isEmby: isEmby,
+    );
+  }
+
   Future<UserAccount> authenticate(
     String serverUrl,
     String username,
@@ -127,31 +156,64 @@ class JellyfinApiService {
         options: Options(headers: {'Authorization': _buildAuthHeader('')}),
       );
 
-      bool isEmby = false;
-      String? serverName;
-      try {
-        final infoResponse = await _dio.get('/System/Info/Public');
-        serverName = infoResponse.data['ServerName'] as String?;
-        final productName = infoResponse.data['ProductName'] as String?;
-        if (productName == null || !productName.toLowerCase().contains('jellyfin')) {
-          isEmby = true;
-        }
-      } catch (_) {}
-
-      return UserAccount(
-        userId: response.data['User']['Id'] as String,
-        username: response.data['User']['Name'] as String,
-        serverUrl: serverUrl,
-        serverName: serverName,
-        accessToken: response.data['AccessToken'] as String,
-        serverId: response.data['ServerId'] as String,
-        isAdmin:
-            response.data['User']?['Policy']?['IsAdministrator'] as bool? ??
-            false,
-        isEmby: isEmby,
+      return await _buildUserAccountFromAuthData(
+        response.data as Map<String, dynamic>,
+        serverUrl,
       );
     } catch (e) {
       throw Exception('Authentication failed: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> initiateQuickConnect(String serverUrl) async {
+    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    try {
+      final response = await _dio.post(
+        '/QuickConnect/Initiate',
+        options: Options(headers: {'Authorization': _buildAuthHeader('')}),
+      );
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception('Quick Connect is not enabled on this server.');
+      }
+      throw Exception('Failed to initiate Quick Connect: ${e.message ?? e.toString()}');
+    } catch (e) {
+      throw Exception('Failed to initiate Quick Connect: $e');
+    }
+  }
+
+  Future<bool> checkQuickConnect(String serverUrl, String secret) async {
+    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    try {
+      final response = await _dio.get(
+        '/QuickConnect/Connect',
+        queryParameters: {'secret': secret},
+        options: Options(headers: {'Authorization': _buildAuthHeader('')}),
+      );
+      return response.data['Authenticated'] as bool? ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<UserAccount> authenticateWithQuickConnect(
+    String serverUrl,
+    String secret,
+  ) async {
+    _dio.options.baseUrl = serverUrl.endsWith('/') ? serverUrl : '$serverUrl/';
+    try {
+      final response = await _dio.post(
+        '/Users/AuthenticateWithQuickConnect',
+        data: {'Secret': secret},
+        options: Options(headers: {'Authorization': _buildAuthHeader('')}),
+      );
+      return await _buildUserAccountFromAuthData(
+        response.data as Map<String, dynamic>,
+        serverUrl,
+      );
+    } catch (e) {
+      throw Exception('Quick Connect authentication failed: $e');
     }
   }
 

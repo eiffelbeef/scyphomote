@@ -196,6 +196,32 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  Future<void> _storeAndActivateUser(
+    UserAccount authenticatedUser, {
+    bool persist = true,
+  }) async {
+    _apiService.setCredentials(
+      authenticatedUser.serverUrl,
+      authenticatedUser.accessToken,
+    );
+
+    final profileImageBase64 = await _apiService.downloadUserImage(
+      authenticatedUser.userId,
+    );
+
+    final user = authenticatedUser.copyWith(
+      profileImageBase64: profileImageBase64,
+    );
+
+    if (persist) {
+      await _storageService.saveUser(user);
+      await _storageService.setActiveUser(user.userId);
+    }
+
+    final users = await _storageService.getUsers();
+    state = AuthState(currentUser: user, users: users, isLoading: false);
+  }
+
   Future<void> login(
     String serverUrl,
     String username,
@@ -209,37 +235,35 @@ class AuthNotifier extends Notifier<AuthState> {
         username,
         password,
       );
-
-      _apiService.setCredentials(
-        authenticatedUser.serverUrl,
-        authenticatedUser.accessToken,
-      );
-
-      final profileImageBase64 = await _apiService.downloadUserImage(
-        authenticatedUser.userId,
-      );
-
-      final user = UserAccount(
-        userId: authenticatedUser.userId,
-        username: authenticatedUser.username,
-        serverUrl: authenticatedUser.serverUrl,
-        serverName: authenticatedUser.serverName,
-        accessToken: authenticatedUser.accessToken,
-        serverId: authenticatedUser.serverId,
-        profileImageBase64: profileImageBase64,
-        isAdmin: authenticatedUser.isAdmin,
-        isEmby: authenticatedUser.isEmby,
-      );
-
-      if (persist) {
-        await _storageService.saveUser(user);
-        await _storageService.setActiveUser(user.userId);
-      }
-
-      final users = await _storageService.getUsers();
-      state = AuthState(currentUser: user, users: users, isLoading: false);
+      await _storeAndActivateUser(authenticatedUser, persist: persist);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: 'Login failed: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> initiateQuickConnect(String serverUrl) {
+    return _apiService.initiateQuickConnect(serverUrl);
+  }
+
+  Future<bool> checkQuickConnect(String serverUrl, String secret) {
+    return _apiService.checkQuickConnect(serverUrl, secret);
+  }
+
+  Future<void> completeQuickConnectLogin(
+    String serverUrl,
+    String secret, {
+    bool persist = true,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final authenticatedUser = await _apiService.authenticateWithQuickConnect(
+        serverUrl,
+        secret,
+      );
+      await _storeAndActivateUser(authenticatedUser, persist: persist);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Quick Connect failed: $e');
+      rethrow;
     }
   }
 
