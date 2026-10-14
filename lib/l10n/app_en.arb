@@ -406,5 +406,6 @@
   "remove": "Remove",
   "haveLicenseKey": "Already have a license key or sponsored on GitHub?",
   "inAppPurchasesUnavailable": "In-app purchases are not available on this version. You can unlock premium features by sponsoring on GitHub.",
-  "retrieveLicenseKey": "Retrieve License Key"
+  "retrieveLicenseKey": "Retrieve License Key",
+  "trickplayNotAvailable": "Trickplay thumbnails are not available for this media"
 }

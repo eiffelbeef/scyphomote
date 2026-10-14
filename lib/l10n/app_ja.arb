@@ -386,5 +386,6 @@
   "remove": "削除",
   "haveLicenseKey": "ライセンスキーをお持ちですか、またはGitHubでスポンサーになりましたか？",
   "inAppPurchasesUnavailable": "このバージョンではアプリ内課金をご利用いただけません。GitHubでスポンサーになることでプレミアム機能をご利用いただけます。",
-  "retrieveLicenseKey": "ライセンスキーを取得"
+  "retrieveLicenseKey": "ライセンスキーを取得",
+  "trickplayNotAvailable": "このメディアではトリックプレイサムネイルを利用できません"
 }

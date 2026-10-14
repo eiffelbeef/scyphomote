@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'dart:typed_data';
-import '../../../providers/auth_provider.dart';
 import '../../../models/trickplay.dart';
+import 'trickplay_fetch_mixin.dart';
+import 'trickplay_tile_image.dart';
 
 class TrickplayOverlay extends ConsumerStatefulWidget {
   final double seconds;
@@ -27,17 +26,21 @@ class TrickplayOverlay extends ConsumerStatefulWidget {
   ConsumerState<TrickplayOverlay> createState() => _TrickplayOverlayState();
 }
 
-class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay> {
-  Uint8List? _imageData;
+class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay>
+    with TrickplayFetchMixin<TrickplayOverlay> {
   double _displayedSeconds = 0;
-  int? _loadedTilesetIndex;
-  int? _inFlightTilesetIndex;
-  final Set<int> _failedIndices = {};
+
+  @override
+  String get fetchItemId => widget.itemId;
+  @override
+  String get fetchMediaSourceId => widget.mediaSourceId;
+  @override
+  TrickplayInfo get fetchInfo => widget.info;
 
   @override
   void initState() {
     super.initState();
-    _fetchImage();
+    _requestTile();
   }
 
   @override
@@ -46,57 +49,21 @@ class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay> {
     if (oldWidget.seconds != widget.seconds ||
         oldWidget.itemId != widget.itemId ||
         oldWidget.info != widget.info) {
-      _fetchImage();
+      _requestTile();
     }
   }
 
-  Future<void> _fetchImage() async {
+  void _requestTile() {
     final targetPosition = widget.info.getTilePosition(widget.seconds);
     if (targetPosition == null) return;
-
     final targetIndex = targetPosition.tilesetIndex;
-
-    if (_imageData != null && _loadedTilesetIndex == targetIndex) {
+    if (imageData != null && loadedTilesetIndex == targetIndex) {
+      // Tileset already loaded — just advance the displayed position.
       if (mounted) setState(() => _displayedSeconds = widget.seconds);
       return;
     }
-
-    if (_inFlightTilesetIndex == targetIndex ||
-        _failedIndices.contains(targetIndex)) {
-      return;
-    }
-
-    try {
-      _inFlightTilesetIndex = targetIndex;
-      final user = ref.read(authProvider).currentUser;
-      if (user == null) return;
-
-      final data = await ref
-          .read(apiServiceProvider)
-          .getTrickplayTileImage(
-            widget.itemId,
-            widget.mediaSourceId,
-            widget.info.width,
-            targetIndex,
-          );
-
-      if (mounted) {
-        if (data != null) {
-          setState(() {
-            _imageData = data;
-            _loadedTilesetIndex = targetIndex;
-            _displayedSeconds = widget.seconds;
-            _failedIndices.remove(targetIndex);
-          });
-        } else {
-          setState(() => _failedIndices.add(targetIndex));
-        }
-      }
-    } catch (e) {
-      if (mounted) setState(() => _failedIndices.add(targetIndex));
-    } finally {
-      _inFlightTilesetIndex = null;
-    }
+    // Pass onLoaded so _displayedSeconds is set atomically with imageData.
+    fetchTileset(targetIndex, onLoaded: () => _displayedSeconds = widget.seconds);
   }
 
   @override
@@ -113,7 +80,8 @@ class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay> {
     }
 
     final targetPosition = widget.info.getTilePosition(widget.seconds);
-    if (targetPosition == null || _failedIndices.contains(targetPosition.tilesetIndex)) {
+    if (targetPosition == null ||
+        failedIndices.contains(targetPosition.tilesetIndex)) {
       return const SizedBox.shrink();
     }
 
@@ -140,20 +108,20 @@ class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: (_imageData != null && displayPosition != null)
-                  ? Image.memory(
-                      _imageData!,
+              child: (imageData != null && displayPosition != null)
+                  ? TrickplayTileImage(
+                      bytes: imageData!,
+                      info: widget.info,
+                      position: displayPosition,
                       fit: BoxFit.none,
-                      alignment: _getAlignment(displayPosition),
-                      gaplessPlayback: true,
                     )
                   : const SizedBox.shrink(),
             ),
-            if (_inFlightTilesetIndex != null)
+            if (inFlightTilesetIndex != null)
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.black54,
                     shape: BoxShape.circle,
                   ),
@@ -170,17 +138,6 @@ class _TrickplayOverlayState extends ConsumerState<TrickplayOverlay> {
           ],
         ),
       ),
-    );
-  }
-
-  Alignment _getAlignment(TilePosition pos) {
-    final double maxX = (widget.info.width * (widget.info.tileWidth - 1))
-        .toDouble();
-    final double maxY = (widget.info.height * (widget.info.tileHeight - 1))
-        .toDouble();
-    return Alignment(
-      maxX > 0 ? -1.0 + 2.0 * (pos.x / maxX) : 0.0,
-      maxY > 0 ? -1.0 + 2.0 * (pos.y / maxY) : 0.0,
     );
   }
 }

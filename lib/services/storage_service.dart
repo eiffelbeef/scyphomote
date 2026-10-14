@@ -21,6 +21,7 @@ class StorageService {
   static const String _backgroundMonitoringEnabledKey = 'background_monitoring_enabled';
   static const String _backgroundMonitoringRefreshRateKey = 'background_monitoring_refresh_rate';
   static const String _backgroundMonitoringVolumeControlKey = 'background_monitoring_volume_control';
+  static const String _liveTrickplayEnabledKey = 'live_trickplay_enabled';
 
   Future<void> saveUser(UserAccount user) async {
     final users = await getUsers();
@@ -277,6 +278,18 @@ class StorageService {
   Future<void> saveBackgroundMonitoringVolumeControl(bool enabled) async {
     await _storage.write(
       key: _backgroundMonitoringVolumeControlKey,
+      value: enabled.toString(),
+    );
+  }
+
+  Future<bool?> getLiveTrickplayEnabled() async {
+    final val = await _storage.read(key: _liveTrickplayEnabledKey);
+    return val == null ? null : val == 'true';
+  }
+
+  Future<void> saveLiveTrickplayEnabled(bool enabled) async {
+    await _storage.write(
+      key: _liveTrickplayEnabledKey,
       value: enabled.toString(),
     );
   }

@@ -387,5 +387,6 @@
   "remove": "移除",
   "haveLicenseKey": "已有许可证密钥或已在 GitHub 上赞助？",
   "inAppPurchasesUnavailable": "此版本不支持应用内购买。您可以通过在 GitHub 上赞助来解锁高级功能。",
-  "retrieveLicenseKey": "获取许可证密钥"
+  "retrieveLicenseKey": "获取许可证密钥",
+  "trickplayNotAvailable": "此媒体不可用 Trickplay 缩略图"
 }

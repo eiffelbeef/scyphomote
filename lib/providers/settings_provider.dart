@@ -17,6 +17,7 @@ class SettingsState {
   final bool backgroundMonitoringEnabled;
   final int backgroundMonitoringRefreshRate;
   final bool backgroundMonitoringVolumeControl;
+  final bool liveTrickplayEnabled;
 
   SettingsState({
     this.playerRefreshRate = 10,
@@ -32,6 +33,7 @@ class SettingsState {
     this.backgroundMonitoringEnabled = false,
     this.backgroundMonitoringRefreshRate = 60,
     this.backgroundMonitoringVolumeControl = true,
+    this.liveTrickplayEnabled = false,
   });
 
   SettingsState copyWith({
@@ -48,6 +50,7 @@ class SettingsState {
     bool? backgroundMonitoringEnabled,
     int? backgroundMonitoringRefreshRate,
     bool? backgroundMonitoringVolumeControl,
+    bool? liveTrickplayEnabled,
   }) {
     return SettingsState(
       playerRefreshRate: playerRefreshRate ?? this.playerRefreshRate,
@@ -67,6 +70,7 @@ class SettingsState {
       backgroundMonitoringEnabled: backgroundMonitoringEnabled ?? this.backgroundMonitoringEnabled,
       backgroundMonitoringRefreshRate: backgroundMonitoringRefreshRate ?? this.backgroundMonitoringRefreshRate,
       backgroundMonitoringVolumeControl: backgroundMonitoringVolumeControl ?? this.backgroundMonitoringVolumeControl,
+      liveTrickplayEnabled: liveTrickplayEnabled ?? this.liveTrickplayEnabled,
     );
   }
 }
@@ -97,6 +101,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final backgroundMonitoring = await _storageService.getBackgroundMonitoringEnabled();
     final backgroundRate = await _storageService.getBackgroundMonitoringRefreshRate();
     final backgroundVolControl = await _storageService.getBackgroundMonitoringVolumeControl();
+    final liveTrickplay = await _storageService.getLiveTrickplayEnabled();
 
     state = SettingsState(
       playerRefreshRate: playerRate ?? 10,
@@ -112,6 +117,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       backgroundMonitoringEnabled: backgroundMonitoring ?? false,
       backgroundMonitoringRefreshRate: backgroundRate ?? 60,
       backgroundMonitoringVolumeControl: backgroundVolControl ?? true,
+      liveTrickplayEnabled: liveTrickplay ?? false,
     );
   }
 
@@ -179,6 +185,12 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> setBackgroundMonitoringVolumeControl(bool enabled) async {
     state = state.copyWith(backgroundMonitoringVolumeControl: enabled);
     await _storageService.saveBackgroundMonitoringVolumeControl(enabled);
+  }
+
+  Future<void> toggleLiveTrickplay() async {
+    final next = !state.liveTrickplayEnabled;
+    state = state.copyWith(liveTrickplayEnabled: next);
+    await _storageService.saveLiveTrickplayEnabled(next);
   }
 }
 

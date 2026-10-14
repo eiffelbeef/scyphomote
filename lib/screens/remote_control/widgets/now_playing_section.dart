@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../widgets/safe_network_image.dart';
 import '../../../widgets/person_row.dart';
 import '../../../widgets/external_links_section.dart';
 import '../../../widgets/drag_handle.dart';
@@ -19,6 +18,7 @@ import '../../../utils/logger.dart';
 import '../../../utils/ui_utils.dart';
 import '../../../widgets/person_details_sheet.dart';
 import 'remote_button.dart';
+import 'now_playing_poster.dart';
 import '../../../../l10n/app_localizations.dart';
 
 import 'package:intl/intl.dart' hide TextDirection;
@@ -55,34 +55,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
         ? (ref.watch(itemFavoriteProvider(nowPlaying.id)).value ?? nowPlaying.isFavorite)
         : false;
 
-    final double fallbackRatio = UiUtils.getFallbackAspectRatio(nowPlaying?.type);
-    final double aspectRatio =
-        nowPlaying?.primaryImageAspectRatio ?? fallbackRatio;
-
-    double finalWidth = artworkSize * aspectRatio;
-    double finalHeight = artworkSize;
-
-    if (widget.maxWidth != null && finalWidth > widget.maxWidth!) {
-      finalWidth = widget.maxWidth!;
-      finalHeight = finalWidth / aspectRatio;
-    }
-
-    Widget buildArtwork() {
-      final placeholder = _buildPlaceholder(
-        context,
-        size: finalHeight,
-        width: finalWidth,
-      );
-
-      return SafeNetworkImage(
-        imageUrl: imageUrl,
-        fallbackWidget: placeholder,
-        width: finalWidth,
-        height: finalHeight,
-        borderRadius: BorderRadius.circular(12),
-      );
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -90,7 +62,12 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
           alignment: Alignment.center,
           clipBehavior: Clip.none,
           children: [
-            buildArtwork(),
+            NowPlayingPoster(
+              session: session,
+              imageUrl: imageUrl,
+              artworkSize: artworkSize,
+              maxWidth: widget.maxWidth,
+            ),
 
             if (nowPlaying != null)
               Positioned(
@@ -119,7 +96,6 @@ class _NowPlayingSectionState extends ConsumerState<NowPlayingSection> {
                   ),
                 ),
               ),
-
 
             if (nowPlaying != null && nowPlaying.isVideo)
               Consumer(
@@ -587,28 +563,6 @@ void showMediaDetailsSheet(BuildContext context, MediaInfo nowPlaying) {
           },
         );
       },
-    );
-  }
-
-  Widget _buildPlaceholder(
-    BuildContext context, {
-    required double size,
-    required double width,
-  }) {
-    return Container(
-      width: width,
-      height: size,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.tv_rounded,
-          size: size * 0.3,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-      ),
     );
   }
 

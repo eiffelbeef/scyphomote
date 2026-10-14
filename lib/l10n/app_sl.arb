@@ -386,5 +386,6 @@
   "remove": "Odstrani",
   "haveLicenseKey": "Že imate licenčni ključ ali ste sponzorirali na GitHubu?",
   "inAppPurchasesUnavailable": "Nakupi v aplikaciji niso na voljo v tej različici. Funkcije Premium lahko odklenete s sponzoriranjem na GitHubu.",
-  "retrieveLicenseKey": "Pridobi licenčni ključ"
+  "retrieveLicenseKey": "Pridobi licenčni ključ",
+  "trickplayNotAvailable": "Sličice trickplay niso na voljo za ta medij"
 }

@@ -79,6 +79,7 @@ class JellyfinApiService {
   String get _version => AppConstants.appVersion;
 
   final LruCache<String, Uint8List> _trickplayCache = LruCache(maxEntries: 50);
+  final Map<String, Future<Uint8List?>> _inFlightTrickplayRequests = {};
 
   void setDeviceId(String deviceId) {
     _deviceId = deviceId;
@@ -335,11 +336,32 @@ class JellyfinApiService {
     String mediaSourceId,
     int width,
     int index,
-  ) async {
+  ) {
     final cacheKey = '${itemId}_${mediaSourceId}_${width}_$index';
     final cached = _trickplayCache.get(cacheKey);
-    if (cached != null) return cached;
+    if (cached != null) return Future.value(cached);
 
+    final inFlight = _inFlightTrickplayRequests[cacheKey];
+    if (inFlight != null) return inFlight;
+
+    final requestFuture = _fetchTrickplayTileImage(
+      cacheKey: cacheKey,
+      itemId: itemId,
+      mediaSourceId: mediaSourceId,
+      width: width,
+      index: index,
+    );
+    _inFlightTrickplayRequests[cacheKey] = requestFuture;
+    return requestFuture;
+  }
+
+  Future<Uint8List?> _fetchTrickplayTileImage({
+    required String cacheKey,
+    required String itemId,
+    required String mediaSourceId,
+    required int width,
+    required int index,
+  }) async {
     try {
       final data = await _getRequest(
         'Videos/$itemId/Trickplay/$width/$index.jpg',
@@ -353,6 +375,8 @@ class JellyfinApiService {
       }
     } catch (e) {
       logError('Failed to fetch trickplay tile $cacheKey: $e');
+    } finally {
+      _inFlightTrickplayRequests.remove(cacheKey);
     }
     return null;
   }

@@ -386,5 +386,6 @@
   "remove": "Remover",
   "haveLicenseKey": "Já possui uma chave de licença ou patrocinou no GitHub?",
   "inAppPurchasesUnavailable": "Compras no aplicativo não estão disponíveis nesta versão. Você pode desbloquear recursos premium patrocinando no GitHub.",
-  "retrieveLicenseKey": "Obter chave de licença"
+  "retrieveLicenseKey": "Obter chave de licença",
+  "trickplayNotAvailable": "Miniaturas de trickplay não estão disponíveis para esta mídia"
 }
