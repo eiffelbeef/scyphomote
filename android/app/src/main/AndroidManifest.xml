@@ -87,6 +87,7 @@
             android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
             android:foregroundServiceType="connectedDevice"
             android:exported="false"
+            android:stopWithTask="true"
             tools:ignore="Instantiatable"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

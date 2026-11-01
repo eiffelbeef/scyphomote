@@ -115,6 +115,7 @@ class SessionNotificationService {
           title: title,
           body: body,
           notificationDetails: androidDetails,
+          startType: AndroidServiceStartType.startNotSticky,
           foregroundServiceTypes: {AndroidServiceForegroundType.foregroundServiceTypeConnectedDevice},
         );
       } on PlatformException catch (e, stackTrace) {
